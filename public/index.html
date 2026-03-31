@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Silai | اعلیٰ درجے کی سلائی — Premium International Stitching</title>
+  <meta name="description" content="Premium Pakistani stitching and tailoring delivered worldwide. Custom shalwar kameez, sherwanis, and bridal wear by master tailors."/>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/home.css"/>
+  <link rel="stylesheet" href="/css/order.css"/>
+  <link rel="stylesheet" href="/css/cultural.css"/>
+  <style>
+    .spa-view { display: none; }
+    .spa-view.active-view { display: block; animation: step-in 0.4s var(--ease); }
+  </style>
+</head>
+<body>
+
+<!-- ─── Auth Modal ────────────────────────────────────── -->
+<div id="auth-modal" class="modal-overlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div style="text-align:center;margin-bottom:var(--space-xl)">
+      <div style="font-size:2rem">🧵</div>
+      <h3 style="margin-top:8px">Welcome to Silai</h3>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Create Account</button>
+    </div>
+    <form id="login-form" class="auth-panel active">
+      <div class="form-group"><label class="form-label">Email</label><input id="login-email" type="email" class="form-input" placeholder="your@email.com" required></div>
+      <div class="form-group">
+        <label class="form-label">Password <a href="#" style="float:right;color:var(--text-muted);font-size:0.8rem">Forgot Password?</a></label>
+        <input id="login-password" type="password" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Sign In</button>
+      <p class="text-muted text-center" style="font-size:0.82rem">No account yet? <button type="button" onclick="switchAuthTab('register')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.82rem">Create one →</button></p>
+    </form>
+    <form id="register-form" class="auth-panel">
+      <div class="form-group"><label class="form-label">Full Name</label><input id="reg-name" type="text" class="form-input" placeholder="Fatima Khan" required></div>
+      <div class="form-group"><label class="form-label">Email</label><input id="reg-email" type="email" class="form-input" placeholder="your@email.com" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input id="reg-password" type="password" class="form-input" placeholder="Min. 6 characters" required minlength="6"></div>
+      <div class="form-group"><label class="form-label">Confirm Password</label><input id="reg-password-confirm" type="password" class="form-input" placeholder="Min. 6 characters" required minlength="6"></div>
+      <button type="submit" class="btn btn-primary w-full">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<!-- ─── Location & Currency Modal ──────────────────── -->
+<div id="location-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box" style="max-width:400px">
+    <button class="modal-close" onclick="document.getElementById('location-modal').classList.remove('open')">✕</button>
+    <h3 class="mb-lg" style="text-align:center">Set Location & Currency</h3>
+    <div class="form-group">
+      <label class="form-label">Deliver To</label>
+      <select id="loc-country-sel" class="form-select">
+        <option value="US" data-flag="🇺🇸" data-currency="USD">United States</option>
+        <option value="UK" data-flag="🇬🇧" data-currency="GBP">United Kingdom</option>
+        <option value="CA" data-flag="🇨🇦" data-currency="CAD">Canada</option>
+        <option value="AE" data-flag="🇦🇪" data-currency="AED">United Arab Emirates</option>
+        <option value="AU" data-flag="🇦🇺" data-currency="AUD">Australia</option>
+      </select>
+    </div>
+    <div class="form-group mt-md">
+      <label class="form-label">Currency Output</label>
+      <input type="text" id="loc-currency-preview" class="form-input" disabled value="USD $" style="background:var(--background-alt)">
+    </div>
+    <button class="btn btn-primary w-full mt-lg" onclick="saveLocationPreferences()">Save Preferences</button>
+  </div>
+</div>\n\n<!-- ─── Size Chart Modal ──────────────────── -->
+<div id="size-chart-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box" style="max-width:500px">
+    <button class="modal-close" onclick="document.getElementById('size-chart-modal').classList.remove('open')">✕</button>
+    <h3 class="mb-lg" style="text-align:center">Standard Size Chart</h3>
+    <table style="width:100%; border-collapse:collapse; text-align:center; font-size:0.9rem">
+      <thead style="background:#eaf0fc;">
+        <tr><th style="padding:10px; border:1px solid #c9d6f0;">Size</th><th style="padding:10px; border:1px solid #c9d6f0;">S</th><th style="padding:10px; border:1px solid #c9d6f0;">M</th><th style="padding:10px; border:1px solid #c9d6f0;">L</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:8px; border-bottom:1px solid var(--border)">Length</td><td style="padding:8px; border-bottom:1px solid var(--border)">50</td><td style="padding:8px; border-bottom:1px solid var(--border)">50</td><td style="padding:8px; border-bottom:1px solid var(--border)">50</td></tr>
+        <tr><td style="padding:8px; border-bottom:1px solid var(--border)">Chest</td><td style="padding:8px; border-bottom:1px solid var(--border)">18.5</td><td style="padding:8px; border-bottom:1px solid var(--border)">20.5</td><td style="padding:8px; border-bottom:1px solid var(--border)">23</td></tr>
+        <tr><td style="padding:8px; border-bottom:1px solid var(--border)">Waist</td><td style="padding:8px; border-bottom:1px solid var(--border)">16</td><td style="padding:8px; border-bottom:1px solid var(--border)">17</td><td style="padding:8px; border-bottom:1px solid var(--border)">19</td></tr>
+        <tr><td style="padding:8px; border-bottom:1px solid var(--border)">Hip</td><td style="padding:8px; border-bottom:1px solid var(--border)">19.5</td><td style="padding:8px; border-bottom:1px solid var(--border)">21.5</td><td style="padding:8px; border-bottom:1px solid var(--border)">25</td></tr>
+        <tr><td style="padding:8px; border-bottom:1px solid var(--border)">Armhole</td><td style="padding:8px; border-bottom:1px solid var(--border)">7</td><td style="padding:8px; border-bottom:1px solid var(--border)">8</td><td style="padding:8px; border-bottom:1px solid var(--border)">9</td></tr>
+      </tbody>
+    </table>
+    <p class="mt-md text-muted text-center" style="font-size:0.8rem">All measurements are in inches.</p>
+  </div>
+</div><!-- ─── Status Update Modal (Admin) ──────────────────── -->
+<div id="status-update-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box" style="max-width:380px">
+    <button class="modal-close" onclick="document.getElementById('status-update-modal').classList.remove('open')">✕</button>
+    <h3 class="mb-lg">Update Order Stage</h3>
+    <form id="status-update-form" style="display:flex;flex-direction:column;gap:var(--space-md)">
+      <input type="hidden" id="su-order-id">
+      <div class="form-group">
+        <label class="form-label">New Stage</label>
+        <select id="su-stage" class="form-select">
+          <option value="1">1 — Order Received</option>
+          <option value="2">2 — Fabric In Transit</option>
+          <option value="3">3 — Fabric Arrived</option>
+          <option value="4">4 — Cutting</option>
+          <option value="5">5 — Stitching</option>
+          <option value="6">6 — QC &amp; Finishing</option>
+          <option value="7">7 — Photos Sent</option>
+          <option value="8">8 — Awaiting Balance</option>
+          <option value="9">9 — Shipped</option>
+          <option value="10">10 — Delivered</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Note (optional)</label><input id="su-note" type="text" class="form-input" placeholder="e.g. DHL tracking number..."></div>
+      <button type="submit" class="btn btn-primary">Update Status</button>
+    </form>
+  </div>
+</div>
+
+<!-- ─── Navbar ────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="#home" class="nav-logo">🧵 Silai<span style="font-family: urdu, sans-serif; font-size: 1.3rem; font-weight: normal; margin-left: 4px;">سلائی</span></a>
+  <div class="nav-links">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#order" class="nav-link">Place Order</a>
+    <a href="#track" class="nav-link">Track Order</a>
+    <a href="#admin" class="nav-link" id="nav-admin-link" style="display:none">Admin</a>
+    <a href="#about" class="nav-link">About Us</a>
+  </div>
+  <div class="nav-actions">
+    <div class="header-delivery" onclick="document.getElementById('location-modal').classList.add('open')" style="cursor:pointer; font-size:0.75rem; line-height:1.2; padding-right:1rem; border-right:1px solid var(--border); margin-right:1rem; display:flex; flex-direction:column; align-items:flex-end; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">
+      <span style="color:var(--text-muted)">Deliver To / Currency</span>
+      <div style="font-weight:600; display:flex; align-items:center; gap:4px;">
+        <span id="nav-flag">🇺🇸</span> <span id="nav-currency">USD / $</span>
+      </div>
+    </div>
+    <div class="nav-user-menu" id="nav-user-menu">
+      <div class="nav-user-avatar" onclick="window.location.hash='#profile'" title="My Profile">👤</div>
+      <span id="nav-user-name" style="font-size:0.9rem;font-weight:600"></span>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Sign Out</button>
+    </div>
+    <button class="btn btn-primary btn-sm" id="nav-auth-btn" onclick="openAuthModal('login')">Sign In</button>
+  </div>
+  <div class="nav-hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu">
+  <a href="#home" class="nav-link">Home</a>
+  <a href="#order" class="nav-link">Place Order</a>
+  <a href="#track" class="nav-link">Track Order</a>
+  <a href="#profile" class="nav-link">My Profile</a>
+</div>
+<div class="toast-container"></div>
+
+<!-- ========================================================
+     ABOUT US VIEW
+======================================================== -->
+<div id="view-about" class="spa-view">
+  <div class="container" style="padding-top:var(--space-4xl); padding-bottom:var(--space-4xl); max-width:760px; line-height:1.9; font-size:1.1rem; color: #ececec; font-family: 'Playfair Display', Georgia, serif; text-align:left;">
+    <h2 style="font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; margin-bottom: 1.5rem; font-weight: 700; color: #fff;">About Us — Silai.pk</h2>
+    <p style="font-weight: 700; margin-bottom: 1.5rem; color: #fff;">Every stitch has a story. Ours begins with a mother.</p>
+    <p style="margin-bottom: 1.5rem;">Her name is Naik Bibi. As a young girl in Pattoki, she learned the art of stitching from her brother — sitting beside him, watching his hands, falling in love with thread and fabric before she even had words for it.</p>
+    <p style="margin-bottom: 1.5rem;">That childhood passion never left her. Years later, after marriage, she turned that love into discipline — enrolling in a tailoring diploma at Fauji Foundation School and graduating with 85% marks. Then she did what every great craftsperson eventually does: she started teaching. She opened her own academy in Pattoki, where young girls came to learn not just how to stitch, but how to carry themselves with the quiet confidence of someone who has mastered something real.</p>
+    <p style="margin-bottom: 1.5rem;">Life eventually asked her to pause. Weak eyesight, growing children, a home to run. The academy closed. But the passion never died.</p>
+    <p style="margin-bottom: 1.5rem;">Years later, a phone call changed everything.</p>
+    <p style="margin-bottom: 1.5rem;">Our friend Maria Sartaj, an overseas Pakistani living in Canada, said something simple: <em style="color:#d4af37">"Finding a good tailor here is nearly impossible — and when you do, it costs a fortune."</em></p>
+    <p style="margin-bottom: 1.5rem;">We knew that feeling. Millions of Pakistani women abroad know it — beautiful unstitched fabric sitting in a suitcase for years, because no one nearby can cut a <em style="color:#d4af37">gala</em> the way home could.</p>
+    <p style="margin-bottom: 1.5rem;">So we built the bridge.</p>
+    <p style="margin-bottom: 1.5rem;"><strong style="color: #fff;">Silai.pk is a platform for overseas Pakistanis.</strong> Send us your fabric, or let us source the finest unstitched cloth from top Pakistani brands — and we'll stitch it with the same love, care, and mastery Naik Bibi always poured into her work. Then we deliver it straight to your doorstep, wherever in the world you call home.</p>
+    <p style="margin-bottom: 1.5rem;">We are not just a tailoring service. We are the feeling of opening a parcel and finding that something finally <em>fits</em> — in every sense of the word.</p>
+    <p style="font-weight: 700; color: #fff; margin-top: 2rem;">Stitched in Pakistan. Delivered to your world.</p>
+  </div>
+</div><!-- ========================================================
+     HOME VIEW
+======================================================== -->
+<div id="view-home" class="spa-view active-view">
+
+  <!-- Hero -->
+  <header class="hero cultural-bg">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <div class="hero-eyebrow">✦ اعلیٰ درجے کی سلائی — Master Tailoring</div>
+      <h1>Your Fabric. <em>Our Craft.</em><br/>Delivered Worldwide.</h1>
+      <p class="hero-sub">Send us your <strong>unstitched lawn, chiffon, or silk</strong> from anywhere in the world. Our Lahore master tailors stitch it to perfection and ship it back to you.</p>
+      <div class="hero-ctas">
+        <a href="#order" class="btn btn-primary btn-lg">✂️ Start My Order</a>
+        <a href="#track" class="btn btn-outline btn-lg">📦 Track Order</a>
+      </div>
+    </div>
+    <div class="hero-float-cards">
+      <div class="hero-float-card"><div class="hero-float-icon">🧵</div><div><h4>Expert Tailors</h4><p>25+ years experience</p></div></div>
+      <div class="hero-float-card"><div class="hero-float-icon">✈️</div><div><h4>Ships Worldwide</h4><p>UK · USA · Canada · UAE</p></div></div>
+      <div class="hero-float-card"><div class="hero-float-icon">💫</div><div><h4>5-Star Quality</h4><p>500+ happy clients</p></div></div>
+    </div>
+    <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
+  </header>
+
+  <!-- Trust Bar -->
+  <section class="trust-bar">
+    <div class="container trust-bar-inner">
+      <div class="trust-item reveal"><div class="trust-icon">⭐</div><div><h3 data-count="500" data-suffix="+">0</h3><p>Happy Clients</p></div></div>
+      <div class="trust-divider"></div>
+      <div class="trust-item reveal delay-1"><div class="trust-icon">🧵</div><div><h3 data-count="1200" data-suffix="+">0</h3><p>Outfits Stitched</p></div></div>
+      <div class="trust-divider"></div>
+      <div class="trust-item reveal delay-2"><div class="trust-icon">🌍</div><div><h3 data-count="15" data-suffix="+">0</h3><p>Countries Served</p></div></div>
+      <div class="trust-divider"></div>
+      <div class="trust-item reveal delay-3"><div class="trust-icon">📅</div><div><h3 data-count="15" data-suffix=" days">0</h3><p>Avg. Turnaround (+ Shipping)</p></div></div>
+    </div>
+  </section>
+
+  <!-- Before / After Slider -->
+  <section class="before-after-section">
+    <div class="container text-center mb-2xl">
+      <span class="section-label">✦ The Transformation</span>
+      <h2 class="section-heading">From Unstitched to Stunning</h2>
+      <p class="section-subheading" style="margin:0 auto">Drag the slider to see how raw fabric becomes a perfectly tailored masterpiece.</p>
+    </div>
+    <div class="container">
+      <div class="before-after-container" id="ba-container">
+        <div class="ba-wrapper">
+          <img class="ba-img" src="/assets/images/before_fabric.png" alt="Unstitched Raw Fabric">
+          <img class="ba-img ba-after" id="ba-after-img" src="/assets/images/after_dress.png" alt="Perfectly Stitched Dress">
+          <div class="ba-label ba-label-before">Unstitched Fabric</div>
+          <div class="ba-label ba-label-after">Stitched Masterpiece ✨</div>
+          <div class="ba-divider" id="ba-divider"></div>
+          <div class="ba-handle" id="ba-handle">⟺</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Women & Men Showcase -->
+  <section class="showcase-section">
+    <div class="container">
+      <div class="text-center mb-2xl">
+        <span class="section-label">✦ Our Work</span>
+        <h2 class="section-heading">For Her &amp; For Him</h2>
+        <p class="section-subheading" style="margin:0 auto">From everyday shalwar kameez to grand bridal ensembles and classic sherwanis.</p>
+      </div>
+      <p style="text-align:center; max-width:600px; margin:0 auto var(--space-xl); color:var(--text-muted)">We provide custom tailoring for women & men, specialized in Pakistani traditional outfits. Ship us your unstitched suits or let us buy them for you from top brands (Khaadi, J., Maria B., etc)!</p>
+   <div class="showcase-grid">
+        <div class="showcase-card reveal">
+          <img src="/assets/images/womens_dress.png" alt="Pakistani Women's Stitching">
+          <div class="showcase-overlay">
+            <div class="showcase-tag">Women's Collection</div>
+            <div class="showcase-title">Shalwar Kameez &amp; Bridal</div>
+            <p class="showcase-desc">Lawn, chiffon, silk — any fabric stitched to your exact measurements.</p>
+          </div>
+        </div>
+        <div class="showcase-card reveal delay-2">
+          <img src="/assets/images/mens_sherwani.png" alt="Pakistani Men's Sherwani Stitching">
+          <div class="showcase-overlay">
+            <div class="showcase-tag">Men's Collection</div>
+            <div class="showcase-title">Kurta &amp; Sherwani</div>
+            <p class="showcase-desc">Classic kurtas to ornate wedding sherwanis, crafted with precision.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Process Flowchart Section -->
+  <section class="process-flowchart" style="padding:var(--space-3xl) 0; background:var(--background-alt); position:relative; overflow:hidden;">
+    <div class="container text-center mb-2xl z-10 position-relative">
+      <span class="section-label">✦ The Silai Process</span>
+      <h2 class="section-heading">How We Craft Your Outfit</h2>
+      <p class="section-subheading" style="margin:0 auto">Step-by-step transparency from unstitched fabric to a final masterpiece.</p>
+    </div>
+    
+    <div class="container position-relative z-10">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-xl); position: relative;">
+         
+         <!-- Stage 1 -->
+         <div style="position:relative; z-index:1; text-align:center;">
+           <div style="width:180px; height:180px; margin:0 auto var(--space-md); border-radius:50%; overflow:hidden; border:3px solid var(--gold); box-shadow:0 10px 30px rgba(0,0,0,0.5); transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <img src="/assets/images/pak_fabric.png" style="width:100%; height:100%; object-fit:cover;" alt="Fabric Sourcing">
+           </div>
+           <div style="width:40px; height:40px; background:var(--gold); color:var(--background); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; margin:-40px auto var(--space-sm); position:relative; z-index:2; box-shadow:0 4px 12px rgba(0,0,0,0.4);">1</div>
+           <h4 style="color:var(--text); margin-bottom:8px; font-size:1.1rem;">Fabric Sourcing</h4>
+           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">You send us your unstitched fabric or we buy it for you from premium brands.</p>
+         </div>
+
+         <!-- Stage 2 -->
+         <div style="position:relative; z-index:1; text-align:center;">
+           <div style="width:180px; height:180px; margin:0 auto var(--space-md); border-radius:50%; overflow:hidden; border:3px solid var(--gold); box-shadow:0 10px 30px rgba(0,0,0,0.5); transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <img src="/assets/images/pak_cutting.png" style="width:100%; height:100%; object-fit:cover;" alt="Cutting">
+           </div>
+           <div style="width:40px; height:40px; background:var(--gold); color:var(--background); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; margin:-40px auto var(--space-sm); position:relative; z-index:2; box-shadow:0 4px 12px rgba(0,0,0,0.4);">2</div>
+           <h4 style="color:var(--text); margin-bottom:8px; font-size:1.1rem;">Precision Cutting</h4>
+           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Our master tailors draft layout patterns precisely to your measurements.</p>
+         </div>
+
+         <!-- Stage 3 -->
+         <div style="position:relative; z-index:1; text-align:center;">
+           <div style="width:180px; height:180px; margin:0 auto var(--space-md); border-radius:50%; overflow:hidden; border:3px solid var(--gold); box-shadow:0 10px 30px rgba(0,0,0,0.5); transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <img src="/assets/images/pak_sewing.png" style="width:100%; height:100%; object-fit:cover;" alt="Sewing">
+           </div>
+           <div style="width:40px; height:40px; background:var(--gold); color:var(--background); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; margin:-40px auto var(--space-sm); position:relative; z-index:2; box-shadow:0 4px 12px rgba(0,0,0,0.4);">3</div>
+           <h4 style="color:var(--text); margin-bottom:8px; font-size:1.1rem;">Expert Stitching</h4>
+           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Heavy sewing, over-locking, and custom add-ons like laces & tassels attached.</p>
+         </div>
+
+         <!-- Stage 4 -->
+         <div style="position:relative; z-index:1; text-align:center;">
+           <div style="width:180px; height:180px; margin:0 auto var(--space-md); border-radius:50%; overflow:hidden; border:3px solid var(--gold); box-shadow:0 10px 30px rgba(0,0,0,0.5); transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+              <img src="/assets/images/pak_suit.png" style="width:100%; height:100%; object-fit:cover;" alt="Finished Outfits">
+           </div>
+           <div style="width:40px; height:40px; background:var(--gold); color:var(--background); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; margin:-40px auto var(--space-sm); position:relative; z-index:2; box-shadow:0 4px 12px rgba(0,0,0,0.4);">4</div>
+           <h4 style="color:var(--text); margin-bottom:8px; font-size:1.1rem;">Finished Masterpiece</h4>
+           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">Your beautifully crafted, perfectly fitting garment is packed and delivered!</p>
+         </div>
+
+      </div>
+    </div>
+  </section>
+\n\n  <!-- Craft Section -->
+  <section class="craft-section">
+    <div class="container">
+      <div class="craft-grid">
+        <div class="craft-img-wrap reveal-left">
+          <img src="/assets/images/sewing_machine.png" alt="Master Tailor's Sewing Machine Lahore">
+          <div class="craft-img-badge">
+            <div style="color:var(--gold);font-weight:700;font-size:0.9rem">🏆 Lahore Workshop</div>
+            <div style="color:var(--text-muted);font-size:0.8rem">Est. 1998 · Old City</div>
+          </div>
+        </div>
+        <div class="reveal-right">
+          <span class="section-label">✦ Our Craft</span>
+          <h2 class="section-heading mt-md">25 Years of Master Tailoring from Lahore</h2>
+          <p style="margin-bottom:var(--space-2xl)">Our workshop in the heart of Lahore's old city has been stitching premium garments for clients in UK, USA, Canada and UAE for over two decades.</p>
+          <div class="craft-points">
+            <div class="craft-point">
+              <div class="craft-point-icon">📏</div>
+              <div><h4>Custom Measurements</h4><p style="margin:0">Fill our form or WhatsApp us a photo of a well-fitting outfit — we handle the rest.</p></div>
+            </div>
+            <div class="craft-point">
+              <div class="craft-point-icon">📸</div>
+              <div><h4>WhatsApp Photo Updates</h4><p style="margin:0">We send you photos at each stage so you can approve before we ship.</p></div>
+            </div>
+            <div class="craft-point">
+              <div class="craft-point-icon">🚀</div>
+              <div><h4>Fast Express Options</h4><p style="margin:0">Need it in 4 days? Our express stitching service has you covered.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fake Reviews Section -->
+  <section class="reviews-section" style="padding:var(--space-3xl) 0; background:var(--background-alt);">
+    <div class="container">
+      <div class="text-center mb-2xl">
+        <span class="section-label">✦ Reviews</span>
+        <h2 class="section-heading">Loved by Overseas Pakistanis</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:var(--space-lg);">
+        <div class="card card-glass text-center" style="padding:var(--space-xl)">
+          <div style="color:var(--gold); font-size:1.2rem; margin-bottom:8px;">★★★★★</div>
+          <p style="font-style:italic; font-size:0.95rem; line-height:1.6">"I live in Toronto and finding a good tailor was impossible. Silai stitched my lawn copies perfectly, delivery was so quick!"</p>
+          <div class="mt-md" style="font-weight:600;">Sadia R.</div>
+          <div style="font-size:0.8rem; color:var(--text-muted)">🇨🇦 Toronto, Canada</div>
+        </div>
+        <div class="card card-glass text-center" style="padding:var(--space-xl)">
+          <div style="color:var(--gold); font-size:1.2rem; margin-bottom:8px;">★★★★★</div>
+          <p style="font-style:italic; font-size:0.95rem; line-height:1.6">"Absolutely premium finish on my Velvet suit. The tassels they added were beautiful. Highly recommended for UK Pakistanis!"</p>
+          <div class="mt-md" style="font-weight:600;">Amina M.</div>
+          <div style="font-size:0.8rem; color:var(--text-muted)">🇬🇧 London, UK</div>
+        </div>
+        <div class="card card-glass text-center" style="padding:var(--space-xl)">
+          <div style="color:var(--gold); font-size:1.2rem; margin-bottom:8px;">★★★★★</div>
+          <p style="font-style:italic; font-size:0.95rem; line-height:1.6">"From Khaadi sourcing to WhatsApp updates, it felt like I was shopping in Lahore. Fits better than off-the-rack."</p>
+          <div class="mt-md" style="font-weight:600;">Hassan Z.</div>
+          <div style="font-size:0.8rem; color:var(--text-muted)">🇺🇸 Texas, USA</div>
+        </div>
+      </div>
+    </div>
+  </section>  <!-- How It Works -->
+  <section class="section container">
+    <div class="text-center mb-2xl">
+      <span class="section-label">✦ Process</span>
+      <h2 class="section-heading">How Silai Works</h2>
+    </div>
+    <div class="hiw-steps">
+      <div class="hiw-step card reveal"><div class="hiw-step-num" data-num="1">📦</div><h3>1. Ship Your Fabric</h3><p>Send your unstitched suit to our Lahore workshop. We'll guide you every step of the way via WhatsApp.</p></div>
+      <div class="hiw-step card reveal delay-1"><div class="hiw-step-num" data-num="2">📏</div><h3>2. We Tailor &amp; Stitch</h3><p>Our master tailors cut and stitch to your exact measurements. You'll get photo updates throughout.</p></div>
+      <div class="hiw-step card reveal delay-2"><div class="hiw-step-num" data-num="3">✈️</div><h3>3. Delivered to You</h3><p>Your perfectly stitched outfit is shipped directly to your doorstep anywhere in the world.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="section-sm container">
+    <div class="consult-cta">
+      <div>
+        <div class="consult-cta-icon">💬</div>
+        <h2>Not sure where to start?</h2>
+        <p style="margin-top:var(--space-md)">Chat with us on WhatsApp — we'll help you choose the right style, fabric, and measurements for your perfect fit.</p>
+      </div>
+      <a href="https://wa.me/923001234567" target="_blank" class="btn btn-whatsapp btn-lg">Chat on WhatsApp</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">🧵 Silai<span style="font-family: urdu, sans-serif; font-size: 1.3rem; font-weight: normal; margin-left: 4px;">سلائی</span></div>
+        <p style="font-style:italic;color:var(--text-muted);margin-top:8px">"اعلیٰ درجے کی سلائی" — Premium Stitching</p>
+        <p>Expert Pakistani tailoring delivered to UK, USA, Canada, UAE &amp; beyond.</p>
+      </div>
+      <div class="footer-col"><h5>Services</h5><div class="footer-links"><a href="#order" class="footer-link">Shalwar Kameez</a><a href="#order" class="footer-link">Bridal Wear</a><a href="#order" class="footer-link">Sherwani</a></div></div>
+      <div class="footer-col"><h5>Explore</h5><div class="footer-links"><a href="#home" class="footer-link">How it Works</a><a href="#track" class="footer-link">Track Order</a><a href="#profile" class="footer-link">My Profile</a></div></div>
+      <div class="footer-col"><h5>Contact</h5><div class="footer-links"><a href="https://wa.me/923001234567" class="footer-link">WhatsApp</a><a href="mailto:hello@silai.pk" class="footer-link">Email Us</a></div></div>
+    </div>
+    <div class="container footer-bottom"><div>© 2026 Silai. All rights reserved.</div><div>Made with ❤️ in Lahore, Pakistan 🇵🇰</div></div>
+  </footer>
+</div>
+
+<!-- ========================================================
+     ORDER VIEW
+======================================================== -->
+<div id="view-order" class="spa-view">
+  <div class="page-header"><div class="container page-header-content text-center"><h1>✂️ Craft Your Outfit</h1><p class="section-subheading" style="margin:0 auto">Custom stitching to your measurements, delivered worldwide.</p></div></div>
+  <div class="container order-page">
+    <div class="order-layout">
+      <div class="order-main">
+        <div id="order-success" class="order-success">
+          <div class="success-icon">🎉</div>
+          <h2>Order Placed!</h2>
+          <p>Your garment is now in our expert hands.</p>
+          <div class="order-id-display" id="success-order-id"></div>
+          <p class="mt-md text-muted">Save this ID to track your order progress.</p>
+          <a href="#track" class="btn btn-primary mt-lg" id="success-track-link">Track My Order →</a>
+        </div>
+        <div id="order-form-wrapper">
+          <div class="step-progress">
+            <div class="step-bar">
+              <div class="step-dot active">1</div><div class="step-line"></div>
+              <div class="step-dot">2</div><div class="step-line"></div>
+              <div class="step-dot">3</div><div class="step-line"></div>
+              <div class="step-dot">4</div><div class="step-line"></div>
+              <div class="step-dot">5</div>
+            </div>
+            <div class="step-labels">
+              <div class="step-label active">Garment</div>
+              <div class="step-label">Style</div>
+              <div class="step-label">Measurements</div>
+              <div class="step-label">Review</div>
+              <div class="step-label">Checkout</div>
+            </div>
+          </div>
+
+          <!-- Step 1 -->
+          <div id="step-1" class="form-step active">
+            <h2 class="step-title">Your Details &amp; Garment</h2>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="customer-name" class="form-input" required placeholder="Fatima Khan"></div>
+              <div class="form-group"><label class="form-label">Email *</label><input type="email" id="customer-email" class="form-input" required placeholder="fatima@email.com"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">WhatsApp *</label><input type="tel" id="customer-whatsapp" class="form-input" required placeholder="+44 7700 900000"></div>
+              <div class="form-group"><label class="form-label">Shipping Country *</label>
+                <select id="shipping-country" class="form-select" required>
+                  <option value="United States">🇺🇸 United States</option>
+                  <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                  <option value="Canada">🇨🇦 Canada</option>
+                  <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                  <option value="Australia">🇦🇺 Australia</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-section-title mt-lg">Fabric Sourcing</div>
+  <div style="margin-bottom:var(--space-md); padding:var(--space-md); background:var(--glass-bg); border-radius:12px; border:1px solid var(--border)">
+    <label style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+      <input type="checkbox" id="source-fabric-check" style="width:20px;height:20px;">
+      <div>
+        <div style="font-weight:600">Buy unstitched fabric for me</div>
+        <div style="font-size:0.85rem; color:var(--text-muted)">We'll source it from Khaadi, J., etc. and add it to your total.</div>
+      </div>
+    </label>
+    <div id="source-fabric-details" style="display:none; margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+      <div class="form-group"><label class="form-label">Paste link of product/item (Optional)</label><input type="url" id="source-fabric-link" class="form-input" placeholder="https://khaadi.com/..."></div>
+      <div class="form-group"><label class="form-label">Upload Picture of Product</label><input type="file" id="source-fabric-upload" class="form-input" accept="image/*"></div>
+      <div class="form-group"><label class="form-label">Details, Colors, Price, etc.</label><textarea id="source-fabric-desc" class="form-input" placeholder="e.g. Size medium, Blue color, Rs. 5000"></textarea></div>
+    </div>
+  </div>
+  <div class="form-section-title mt-lg">Select Garment Type</div>
+            <input type="hidden" id="garment-type-val" value="kameez"/>
+            <div class="garment-selector">
+              <input type="radio" name="garmentType" id="gt-kameez" value="kameez" class="garment-option" checked>
+              <label for="gt-kameez" class="garment-label"><div class="garment-icon">👘</div><div class="garment-name">Kameez Only</div><div class="garment-price">from $22</div></label>
+              <input type="radio" name="garmentType" id="gt-fullsuit" value="fullsuit" class="garment-option">
+              <label for="gt-fullsuit" class="garment-label"><div class="garment-icon">👗</div><div class="garment-name">Full Suit (2pc)</div><div class="garment-price">from $32</div></label>
+              <input type="radio" name="garmentType" id="gt-3piece" value="3piece" class="garment-option">
+              <label for="gt-3piece" class="garment-label"><div class="garment-icon">✨</div><div class="garment-name">3-Piece Suit</div><div class="garment-price">from $45</div></label>
+              <input type="radio" name="garmentType" id="gt-party" value="party" class="garment-option">
+              <label for="gt-party" class="garment-label"><div class="garment-icon">👑</div><div class="garment-name">Party Wear</div><div class="garment-price">from $60</div></label>
+            </div>
+          </div>
+
+                    <!-- Step 2 -->
+          <div id="step-2" class="form-step">
+            <h2 class="step-title">Style &amp; Add-ons</h2>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Fabric Type</label><select id="fabric-type" class="form-select"><option value="Lawn">Lawn</option><option value="Chiffon">Chiffon</option><option value="Silk">Silk</option><option value="Velvet">Velvet</option><option value="Cotton">Cotton</option><option value="Organza">Organza</option></select></div>
+              <div class="form-group"><label class="form-label">Neckline</label><select id="neckline" class="form-select"><option value="Round">Round</option><option value="V-Neck">V-Neck</option><option value="Boat">Boat Neck</option><option value="Collar">Collar</option><option value="Square">Square</option></select></div>
+            </div>
+            <div class="form-row" id="trouser-style-group" style="display:none">
+              <div class="form-group"><label class="form-label">Sleeve Style</label><select id="sleeve-style" class="form-select"><option value="Full">Full Sleeves</option><option value="Three-Quarter">3/4 Sleeves</option><option value="Half">Half Sleeves</option><option value="Sleeveless">Sleeveless</option></select></div>
+              <div class="form-group"><label class="form-label">Trouser Style</label><select id="trouser-style" class="form-select"><option value="Straight">Straight Pants</option><option value="Shalwar">Shalwar</option><option value="Bell-Bottom">Bell Bottom</option><option value="Palazzo">Palazzo</option></select></div>
+            </div>
+            
+            <div class="form-section-title mt-lg">Reference Design Picture</div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Have a specific style in mind? Show us.</p>
+            <div class="measurement-options">
+              <input type="radio" name="refMethod" id="rm-upload" value="upload" class="meas-option-radio" checked>
+              <label for="rm-upload" class="meas-option-label"><div class="meas-option-icon">📁</div><div class="meas-option-text"><h4>Upload Picture</h4></div></label>
+              
+              <input type="radio" name="refMethod" id="rm-whatsapp" value="whatsapp" class="meas-option-radio">
+              <label for="rm-whatsapp" class="meas-option-label"><div class="meas-option-icon">💬</div><div class="meas-option-text"><h4>Send via WhatsApp</h4></div></label>
+            </div>
+            <div id="ref-upload-panel" style="margin-top:12px;">
+               <input type="file" id="reference-upload" class="form-input" accept="image/*">
+            </div>
+
+            <div class="form-section-title mt-lg">Premium Add-ons</div>
+            <div class="addons-grid">
+              <label class="addon-item"><div class="addon-left"><div class="addon-icon">⚡</div><div><div class="addon-name">Express Stitching</div><div class="addon-desc">4-day turnaround</div></div></div><div class="addon-right"><div class="addon-price">+$10</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="express"><div class="toggle-track"></div></div></div></label>
+              <label class="addon-item"><div class="addon-left"><div class="addon-icon">🧵</div><div><div class="addon-name">Inner Lining</div><div class="addon-desc">For sheer fabrics</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="lining"><div class="toggle-track"></div></div></div></label>
+              <label class="addon-item"><div class="addon-left"><div class="addon-icon">✨</div><div><div class="addon-name">Tassels, Laces & Buttons</div><div class="addon-desc">Custom designs</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="trims" id="addon-trims-check"><div class="toggle-track"></div></div></div></label>
+              <!-- Upload panel for trims -->
+              <div id="trims-upload-panel" style="display:none; margin-top:8px; margin-bottom:12px; padding:12px; border-radius:8px; border:1px dashed var(--border);">
+                 <label class="form-label mb-sm" style="font-size:0.85rem">Upload lacces or tassels designs photo</label>
+                 <input type="file" id="trims-upload" class="form-input" accept="image/*">
+              </div>
+            </div>
+            <div class="form-group mt-lg"><label class="form-label">Special Instructions</label><textarea id="special-instructions" class="form-textarea" placeholder="e.g. Add piping on neckline, specific button style…"></textarea></div>
+          </div>          <!-- Step 3 -->
+          <div id="step-3" class="form-step">
+            <h2 class="step-title">Measurements</h2>
+            <div class="measurement-options">
+               <input type="radio" name="measMethod" id="mm-standard" value="standard" class="meas-option-radio" checked>
+              <label for="mm-standard" class="meas-option-label"><div class="meas-option-icon">👕</div><div class="meas-option-text"><h4>Standard Size</h4><p>Pick S, M, or L</p></div></label>
+
+              <input type="radio" name="measMethod" id="mm-form" value="form" class="meas-option-radio">
+              <label for="mm-form" class="meas-option-label"><div class="meas-option-icon">📏</div><div class="meas-option-text"><h4>Custom</h4><p>Enter exact inches</p></div></label>
+              
+              <input type="radio" name="measMethod" id="mm-photo" value="upload-meas" class="meas-option-radio">
+              <label for="mm-photo" class="meas-option-label"><div class="meas-option-icon">📁</div><div class="meas-option-text"><h4>Upload Picture</h4><p>Upload a sample pic</p></div></label>
+            </div>
+            
+            <div class="standard-size-panel visible">
+              <div class="form-group mt-md">
+                <label class="form-label">Select Size</label>
+                <select id="meas-standard-size" class="form-select">
+                  <option value="S">Small (S)</option>
+                  <option value="M">Medium (M)</option>
+                  <option value="L">Large (L)</option>
+                </select>
+                <div class="mt-md" style="text-align:center;">
+                  <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('size-chart-modal').classList.add('open')">View Size Chart 📏</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="measurements-form-panel">
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:var(--space-md)">Measure in inches.</p>
+              <div class="meas-grid">
+                <div class="form-group"><label class="form-label">Chest</label><input type="number" id="meas-chest" class="form-input" placeholder="e.g. 36"></div>
+                <div class="form-group"><label class="form-label">Waist</label><input type="number" id="meas-waist" class="form-input" placeholder="e.g. 30"></div>
+                <div class="form-group"><label class="form-label">Hips</label><input type="number" id="meas-hips" class="form-input" placeholder="e.g. 38"></div>
+                <div class="form-group"><label class="form-label">Shoulder</label><input type="number" id="meas-shoulder" class="form-input" placeholder="e.g. 14"></div>
+                <div class="form-group"><label class="form-label">Kameez Length</label><input type="number" id="meas-klength" class="form-input" placeholder="e.g. 42"></div>
+                <div class="form-group"><label class="form-label">Sleeve Length</label><input type="number" id="meas-sleeve" class="form-input" placeholder="e.g. 21"></div>
+                <div class="form-group"><label class="form-label">Trouser Length</label><input type="number" id="meas-trouser" class="form-input" placeholder="e.g. 38"></div>
+                <div class="form-group"><label class="form-label">Inseam</label><input type="number" id="meas-inseam" class="form-input" placeholder="e.g. 28"></div>
+              </div>
+            </div>
+            <div class="photo-upload-panel text-center">
+               <div class="card card-glass mt-lg" style="padding:var(--space-2xl)">
+                 <div style="font-size:3rem">📸</div>
+                 <h4 class="mt-md mb-md">Upload Measurements Reference</h4>
+                 <p style="margin-bottom:12px; font-size:0.9rem; color:var(--text-muted)">Upload a clear photo of your reference garment with measurements shown.</p>
+                 <input type="file" id="meas-upload-file" class="form-input" accept="image/*">
+               </div>
+            </div>
+          </div>          <!-- Step 4 -->
+          <div id="step-4" class="form-step">
+            <h2 class="step-title">Review Your Order</h2>
+            <div class="card card-glass mb-lg">
+              <div class="form-section-title">Customer</div>
+              <div class="price-line"><span>Name</span><strong id="review-customer-name">—</strong></div>
+              <div class="price-line"><span>Email</span><strong id="review-customer-email">—</strong></div>
+              <div class="price-line"><span>WhatsApp</span><strong id="review-customer-whatsapp">—</strong></div>
+              <div class="price-line"><span>Country</span><strong id="review-shipping-country">—</strong></div>
+            </div>
+            <div class="card card-glass">
+              <div class="form-section-title">Style</div>
+              <div class="price-line"><span>Garment</span><strong id="review-garment">—</strong></div>
+              <div class="price-line"><span>Fabric</span><strong id="review-fabric-type">—</strong></div>
+              <div class="price-line"><span>Neckline</span><strong id="review-neckline">—</strong></div>
+              <div class="price-line"><span>Add-ons</span><strong id="review-addons">None</strong></div>
+            </div>
+          </div>
+
+                    <!-- Step 5 -->
+          <div id="step-5" class="form-step">
+            <h2 class="step-title">Quick Checkout</h2>
+            <p class="step-subtitle text-muted mb-lg" style="font-size:0.9rem">
+              Send your fabric to: <strong>123 Stitching Workshop, Old City, Lahore, Pakistan</strong>
+            </p>
+            
+            <div style="display:flex; gap:var(--space-xl); flex-wrap:wrap;">
+              <div style="flex:1; min-width:300px;">
+                <!-- Contact Info -->
+                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                  <h4 class="mb-md">Contact Info</h4>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">First Name *</label><input type="text" id="co-fname" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Last Name *</label><input type="text" id="co-lname" class="form-input" required></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Email Address *</label><input type="email" id="co-email" class="form-input" required></div>
+                  <div class="form-group"><label class="form-label">Phone Number *</label><input type="tel" id="co-phone" class="form-input" required></div>
+                </div>
+
+                <!-- Shipping -->
+                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                  <h4 class="mb-md">Shipping Address</h4>
+                  <div class="form-group"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
+                  <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Zip *</label><input type="text" id="co-zip" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
+                  </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 class="mb-md">Payment Method</h4>
+                  </div>
+                  
+                  <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+                    <!-- Card Option -->
+                    <label style="display:flex; padding:var(--space-md); border-bottom:1px solid var(--border); cursor:pointer; align-items:center; gap:12px; background:var(--glass-bg)">
+                      <input type="radio" name="payMethod" value="card" checked>
+                      <div style="flex:1; font-weight:600;">Credit/Debit Card</div>
+                      <div style="font-size:1.2rem;">💳</div>
+                    </label>
+                    <div id="pm-card-details" style="padding:var(--space-md);">
+                      <div class="form-group"><input type="text" class="form-input" placeholder="Card number"></div>
+                      <div class="form-row">
+                        <div class="form-group"><input type="text" class="form-input" placeholder="MM / YY"></div>
+                        <div class="form-group"><input type="text" class="form-input" placeholder="CVC"></div>
+                      </div>
+                    </div>
+                    
+                    <!-- Bank Option -->
+                    <label style="display:flex; padding:var(--space-md); border-bottom:1px solid var(--border); cursor:pointer; align-items:center; gap:12px; background:var(--glass-bg)">
+                      <input type="radio" name="payMethod" value="bank">
+                      <div style="flex:1; font-weight:600;">Bank Transfer (silai.pk)</div>
+                      <div style="font-size:1.2rem;">🏦</div>
+                    </label>
+                    <div id="pm-bank-details" style="padding:var(--space-md); display:none; font-size:0.85rem; color:var(--text-muted)">
+                      Please transfer the total amount to: <br/>
+                      <strong>Bank:</strong> Meezan Bank Ltd <br/>
+                      <strong>Title:</strong> SilaiBox Pvt Ltd<br/>
+                      <strong>Account Num:</strong> 0123 4567 8910 11<br/><br/>
+                      Use your Order ID as reference. 
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              
+              <!-- Order Summary Side -->
+              <div style="width:100%; max-width:320px;">
+                <div class="card" style="padding:var(--space-lg); border:1px solid var(--border); position:sticky; top:100px;">
+                  <h4 class="mb-md">Order summary (1 item)</h4>
+                  <div style="display:flex; gap:12px; margin-bottom:var(--space-md);">
+                     <div style="width:60px; height:80px; background:var(--glass-bg); display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:1.5rem;">👘</div>
+                     <div>
+                       <div style="font-weight:600; font-size:0.9rem;" id="checkout-garment">Kameez Only</div>
+                       <div style="font-size:0.8rem; color:var(--text-muted);" id="checkout-size">Standard - M</div>
+                     </div>
+                  </div>
+                  <div class="price-line" style="font-size:0.9rem;"><span>Subtotal</span><span id="co-subtotal">$22.00</span></div>
+                  <div class="price-line" style="font-size:0.9rem;"><span>Shipping</span><span style="color:var(--terracotta)">TBD</span></div>
+                  <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;" />
+                  <div class="price-line total" style="font-size:1.1rem;"><span>Total</span><span id="co-total">$22.00</span></div>
+                  
+                  <div style="background:rgba(233,196,106,0.1); color:var(--gold); padding:8px 12px; border-radius:4px; margin-top:12px; font-size:0.8rem; display:flex; gap:8px; align-items:center;">
+                    <span>✨</span> Earn <strong id="co-points">198</strong> points on this purchase!
+                  </div>
+
+                  <div style="background:#fff3cd; color:#856404; padding:8px 12px; border-radius:4px; margin-top:12px; font-size:0.8rem; border:1px solid #ffeeba;">
+                     This order will be charged fully in advance via the selected method.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Note: buttons are handled globally below -->
+          </div>          <div class="form-nav" style="margin-top:var(--space-xl)">            <button class="btn btn-outline" id="btn-prev" style="display:none">← Back</button>            <div style="flex:1"></div>            <button class="btn btn-primary" id="btn-next">Continue →</button>            <button class="btn btn-teal" id="btn-submit" style="display:none; width:100%; max-width:300px;">Place Order</button>          </div>        </div>
+      </div>
+      <!-- Sidebar -->
+      <div class="price-sidebar">
+        <div class="price-box">
+          <h4>💰 Order Summary</h4>
+          <div class="price-line"><span>Base Stitching</span><span id="price-base">$22.00</span></div>
+          <div class="price-line"><span>Add-ons</span><span id="price-addons">$0.00</span></div>
+          <div class="price-line"><span>Shipping</span><span class="text-teal">At dispatch</span></div>
+          <div class="price-line total"><span>Total</span><span id="price-total">$22.00</span></div>
+          <div class="price-total-big mt-lg" style="display:none"><div class="amount" id="price-deposit">$0</div></div>
+          <div class="price-deposit mt-md">100% Total Due Now. Shipping calculated later.</div>
+          <div class="badge badge-gold w-full flex-center mt-md" style="justify-content:center">🔒 Secure Payment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     TRACK VIEW
+======================================================== -->
+<div id="view-track" class="spa-view">
+  <div class="page-header"><div class="container page-header-content text-center"><h1>📦 Track Your Order</h1><p class="section-subheading" style="margin:0 auto">Follow your fabric's journey from Lahore to your door.</p></div></div>
+  <div class="container track-page">
+    <div class="track-search-box">
+      <form id="track-form" class="track-search-form">
+        <input type="text" id="order-id-input" class="form-input" placeholder="e.g. SB-2025-00001" style="text-transform:uppercase">
+        <button type="submit" class="btn btn-primary">Track →</button>
+      </form>
+      <p class="text-muted mt-md" style="font-size:0.82rem">Try demo order: <button onclick="document.getElementById('order-id-input').value='SB-2025-00001';lookupOrder('SB-2025-00001')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.82rem">SB-2025-00001</button></p>
+    </div>
+    <div id="tracking-result" class="tracking-result">
+      <div class="tracking-header">
+        <div><div class="tracking-order-id" id="result-order-id"></div><div class="tracking-customer" id="result-customer"></div></div>
+        <a href="#" class="btn btn-whatsapp btn-sm" id="result-whatsapp" target="_blank">💬 WhatsApp Support</a>
+      </div>
+      <div class="tracking-info-grid">
+        <div class="card card-glass tracking-info-card"><div class="label">Garment</div><div class="value" id="result-garment">—</div></div>
+        <div class="card card-glass tracking-info-card"><div class="label">Shipping To</div><div class="value" id="result-country">—</div></div>
+        <div class="card card-glass tracking-info-card"><div class="label">Amount Paid</div><div class="value text-teal" id="result-paid">—</div></div>
+        <div class="card card-glass tracking-info-card"><div class="label">Balance Due</div><div class="value text-terra" id="result-balance">—</div></div>
+      </div>
+      <div class="card mt-xl">
+        <h3 class="mb-lg">Status: <span class="text-gold" id="result-stage">—</span></h3>
+        <div class="progress-track mb-2xl"><div class="progress-fill" id="tracking-progress-fill" style="width:0%"></div></div>
+        <div class="tracking-timeline" id="tracking-timeline"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     PROFILE VIEW
+======================================================== -->
+<div id="view-profile" class="spa-view">
+  <div class="page-header"><div class="container page-header-content text-center"><h1>👤 My Profile</h1></div></div>
+  <div class="container" style="padding-top:var(--space-3xl);padding-bottom:var(--space-4xl)">
+    <div id="profile-not-logged-in" style="text-align:center;padding:var(--space-3xl)">
+      <div style="font-size:4rem">🔒</div>
+      <h2 class="mt-lg">Sign in to view your profile</h2>
+      <p>Track your orders, view history, and manage your account.</p>
+      <button class="btn btn-primary mt-xl" onclick="openAuthModal('login')">Sign In</button>
+    </div>
+    <div id="profile-logged-in" style="display:none">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profile-avatar">👤</div>
+        <div>
+          <h2 id="profile-name">—</h2>
+          <p style="margin:0" id="profile-email">—</p>
+        </div>
+      </div>
+      <h3 class="mb-lg">My Orders</h3>
+      <div class="profile-orders-grid" id="profile-orders-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================
+     ADMIN VIEW
+======================================================== -->
+<div id="view-admin" class="spa-view">
+  <div class="page-header"><div class="container page-header-content text-center"><h1>🔐 Admin Dashboard</h1></div></div>
+  <div class="container" style="padding-top:var(--space-3xl);padding-bottom:var(--space-4xl)">
+    <!-- Gate -->
+    <div id="admin-gate" class="admin-gate">
+      <div style="font-size:3rem;margin-bottom:var(--space-lg)">🔐</div>
+      <h2>Admin Access</h2>
+      <p class="mt-md">Enter your admin password to continue.</p>
+      <form id="admin-password-form" style="display:flex;flex-direction:column;gap:var(--space-md);margin-top:var(--space-xl);">
+        <input type="password" id="admin-pw-input" class="form-input" placeholder="Admin password" style="text-align:center">
+        <button type="submit" class="btn btn-primary">Unlock Dashboard</button>
+      </form>
+    </div>
+    <!-- Content -->
+    <div id="admin-content" style="display:none">
+      
+      <!-- Admin Tabs -->
+      <div class="admin-tabs-nav mb-2xl" style="display:flex;gap:var(--space-md);border-bottom:1px solid var(--border);padding-bottom:var(--space-sm);">
+        <button class="admin-tab active" onclick="switchAdminTab('analytics')" style="background:none;border:none;color:var(--text);font-size:1.1rem;font-weight:600;cursor:pointer;padding:var(--space-sm);border-bottom:3px solid var(--gold);">📊 Analytics</button>
+        <button class="admin-tab" onclick="switchAdminTab('orders')" style="background:none;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;padding:var(--space-sm);">📦 Orders</button>
+        <button class="admin-tab" onclick="switchAdminTab('users')" style="background:none;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;padding:var(--space-sm);">👥 Users</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-outline btn-sm" onclick="refreshAdminData()">🔄 Refresh</button>
+      </div>
+
+      <!-- Tab 1: Analytics -->
+      <div id="admin-tab-analytics" class="admin-tab-content active" style="display:block">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:var(--space-lg);margin-bottom:var(--space-xl);">
+          <div class="card card-glass text-center" style="padding:var(--space-xl)">
+            <div style="font-size:2rem;margin-bottom:8px">💰</div>
+            <h3 style="margin:0;font-size:1rem;color:var(--text-muted);font-weight:400">Total Revenue</h3>
+            <div id="dash-revenue" style="font-size:2rem;font-weight:700;color:var(--teal-light);font-family:var(--font-sans)">$0.00</div>
+          </div>
+          <div class="card card-glass text-center" style="padding:var(--space-xl)">
+            <div style="font-size:2rem;margin-bottom:8px">⏳</div>
+            <h3 style="margin:0;font-size:1rem;color:var(--text-muted);font-weight:400">Pending Balance</h3>
+            <div id="dash-pending" style="font-size:2rem;font-weight:700;color:var(--terracotta);font-family:var(--font-sans)">$0.00</div>
+          </div>
+          <div class="card card-glass text-center" style="padding:var(--space-xl)">
+            <div style="font-size:2rem;margin-bottom:8px">📦</div>
+            <h3 style="margin:0;font-size:1rem;color:var(--text-muted);font-weight:400">Total Orders</h3>
+            <div id="dash-orders" style="font-size:2rem;font-weight:700;color:var(--gold);font-family:var(--font-sans)">0</div>
+          </div>
+        </div>
+        <div class="card mb-2xl" style="padding:var(--space-lg); border:1px solid var(--border)">
+      <h3 class="mb-md">Revenue & Orders (30 Days)</h3>
+      <canvas id="admin-chart" width="100%" height="40"></canvas>
+   </div>
+   <h3 class="mb-md">Recent Orders Activity</h3>
+        <div class="card" id="dash-recent-orders-table">Loading…</div>
+      </div>
+
+      <!-- Tab 2: Orders -->
+      <div id="admin-tab-orders" class="admin-tab-content" style="display:none">
+        <h3 class="mb-md">Manage All Orders</h3>
+        <div class="card" id="admin-orders-table">Loading…</div>
+      </div>
+
+      <!-- Tab 3: Users -->
+      <div id="admin-tab-users" class="admin-tab-content" style="display:none">
+        <h3 class="mb-md">Registered Customers</h3>
+        <div class="card" id="admin-users-table">Loading…</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── Before/After Slider Script ─────────────────── -->
+<script>
+(function(){
+  const container = document.getElementById('ba-container');
+  if (!container) return;
+  const afterImg = document.getElementById('ba-after-img');
+  const divider  = document.getElementById('ba-divider');
+  const handle   = document.getElementById('ba-handle');
+  let dragging = false;
+
+  function setPosition(pct) {
+    pct = Math.max(5, Math.min(95, pct));
+    afterImg.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+    divider.style.left = pct + '%';
+    handle.style.left  = pct + '%';
+  }
+  setPosition(50);
+
+  function getPercent(e) {
+    const rect = container.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    return ((clientX - rect.left) / rect.width) * 100;
+  }
+
+  handle.addEventListener('mousedown',  () => dragging = true);
+  handle.addEventListener('touchstart', () => dragging = true, {passive:true});
+  window.addEventListener('mouseup',    () => dragging = false);
+  window.addEventListener('touchend',   () => dragging = false);
+  window.addEventListener('mousemove',  e => { if (dragging) setPosition(getPercent(e)); });
+  window.addEventListener('touchmove',  e => { if (dragging) setPosition(getPercent(e)); }, {passive:true});
+})();
+</script>
+
+<!-- ─── SPA Router ─────────────────────────────────── -->
+<script>
+function handleHashChange() {
+  const hash = (window.location.hash || '#home').replace('#','');
+  document.querySelectorAll('.spa-view').forEach(v => v.classList.remove('active-view'));
+  const view = document.getElementById('view-' + hash);
+  if (view) { view.classList.add('active-view'); window.scrollTo(0,0); }
+  else { document.getElementById('view-home').classList.add('active-view'); }
+
+  // Lazy load views
+  if (hash === 'profile') loadProfile();
+  if (hash === 'admin') { /* gate handles it */ }
+}
+window.addEventListener('hashchange', handleHashChange);
+window.addEventListener('load', handleHashChange);
+</script>
+
+<script src="/js/main.js"></script>
+<script src="/js/order.js"></script>
+<script src="/js/track.js"></script>
+<script src="/js/auth.js"></script>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/923001234567" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+</a>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

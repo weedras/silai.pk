@@ -1,0 +1,380 @@
+/* ═══════════════════════════════════════════════════════════
+   Silai — Cultural Design: Pakistani Touch
+   Paisley ornaments · Mughal arches · Warm spice palette
+═══════════════════════════════════════════════════════════ */
+
+/* ─── Cultural Color Overrides ──────────────────────────── */
+:root {
+  --henna:     #8B2635;
+  --saffron:   #E07B39;
+  --marigold:  #E8A020;
+  --emerald:   #1A6B5A;
+  --royal-blue:#1A3A8F;
+  --dupatta:   rgba(224,123,57,0.12);
+}
+
+/* ─── Mughal / Paisley SVG Background ───────────────────── */
+.cultural-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='12' fill='none' stroke='rgba(212,175,55,0.07)' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='22' fill='none' stroke='rgba(212,175,55,0.04)' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='35' fill='none' stroke='rgba(212,175,55,0.03)' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* ─── Hero cultural redesign ─────────────────────────────── */
+.hero-bg {
+  background: linear-gradient(135deg, #0A0812 0%, #160A18 40%, #0A1208 100%) !important;
+}
+
+.hero-eyebrow {
+  border-color: rgba(232,160,32,0.4) !important;
+  background: rgba(232,160,32,0.08) !important;
+  color: var(--marigold) !important;
+}
+
+/* ─── Urdu-inspired decorative divider ───────────────────── */
+.cultural-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin: var(--space-2xl) 0;
+}
+.cultural-divider::before,
+.cultural-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+.cultural-divider-icon {
+  font-size: 1.4rem;
+  color: var(--gold);
+  opacity: 0.7;
+}
+
+/* ─── Before/After Slider ────────────────────────────────── */
+.before-after-section {
+  padding: var(--space-4xl) 0;
+  background: var(--midnight-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.before-after-container {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: ew-resize;
+  user-select: none;
+}
+.ba-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+}
+.ba-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ba-after {
+  clip-path: inset(0 50% 0 0);
+  transition: clip-path 0s;
+}
+.ba-divider {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 3px;
+  background: var(--gold);
+  z-index: 10;
+  transition: left 0s;
+}
+.ba-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px; height: 48px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--midnight);
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(212,175,55,0.6);
+  z-index: 11;
+  cursor: ew-resize;
+}
+.ba-label {
+  position: absolute;
+  bottom: var(--space-lg);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 9;
+}
+.ba-label-before {
+  right: var(--space-lg);
+  background: rgba(13,13,26,0.85);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.ba-label-after {
+  left: var(--space-lg);
+  background: rgba(212,175,55,0.2);
+  color: var(--gold);
+  border: 1px solid rgba(212,175,55,0.5);
+}
+
+/* ─── Showcase Gallery – Women & Men ─────────────────────── */
+.showcase-section { padding: var(--space-4xl) 0; }
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.showcase-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  min-height: 500px;
+  height: 560px;
+  cursor: pointer;
+}
+.showcase-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.6s var(--ease);
+  display: block;
+}
+.showcase-card:hover img { transform: scale(1.05); }
+.showcase-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,8,18,0.92) 0%, rgba(10,8,18,0.2) 50%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-xl);
+}
+.showcase-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--marigold);
+  margin-bottom: var(--space-sm);
+}
+.showcase-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--cream);
+  margin-bottom: var(--space-sm);
+}
+.showcase-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ─── Craft / Sewing Machine Section ────────────────────── */
+.craft-section {
+  padding: var(--space-4xl) 0;
+  background: linear-gradient(135deg, #0A0812 0%, #0a1208 100%);
+}
+.craft-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+.craft-img-wrap {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+}
+.craft-img-wrap img { width: 100%; display: block; border-radius: var(--radius-xl); }
+.craft-img-badge {
+  position: absolute;
+  bottom: var(--space-xl);
+  left: var(--space-xl);
+  background: rgba(10,8,18,0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  font-size: 0.85rem;
+}
+.craft-points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+.craft-point {
+  display: flex;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+.craft-point-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(212,175,55,0.08);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* ─── Auth Modal ─────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--midnight-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+  animation: step-in 0.3s var(--ease);
+}
+.modal-close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast);
+}
+.modal-close:hover { color: var(--text-primary); }
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-xl);
+}
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: var(--space-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--dur-fast);
+}
+.auth-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.auth-panel { display: none; }
+.auth-panel.active { display: flex; flex-direction: column; gap: var(--space-md); animation: step-in 0.2s var(--ease); }
+
+/* ─── Profile View ───────────────────────────────────────── */
+.profile-header {
+  background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(42,157,143,0.05) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+.profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--marigold), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--midnight);
+  flex-shrink: 0;
+}
+.profile-orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* ─── Admin Dashboard ────────────────────────────────────── */
+.admin-gate {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  padding: var(--space-3xl);
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+.admin-stat-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  text-align: center;
+}
+.admin-stat-val {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: var(--gold);
+}
+
+/* ─── Nav User Menu ──────────────────────────────────────── */
+.nav-user-menu {
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.nav-user-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--marigold), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+  color: var(--midnight);
+  cursor: pointer;
+  border: 2px solid rgba(212,175,55,0.4);
+}
+
+/* ─── Responsive Cultural ────────────────────────────────── */
+@media (max-width: 768px) {
+  .showcase-grid { grid-template-columns: 1fr; }
+  .craft-grid { grid-template-columns: 1fr; }
+  .ba-wrapper { height: 280px; }
+  .admin-stats { grid-template-columns: 1fr; }
+}
