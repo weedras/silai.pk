@@ -117,7 +117,14 @@
 
 <!-- ─── Navbar ────────────────────────────────────────── -->
 <nav class="navbar">
-  <a href="#home" class="nav-logo">🧵 Silai<span style="font-family: urdu, sans-serif; font-size: 1.3rem; font-weight: normal; margin-left: 4px;">سلائی</span></a>
+  <a href="#home" class="nav-logo">
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 5C11.7157 5 5 11.7157 5 20C5 28.2843 11.7157 35 20 35C28.2843 35 35 28.2843 35 20C35 11.7157 28.2843 5 20 5Z" stroke="var(--gold)" stroke-width="2.5"/>
+      <path d="M12 20C12 15.5817 15.5817 12 20 12C24.4183 12 28 15.5817 28 20C28 24.4183 24.4183 28 20 28C15.5817 28 12 24.4183 12 20Z" fill="var(--gold)" fill-opacity="0.1" stroke="var(--gold)" stroke-width="1.5"/>
+      <path d="M20 15V25M15 20H25" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>Silai</span><span style="font-family: urdu, sans-serif; font-size: 1.3rem; font-weight: normal; margin-left: 4px; color:var(--text-muted)">سلائی</span>
+  </a>
   <div class="nav-links">
     <a href="#home" class="nav-link">Home</a>
     <a href="#order" class="nav-link">Place Order</a>
@@ -194,6 +201,42 @@
     </div>
     <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
   </header>
+
+  <!-- Mission Section -->
+  <section class="section" style="background:var(--midnight-2); border-bottom:1px solid var(--border)">
+    <div class="container text-center">
+      <span class="section-label">✦ Our Identity</span>
+      <h2 class="section-heading">At Silai.. we do this.</h2>
+      <p class="section-subheading" style="margin:0 auto var(--space-xl)">We bridge the gap between raw fabric and refined craftsmanship. Our mission is to provide overseas Pakistanis with the same quality and care they would expect from their favorite tailors back home.</p>
+      <div class="grid-3" style="margin-top:var(--space-2xl)">
+        <div class="card card-glass"><h4>Authentic Craft 🧵</h4><p style="font-size:0.9rem">Every stitch is handled by master tailors with decades of experience in Lahore's garment districts.</p></div>
+        <div class="card card-glass"><h4>Global Reach 🌏</h4><p style="font-size:0.9rem">We ship to USA, UK, Canada, UAE, and beyond with reliable express tracking.</p></div>
+        <div class="card card-glass"><h4>Premium Sourcing 🛍️</h4><p style="font-size:0.9rem">Don't have fabric? We'll buy from brands like **Laam.pk, Khaadi, or Maria B.** and stitch it for you!</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stitched vs Unstitched Section -->
+  <section class="section" style="padding-top:var(--space-4xl)">
+    <div class="container text-center mb-2xl">
+      <span class="section-label">✦ Samples</span>
+      <h2 class="section-heading">The Transformation</h2>
+      <p class="section-subheading" style="margin:0 auto">See how we turn raw, unstitched fabric into a ready-to-wear masterpiece.</p>
+    </div>
+    <div class="container">
+      <div class="grid-2">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <img src="/assets/images/unstitched_sample.jpg" alt="Unstitched Sample" style="width:100%; height:300px; object-fit:cover;">
+          <div style="padding:var(--space-md); text-align:center;"><h4 style="color:var(--text-muted)">Unstitched Raw Fabric</h4><p style="font-size:0.85rem">Premium Lawn from J. Junaid Jamshed</p></div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div style="position:absolute; top:12px; right:12px; background:var(--gold); color:var(--midnight); padding:4px 12px; border-radius:var(--radius-full); font-size:0.7rem; font-weight:700;">✨ STITCHED</div>
+          <img src="/assets/images/stitched_sample.jpg" alt="Stitched Sample" style="width:100%; height:300px; object-fit:cover;">
+          <div style="padding:var(--space-md); text-align:center;"><h4>Masterfully Tailored</h4><p style="font-size:0.85rem">Custom fit with boutique finishing</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Trust Bar -->
   <section class="trust-bar">
@@ -278,7 +321,7 @@
            </div>
            <div style="width:40px; height:40px; background:var(--gold); color:var(--background); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; margin:-40px auto var(--space-sm); position:relative; z-index:2; box-shadow:0 4px 12px rgba(0,0,0,0.4);">1</div>
            <h4 style="color:var(--text); margin-bottom:8px; font-size:1.1rem;">Fabric Sourcing</h4>
-           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">You send us your unstitched fabric or we buy it for you from premium brands.</p>
+           <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.5;">You send us your unstitched fabric or we buy it for you from premium brands like **Laam.pk**.</p>
          </div>
 
          <!-- Stage 2 -->
@@ -434,6 +477,7 @@
           <a href="#track" class="btn btn-primary mt-lg" id="success-track-link">Track My Order →</a>
         </div>
         <div id="order-form-wrapper">
+          <form id="orderForm">
           <div class="step-progress">
             <div class="step-bar">
               <div class="step-dot active">1</div><div class="step-line"></div>
@@ -480,7 +524,10 @@
       </div>
     </label>
     <div id="source-fabric-details" style="display:none; margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-      <div class="form-group"><label class="form-label">Paste link of product/item (Optional)</label><input type="url" id="source-fabric-link" class="form-input" placeholder="https://khaadi.com/..."></div>
+      <div style="background:rgba(212,175,55,0.08); padding:var(--space-md); border-radius:8px; font-size:0.85rem; border:1px solid rgba(212,175,55,0.2); margin-bottom:var(--space-sm);">
+        <strong>💡 Example:</strong> Shop from <a href="https://laam.pk" target="_blank" style="color:var(--gold);text-decoration:underline;">Laam.pk</a> and set our workshop as the delivery address!
+      </div>
+      <div class="form-group"><label class="form-label">Paste link of product/item (Optional)</label><input type="url" id="source-fabric-link" class="form-input" placeholder="https://laam.pk/products/..."></div>
       <div class="form-group"><label class="form-label">Upload Picture of Product</label><input type="file" id="source-fabric-upload" class="form-input" accept="image/*"></div>
       <div class="form-group"><label class="form-label">Details, Colors, Price, etc.</label><textarea id="source-fabric-desc" class="form-input" placeholder="e.g. Size medium, Blue color, Rs. 5000"></textarea></div>
     </div>
@@ -625,15 +672,24 @@
                 </div>
 
                 <!-- Shipping -->
-                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
-                  <h4 class="mb-md">Shipping Address</h4>
-                  <div class="form-group"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
-                  <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
-                  <div class="form-row">
-                    <div class="form-group"><label class="form-label">Zip *</label><input type="text" id="co-zip" class="form-input" required></div>
-                    <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
+                  <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                    <h4 class="mb-md">Shipping Address</h4>
+                    <div class="form-group"><label class="form-label">Country *</label>
+                      <select id="co-country" class="form-select" required>
+                        <option value="United States">🇺🇸 United States</option>
+                        <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                        <option value="Canada">🇨🇦 Canada</option>
+                        <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                        <option value="Australia">🇦🇺 Australia</option>
+                      </select>
+                    </div>
+                    <div class="form-group mt-sm"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
+                    <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
+                    <div class="form-row">
+                      <div class="form-group"><label class="form-label">Zip *</label><input type="text" id="co-zip" class="form-input" required></div>
+                      <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
+                    </div>
                   </div>
-                </div>
 
                 <!-- Payment -->
                 <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
@@ -701,7 +757,7 @@
               </div>
             </div>
             <!-- Note: buttons are handled globally below -->
-          </div>          <div class="form-nav" style="margin-top:var(--space-xl)">            <button class="btn btn-outline" id="btn-prev" style="display:none">← Back</button>            <div style="flex:1"></div>            <button class="btn btn-primary" id="btn-next">Continue →</button>            <button class="btn btn-teal" id="btn-submit" style="display:none; width:100%; max-width:300px;">Place Order</button>          </div>        </div>
+          </div>            <div class="form-nav" style="margin-top:var(--space-xl)">            <button class="btn btn-outline" id="btn-prev" style="display:none">← Back</button>            <div style="flex:1"></div>            <button class="btn btn-primary" id="btn-next">Continue →</button>            <button class="btn btn-teal" id="btn-submit" type="submit" style="display:none; width:100%; max-width:300px;">Place Order</button>          </div>        </form></div>
       </div>
       <!-- Sidebar -->
       <div class="price-sidebar">

@@ -20,7 +20,7 @@
 
 /* ─── Hero cultural redesign ─────────────────────────────── */
 .hero-bg {
-  background: linear-gradient(135deg, #0A0812 0%, #160A18 40%, #0A1208 100%) !important;
+  background: linear-gradient(135deg, var(--midnight-2) 0%, var(--midnight) 100%) !important;
 }
 
 .hero-eyebrow {
@@ -123,8 +123,8 @@
 }
 .ba-label-before {
   right: var(--space-lg);
-  background: rgba(13,13,26,0.85);
-  color: var(--text-muted);
+  background: rgba(255,255,255,0.85);
+  color: var(--text-secondary);
   border: 1px solid var(--border);
 }
 .ba-label-after {
@@ -163,7 +163,7 @@
 .showcase-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10,8,18,0.92) 0%, rgba(10,8,18,0.2) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -192,7 +192,7 @@
 /* ─── Craft / Sewing Machine Section ────────────────────── */
 .craft-section {
   padding: var(--space-4xl) 0;
-  background: linear-gradient(135deg, #0A0812 0%, #0a1208 100%);
+  background: var(--midnight-2);
 }
 .craft-grid {
   display: grid;
@@ -210,7 +210,7 @@
   position: absolute;
   bottom: var(--space-xl);
   left: var(--space-xl);
-  background: rgba(10,8,18,0.85);
+  background: rgba(255,255,255,0.9);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -253,13 +253,14 @@
 }
 .modal-overlay.open { display: flex; }
 .modal-box {
-  background: var(--midnight-3);
+  background: #FFFFFF;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   padding: var(--space-2xl);
   width: 100%;
   max-width: 460px;
   position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
   animation: step-in 0.3s var(--ease);
 }
 .modal-close {
@@ -308,6 +309,7 @@
   align-items: center;
   gap: var(--space-xl);
   margin-bottom: var(--space-2xl);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 .profile-avatar {
   width: 72px; height: 72px;

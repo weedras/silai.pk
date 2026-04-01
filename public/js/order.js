@@ -381,8 +381,9 @@ if (orderForm) {
     btn.disabled = true;
 
     const cName = document.getElementById('co-fname')?.value + ' ' + (document.getElementById('co-lname')?.value || '');
-    const coAddress = (document.getElementById('co-address')?.value || '') + ', ' + (document.getElementById('co-city')?.value || '') + ' ' + (document.getElementById('co-zip')?.value || '');
-                  
+    const coCountry = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value;
+    const coAddress = (document.getElementById('co-address')?.value || '') + ', ' + (document.getElementById('co-city')?.value || '') + ' ' + (document.getElementById('co-zip')?.value || '') + ', ' + coCountry;
+    
     const cPhone = document.getElementById('co-phone')?.value || document.getElementById('customer-whatsapp')?.value;
     const cEmail = document.getElementById('co-email')?.value || document.getElementById('customer-email')?.value;
 
@@ -390,7 +391,7 @@ if (orderForm) {
       customer_name: cName,
       customer_email: cEmail,
       customer_whatsapp: cPhone,
-      shipping_country: document.getElementById('shipping-country')?.value,
+      shipping_country: coCountry,
       shipping_address: coAddress,
       garment_type: document.getElementById('garment-type-val')?.value,
       fabric_type: document.getElementById('fabric-type')?.value,
