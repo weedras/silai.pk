@@ -349,7 +349,7 @@
       <div id="ba-container" class="before-after-container reveal">
         <div class="ba-wrapper">
           <img src="/assets/images/sapphire_transform.png" class="ba-img" alt="Masterpiece Transformation">
-          <div id="ba-after-img" class="ba-img ba-after" style="background-image:url('/assets/images/sapphire_transform.png'); background-size:cover; background-position:right center;"></div>
+          <div id="ba-after-img" class="ba-img ba-after" style="background-image:url('/assets/images/sapphire_transform.png');"></div>
           
           <div class="ba-divider" id="ba-divider"></div>
           <div class="ba-handle" id="ba-handle">↔</div>
@@ -384,7 +384,7 @@
           <div style="padding:var(--space-lg)">
             <div class="badge badge-gold mb-sm">Maria B. Inspired</div>
             <h4 class="mb-sm">Luxury Embroidery Masterpiece</h4>
-            <p style="font-size:0.85rem; line-height:1.5">Intricate heavy embroidery work with standardized boutique finishing.</p>
+            <p style="font-size:0.85rem; line-height:1.5">Standardized boutique finishing with heavy thread work.</p>
             <div class="flex-between mt-lg">
               <span class="text-gold font-bold">Premium Fit</span>
               <a href="#order" class="btn btn-sm btn-outline">Tailor This</a>
@@ -392,12 +392,29 @@
           </div>
         </div>
         <div class="card reveal delay-1" style="padding:0; overflow:hidden;">
-          <img src="/assets/images/sapphire_transform.png" alt="Sapphire Collection" style="width:100%; height:320px; object-fit:cover; object-position:right;">
+          <img src="/assets/images/pak_suit_2.png" alt="Sapphire Collection" style="width:100%; height:320px; object-fit:cover;">
           <div style="padding:var(--space-lg)">
-            <div class="badge badge-teal mb-sm">Sapphire Essential</div>
-            <h4 class="mb-sm">Signature Lawn Suit</h4>
-            <p style="font-size:0.85rem; line-height:1.5">Classic lawn silhouettes with modern design twists and clean cuts.</p>
+            <div class="badge badge-teal mb-sm">Sapphire / J.</div>
+            <h4 class="mb-sm">Signature Winter Formal</h4>
+            <p style="font-size:0.85rem; line-height:1.5">Classic silhouettes with modern design twists and clean cuts.</p>
             <div class="flex-between mt-lg">
+              <span class="text-teal font-bold">Winter Special</span>
+              <a href="#order" class="btn btn-sm btn-outline">Tailor This</a>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal delay-2" style="padding:0; overflow:hidden;">
+          <img src="/assets/images/pak_sherwani_1.png" alt="Men's Sherwani Collection" style="width:100%; height:320px; object-fit:cover;">
+          <div style="padding:var(--space-lg)">
+            <div class="badge badge-gold mb-sm">Khaadi / Sherwani</div>
+            <h4 class="mb-sm">Royal Heritage Sherwani</h4>
+            <p style="font-size:0.85rem; line-height:1.5">Hand-embroidered elegance for weddings and grand events.</p>
+            <div class="flex-between mt-lg">
+              <span class="text-gold font-bold">Heritage Fit</span>
+              <a href="#order" class="btn btn-sm btn-outline">Tailor This</a>
+            </div>
+          </div>
+        </div>
               <span class="text-gold font-bold">Fast Express</span>
               <a href="#order" class="btn btn-sm btn-outline">Tailor This</a>
             </div>
@@ -1377,23 +1394,8 @@
 })();
 </script>
 
-<!-- ─── SPA Router ─────────────────────────────────── -->
-<script>
-function handleHashChange() {
-  const hash = (window.location.hash || '#home').replace('#','');
-  document.querySelectorAll('.spa-view').forEach(v => v.classList.remove('active-view'));
-  const view = document.getElementById('view-' + hash);
-  if (view) { view.classList.add('active-view'); window.scrollTo(0,0); }
-  else { document.getElementById('view-home').classList.add('active-view'); }
 
-  // Lazy load views
-  if (hash === 'profile') loadProfile();
-  if (hash === 'admin') { /* gate handles it */ }
-  if (hash === 'measure') { /* static view, no load needed */ }
-}
-window.addEventListener('hashchange', handleHashChange);
-window.addEventListener('load', handleHashChange);
-</script>
+<!-- SPA logic moved to main.js for stability -->
 
 <script src="/js/main.js"></script>
 <script src="/js/order.js"></script>

@@ -134,16 +134,48 @@ waBtns.forEach(btn => {
   });
 });
 
-// ─── Smooth anchor scroll ──────────────────────────────────
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', (e) => {
-    const target = document.querySelector(anchor.getAttribute('href'));
-    if (target) {
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+// ─── SPA Router ───────────────────────────────────
+/**
+ * Handles view switching based on URL hash (e.g. #order, #track)
+ */
+function handleHashChange() {
+  const hash = (window.location.hash || '#home').replace('#', '');
+  
+  // 1. Hide all views
+  const allViews = document.querySelectorAll('.spa-view');
+  allViews.forEach(view => {
+    view.classList.remove('active-view');
+    view.style.display = 'none'; // Force hide
   });
-});
+
+  // 2. Find target view
+  const targetId = 'view-' + hash;
+  let targetView = document.getElementById(targetId);
+
+  // 3. Fallback to home if not found
+  if (!targetView) {
+    targetView = document.getElementById('view-home');
+    if (window.location.hash && window.location.hash !== '#home') {
+       console.warn(`View "${targetId}" not found, falling back to home.`);
+    }
+  }
+
+  // 4. Show active view
+  if (targetView) {
+    targetView.style.display = 'block';
+    setTimeout(() => targetView.classList.add('active-view'), 10);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 5. Run specific view logic
+  if (hash === 'profile' && window.loadProfile) window.loadProfile();
+  if (hash === 'order' && window.initOrderForm) window.initOrderForm();
+}
+
+// Global initialization
+window.addEventListener('hashchange', handleHashChange);
+window.addEventListener('load', handleHashChange);
 
 // Expose toast globally
 window.showToast = showToast;
+window.handleHashChange = handleHashChange;

@@ -198,7 +198,13 @@ async function initLocation() {
       liveExchangeRates = fxData.rates;
       state.currency.rate = liveExchangeRates[state.currency.code] || 1;
     }
-  } catch(e) { console.error('Location Error:', e); }
+  } catch(e) { 
+    console.error('Location/FX Error:', e);
+    // Safety Fallbacks
+    state.currency.rate = 1;
+    state.currency.code = 'USD';
+    state.currency.symbol = '$';
+  }
   recalcPrice();
 }
 
@@ -313,10 +319,10 @@ function recalcPrice() {
     if (state.addons[key]) state.addonsPrice += PRICES.addons[key] || 0;
   });
 
-  const total = state.basePrice + state.addonsPrice + state.shippingRate;
+  const total = (state.basePrice || 0) + (state.addonsPrice || 0) + (state.shippingRate || 0);
   const deposit = total; // 100% upfront
   
-  state.loyaltyPoints = Math.floor(deposit * 10);
+  state.loyaltyPoints = Math.floor(deposit * 10) || 0;
 
   const shipElem = document.querySelector('.price-line span.text-teal');
   if (shipElem) {
