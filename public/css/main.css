@@ -224,28 +224,33 @@ p  { color: var(--text-secondary); line-height: 1.75; }
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  margin: 0;
 }
 .logo-emoji {
-  font-size: 1.8rem;
+  font-size: 2rem;
   line-height: 1;
+  order: 2; /* Emoji on the right side */
 }
 .logo-text {
   display: flex;
   flex-direction: column;
   line-height: 1;
+  text-align: left;
+  order: 1;
 }
 .logo-eng {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--gold);
+  letter-spacing: -0.02em;
 }
 .logo-urdu {
   font-family: urdu, sans-serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 .nav-links { display: flex; align-items: center; gap: var(--space-xl); margin: 0 auto; }
 .nav-link {
