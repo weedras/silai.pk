@@ -488,6 +488,36 @@ p  { color: var(--text-secondary); line-height: 1.75; }
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
+/* ─── Carousel Layout ─────────────────── */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.carousel-track {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: var(--space-xl);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: var(--space-lg) 2px var(--space-2xl);
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.carousel-track::-webkit-scrollbar { height: 6px; }
+.carousel-track::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
+.carousel-track::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+.carousel-track .card {
+  flex: 0 0 350px;
+  scroll-snap-align: start;
+  transition: transform 0.4s var(--ease);
+}
+.carousel-track .card:hover { transform: translateY(-5px); }
+@media (max-width: 768px) {
+  .carousel-track .card { flex: 0 0 280px; }
+}
+
 /* ─── Measure Section ────────────────────────────────────── */
 .measure-section { padding: var(--space-4xl) 0; }
 .measure-grid {
