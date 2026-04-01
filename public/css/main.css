@@ -495,8 +495,7 @@ p  { color: var(--text-secondary); line-height: 1.75; }
   margin: 0 auto;
 }
 .carousel-track {
-  display: flex !important;
-  flex-direction: row !important;
+  display: flex;
   gap: var(--space-xl);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
