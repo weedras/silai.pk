@@ -159,10 +159,9 @@
     </div>
     <button class="btn btn-primary btn-sm" id="nav-auth-btn" onclick="openAuthModal('login')">Sign In</button>
   </div>
-  <div class="nav-hamburger"><span></span><span></span><span></span></div>
 </nav>
 
-<div class="mobile-menu">
+<div class="mobile-menu" id="mobile-menu">
   <a href="#home" class="nav-link">Home</a>
   <a href="#order" class="nav-link">Place Order</a>
   <a href="#track" class="nav-link">Track Order</a>
@@ -175,42 +174,20 @@
      ABOUT US VIEW
 ======================================================== -->
 <div id="view-about" class="spa-view">
-  <div class="container" style="padding-top:var(--space-4xl); padding-bottom:var(--space-4xl); max-width:800px;">
-    <div class="text-center mb-3xl">
-      <span class="section-label">✦ The Silai Story</span>
-      <h2 class="section-heading">Every stitch has a story.<br/>Ours begins with a mother.</h2>
-    </div>
-    
-    <div style="line-height:1.9; font-size:1.1rem; color: #ececec; font-family: 'Playfair Display', serif;">
-      <!-- Prologue -->
-      <div style="margin-bottom:var(--space-3xl); position:relative;">
-        <div style="position:absolute; left:-40px; top:0; font-size:4rem; color:var(--gold); opacity:0.1; font-family:serif;">“</div>
-        <p><strong style="color:var(--gold)">The Prologue:</strong> Her name is Naik Bibi. In the small town of Pattoki, she fell in love with the silent dance of thread and fabric long before she had words for it. Sitting beside her brother, watching him master the drafting table, she saw not just clothes, but a craft that demanded respect.</p>
-      </div>
-
-      <!-- The Journey -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-2xl); align-items:center; margin-bottom:var(--space-3xl);">
-        <div>
-          <p>That childhood passion became her discipline. Graduating with top honors from the Fauji Foundation School, she transformed her love into an academy in Pattoki. For years, she taught young girls more than just how to stitch—she taught them the quiet confidence of someone who has mastered a real trade.</p>
-          <p class="mt-md">Life eventually asked for a pause. Eyesight weakened, children grew, and the academy doors closed. But the fire never died.</p>
-        </div>
-        <div style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border);">
-           <img src="/assets/images/pak_sewing.png" style="width:100%; height:300px; object-fit:cover;" alt="Our Heritage">
-        </div>
-      </div>
-
-      <!-- The Why -->
-      <div style="background:var(--glass); border:1px solid var(--border); padding:var(--space-2xl); border-radius:var(--radius-xl); margin-bottom:var(--space-3xl);">
-        <h4 style="color:var(--gold); margin-bottom:var(--space-md); font-family:var(--font-sans); text-transform:uppercase; letter-spacing:0.1em; font-size:0.9rem;">The Why: Why We Bridge the Gap</h4>
-        <p>A simple phone call from Maria Sartaj in Canada changed everything. <em style="color:#d4af37">"Finding a good tailor here is nearly impossible,"</em> she said. <em style="color:#d4af37">"If you find one, they don't understand the 'gala' or the 'daman' like we do at home."</em></p>
-        <p class="mt-md">We realized millions of Pakistanis abroad have beautiful fabric sitting in suitcases for years—because no one nearby can cut it the way <em>home</em> could. **Silai.pk is that bridge.**</p>
-      </div>
-
-      <div style="text-align:center;">
-        <p style="font-size:1.3rem; font-weight:700; color:var(--gold); font-style:italic;">"Stitched in Pakistan. Delivered to your world."</p>
-        <p class="mt-lg"><a href="#order" class="btn btn-primary">Start Your Journey With Us</a></p>
-      </div>
-    </div>
+  <div class="container" style="padding-top:var(--space-4xl); padding-bottom:var(--space-4xl); max-width:760px; line-height:1.9; font-size:1.1rem; color: #ececec; font-family: 'Playfair Display', Georgia, serif; text-align:left;">
+    <h2 style="font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; margin-bottom: 1.5rem; font-weight: 700; color: #fff;">About Us — Silai.pk</h2>
+    <p style="font-weight: 700; margin-bottom: 1.5rem; color: #fff;">Every stitch has a story. Ours begins with a mother.</p>
+    <p style="margin-bottom: 1.5rem;">Her name is Naik Bibi. As a young girl in Pattoki, she learned the art of stitching from her brother — sitting beside him, watching his hands, falling in love with thread and fabric before she even had words for it.</p>
+    <p style="margin-bottom: 1.5rem;">That childhood passion never left her. Years later, after marriage, she turned that love into discipline — enrolling in a tailoring diploma at Fauji Foundation School and graduating with 85% marks. Then she did what every great craftsperson eventually does: she started teaching. She opened her own academy in Pattoki, where young girls came to learn not just how to stitch, but how to carry themselves with the quiet confidence of someone who has mastered something real.</p>
+    <p style="margin-bottom: 1.5rem;">Life eventually asked her to pause. Weak eyesight, growing children, a home to run. The academy closed. But the passion never died.</p>
+    <p style="margin-bottom: 1.5rem;">Years later, a phone call changed everything.</p>
+    <p style="margin-bottom: 1.5rem;">Our friend Maria Sartaj, an overseas Pakistani living in Canada, said something simple: <em style="color:#d4af37">"Finding a good tailor here is nearly impossible — and when you do, it costs a fortune."</em></p>
+    <p style="margin-bottom: 1.5rem;">We knew that feeling. Millions of Pakistani women abroad know it — beautiful unstitched fabric sitting in a suitcase for years, because no one nearby can cut a <em style="color:#d4af37">gala</em> the way home could.</p>
+    <p style="margin-bottom: 1.5rem;">So we built the bridge.</p>
+    <p style="margin-bottom: 1.5rem;"><strong style="color: #fff;">Silai.pk is a platform for overseas Pakistanis.</strong> Send us your fabric, or let us source the finest unstitched cloth from top Pakistani brands — and we'll stitch it with the same love, care, and mastery Naik Bibi always poured into her work. Then we deliver it straight to your doorstep, wherever in the world you call home.</p>
+    <p style="margin-bottom: 1.5rem;">We are not just a tailoring service. We are the feeling of opening a parcel and finding that something finally <em>fits</em> — in every sense of the word.</p>
+    <p style="font-weight: 700; color: #fff; margin-top: 2rem;">Stitched in Pakistan. Delivered to your world.</p>
+    <p class="mt-lg"><a href="#order" class="btn btn-primary">Start Your Journey With Us</a></p>
   </div>
 </div>
 
