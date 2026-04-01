@@ -127,11 +127,12 @@
 <nav class="navbar">
   <a href="#home" class="nav-logo">
     <div class="logo-inner">
-      <span class="logo-emoji">🧵</span>
       <div class="logo-text">
         <div class="logo-eng">Silai</div>
         <div class="logo-urdu">سلائی</div>
       </div>
+      <span class="logo-emoji">🧵</span>
+
     </div>
   </a>
   <div class="nav-links">
@@ -145,11 +146,6 @@
     <div class="nav-actions">
     <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle Menu" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
       <span></span><span></span><span></span>
-    </button>
-    <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
-
-      <span class="sun-icon">☀️</span>
-      <span class="moon-icon">🌙</span>
     </button>
     <div class="header-delivery" onclick="document.getElementById('location-modal').classList.add('open')" style="cursor:pointer; font-size:0.75rem; line-height:1.2; padding-right:1rem; border-right:1px solid var(--border); margin-right:1rem; display:flex; flex-direction:column; align-items:flex-end; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">
       <span style="color:var(--text-muted)">Deliver To / Currency</span>
@@ -547,36 +543,36 @@
         <h2 class="section-heading">How to measure yourself at home</h2>
         <p class="section-subheading" style="margin:0 auto">Get the perfect fit with our simple measurement guide.</p>
       </div>
-      <div class="measure-grid">
+      <div class="measure-grid" style="align-items: flex-start; margin-top: var(--space-2xl);">
         <div class="measure-diagram reveal-left">
-          <div style="background:var(--midnight-3); border-radius:var(--radius-xl); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-card); position:relative;">
-             <img src="/assets/images/meas_guide.png" alt="Measurement Guide Diagram" style="width:100%; height:auto; display:block;">
+          <div style="background:var(--midnight-3); border-radius:var(--radius-xl); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-card); position:relative; min-height: 400px; display: flex; align-items: center; justify-content: center;">
+             <img src="/assets/images/meas_guide.png" alt="Measurement Guide Diagram" style="width:100%; height:auto; display:block; padding: var(--space-xl);">
              <div style="position:absolute; top:20px; right:20px; background:var(--gold); color:var(--midnight); padding:4px 12px; border-radius:4px; font-weight:bold; font-size:0.8rem; box-shadow:0 4px 12px rgba(0,0,0,0.3)">Step-by-Step</div>
           </div>
         </div>
         <div class="measure-list reveal-right">
-          <div class="measure-item">
+          <div class="measure-item" style="padding: var(--space-lg);">
             <div class="measure-num">1</div>
             <div class="measure-info">
               <h4>Chest <span class="text-gold">(Seena)</span></h4>
-              <span>Measure around the fullest part of your chest, keeping the tape straight.</span>
+              <span>Measure around the fullest part of your chest, keeping the tape horizontal.</span>
             </div>
           </div>
-          <div class="measure-item">
+          <div class="measure-item" style="padding: var(--space-lg);">
             <div class="measure-num">2</div>
             <div class="measure-info">
               <h4>Waist <span class="text-gold">(Kamar)</span></h4>
               <span>Measure around your natural waistline, just above the belly button.</span>
             </div>
           </div>
-          <div class="measure-item">
+          <div class="measure-item" style="padding: var(--space-lg);">
             <div class="measure-num">3</div>
             <div class="measure-info">
               <h4>Hips <span class="text-gold">(Koolay)</span></h4>
               <span>Measure around the widest part of your hips for a comfortable fit.</span>
             </div>
           </div>
-          <div class="measure-item">
+          <div class="measure-item" style="padding: var(--space-lg);">
             <div class="measure-num">4</div>
             <div class="measure-info">
               <h4>Length <span class="text-gold">(Lambai)</span></h4>
@@ -650,11 +646,11 @@
       <div class="footer-brand">
         <a href="#home" class="nav-logo">
           <div class="logo-inner">
-            <span class="logo-emoji">🧵</span>
             <div class="logo-text">
               <div class="logo-eng">Silai</div>
               <div class="logo-urdu">سلائی</div>
             </div>
+            <span class="logo-emoji">🧵</span>
           </div>
         </a>
         <p style="font-style:italic;color:var(--text-muted);margin-top:8px">"اعلیٰ درجے کی سلائی" — Premium Stitching</p>

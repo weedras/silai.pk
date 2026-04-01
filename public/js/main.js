@@ -2,23 +2,8 @@
    Silai — Shared JS: Nav, Theme, Scroll Reveal, Toast, Utility
 ═══════════════════════════════════════════════════════════ */
 
-// ─── Theme Switcher (Dark/Light Mode) ──────────────────────
-function initTheme() {
-  const savedTheme = localStorage.getItem('silai-theme') || 'dark';
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-mode');
-  }
-}
-
-function toggleTheme() {
-  const isLight = document.body.classList.toggle('light-mode');
-  localStorage.setItem('silai-theme', isLight ? 'light' : 'dark');
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-  const themeBtn = document.getElementById('theme-toggle');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+  // Theme initialization removed (Dark Luxury is default)
 });
 
 // ─── Navbar scroll effect ──────────────────────────────────
