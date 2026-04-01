@@ -221,30 +221,28 @@ p  { color: var(--text-secondary); line-height: 1.75; }
 }
 .nav-logo:hover { opacity: 0.8; }
 .logo-inner {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-md);
-  margin: 0;
-}
-.logo-emoji {
-  font-size: 2rem;
-  line-height: 1;
-  order: 2; /* Emoji on the right side */
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: var(--space-md) !important;
+  text-decoration: none;
 }
 .logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
+  display: flex !important;
+  flex-direction: column !important;
+  line-height: 1.1;
   text-align: left;
-  order: 1;
+}
+.logo-emoji {
+  font-size: 2.2rem;
+  line-height: 1;
 }
 .logo-eng {
   font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 700;
   color: var(--gold);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 .logo-urdu {
   font-family: urdu, sans-serif;
