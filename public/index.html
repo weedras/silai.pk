@@ -288,7 +288,8 @@
         </div>
 
         <div style="margin-top:var(--space-2xl); display:flex; flex-direction:column; gap:var(--space-md);">
-          <a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27d%20like%20help%20with%20my%20measurements%20for%20a%20Silai.pk%20order." target="_blank" class="btn btn-whatsapp">💬 Send Measurements via WhatsApp</a>
+          <button class="btn btn-outline" onclick="document.getElementById('size-chart-modal').classList.add('open')">📏 View Standard Size Chart</button>
+          <a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27d%20like%20help%20with%20my%20measurements%20for%20a%20Silai.pk%20order." target="_blank" class="btn btn-whatsapp">💬 Help via WhatsApp</a>
           <a href="#order" class="btn btn-primary">✂️ Place Your Order Now</a>
         </div>
       </div>
@@ -337,18 +338,18 @@
     </div>
   </section>
 
-  <!-- Stitched vs Unstitched Section -->
+  <!-- Transformation Slider Section -->
   <section class="section" style="padding-top:var(--space-4xl)">
     <div class="container text-center mb-2xl">
       <span class="section-label">✦ Samples</span>
-      <h2 class="section-heading">The Transformation</h2>
-      <p class="section-subheading" style="margin:0 auto">See how we turn raw, unstitched fabric into a ready-to-wear masterpiece.</p>
+      <h2 class="section-heading">The Masterpiece Transformation</h2>
+      <p class="section-subheading" style="margin:0 auto">See how we turn raw Sapphire & Maria B. fabric into a ready-to-wear masterpiece.</p>
     </div>
     <div class="container" style="max-width:1000px; margin:0 auto;">
       <div id="ba-container" class="before-after-container reveal">
         <div class="ba-wrapper">
-          <img src="sapphire_transformation_pair_1775067152500.png" class="ba-img" alt="Masterpiece Transformation">
-          <div id="ba-after-img" class="ba-img ba-after" style="background-image:url('sapphire_transformation_pair_1775067152500.png'); background-size:cover; background-position:right center;"></div>
+          <img src="/assets/images/sapphire_transform.png" class="ba-img" alt="Masterpiece Transformation">
+          <div id="ba-after-img" class="ba-img ba-after" style="background-image:url('/assets/images/sapphire_transform.png'); background-size:cover; background-position:right center;"></div>
           
           <div class="ba-divider" id="ba-divider"></div>
           <div class="ba-handle" id="ba-handle">↔</div>
@@ -358,43 +359,7 @@
         </div>
       </div>
       <div class="text-center mt-xl">
-        <p style="color:var(--gold); font-weight:700; font-style:italic; font-size:1.1rem;">"From Sapphire Fabric to Your Stunning Reception Look."</p>
-      </div>
-    </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Trust Bar -->
-  <section class="trust-bar">
-    <div class="container trust-bar-inner">
-      <div class="trust-item reveal"><div class="trust-icon">⭐</div><div><h3 data-count="500" data-suffix="+">0</h3><p>Happy Clients</p></div></div>
-      <div class="trust-divider"></div>
-      <div class="trust-item reveal delay-1"><div class="trust-icon">🧵</div><div><h3 data-count="1200" data-suffix="+">0</h3><p>Outfits Stitched</p></div></div>
-      <div class="trust-divider"></div>
-      <div class="trust-item reveal delay-2"><div class="trust-icon">🌍</div><div><h3 data-count="15" data-suffix="+">0</h3><p>Countries Served</p></div></div>
-      <div class="trust-divider"></div>
-      <div class="trust-item reveal delay-3"><div class="trust-icon">📅</div><div><h3 data-count="15" data-suffix=" days">0</h3><p>Avg. Turnaround (+ Shipping)</p></div></div>
-    </div>
-  </section>
-
-  <!-- Before / After Slider -->
-  <section class="before-after-section">
-    <div class="container text-center mb-2xl">
-      <span class="section-label">✦ The Transformation</span>
-      <h2 class="section-heading">From Unstitched to Stunning</h2>
-      <p class="section-subheading" style="margin:0 auto">Drag the slider to see how raw fabric becomes a perfectly tailored masterpiece.</p>
-    </div>
-    <div class="container">
-      <div class="before-after-container" id="ba-container">
-        <div class="ba-wrapper">
-          <img class="ba-img" src="/assets/images/before_fabric.png" alt="Unstitched Raw Fabric">
-          <img class="ba-img ba-after" id="ba-after-img" src="/assets/images/after_dress.png" alt="Perfectly Stitched Dress">
-          <div class="ba-label ba-label-before">Unstitched Fabric</div>
-          <div class="ba-label ba-label-after">Stitched Masterpiece ✨</div>
-          <div class="ba-divider" id="ba-divider"></div>
-          <div class="ba-handle" id="ba-handle">⟺</div>
-        </div>
+        <p style="color:var(--gold); font-weight:700; font-style:italic; font-size:1.1rem;">"Exclusive finishing for Sapphire, Maria B, & Khaadi Luxury Suits."</p>
       </div>
     </div>
   </section>
@@ -415,7 +380,7 @@
       <div class="carousel-container">
         <div class="carousel-track" id="collections-grid">
         <div class="card reveal" style="padding:0; overflow:hidden;">
-          <img src="pak_formal_suit_women_1_1775064263603.png" alt="Maria B. Collection" style="width:100%; height:320px; object-fit:cover;">
+          <img src="/assets/images/pak_suit_1.png" alt="Maria B. Collection" style="width:100%; height:320px; object-fit:cover;">
           <div style="padding:var(--space-lg)">
             <div class="badge badge-gold mb-sm">Maria B. Inspired</div>
             <h4 class="mb-sm">Luxury Embroidery Masterpiece</h4>
@@ -427,7 +392,7 @@
           </div>
         </div>
         <div class="card reveal delay-1" style="padding:0; overflow:hidden;">
-          <img src="sapphire_transformation_pair_1775067152500.png" alt="Sapphire Collection" style="width:100%; height:320px; object-fit:cover; object-position:right;">
+          <img src="/assets/images/sapphire_transform.png" alt="Sapphire Collection" style="width:100%; height:320px; object-fit:cover; object-position:right;">
           <div style="padding:var(--space-lg)">
             <div class="badge badge-teal mb-sm">Sapphire Essential</div>
             <h4 class="mb-sm">Signature Lawn Suit</h4>
@@ -439,7 +404,7 @@
           </div>
         </div>
         <div class="card reveal delay-2" style="padding:0; overflow:hidden;">
-          <img src="pak_mens_sherwani_1_1775064306036.png" alt="Sherwani Collection" style="width:100%; height:320px; object-fit:cover;">
+          <img src="/assets/images/pak_sherwani_1.png" alt="Sherwani Collection" style="width:100%; height:320px; object-fit:cover;">
           <div style="padding:var(--space-lg)">
             <div class="badge badge-rose mb-sm">The Heritage Sherwani</div>
             <h4 class="mb-sm">Royal Silk Groomswear</h4>
@@ -684,13 +649,6 @@
     </div>
   </section>
 
-
-        </div>
-      </div>
-      <div class="text-center mt-3xl">
-        <button class="btn btn-primary" onclick="document.getElementById('size-chart-modal').classList.add('open')">View Standard Size Chart</button>
-      </div>
-    </div>
   </section>
 
   <!-- Fake Reviews Section -->
