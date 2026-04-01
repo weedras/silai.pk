@@ -122,6 +122,7 @@
     <a href="#home" class="nav-link">Home</a>
     <a href="#order" class="nav-link">Place Order</a>
     <a href="#track" class="nav-link">Track Order</a>
+    <a href="#measure" class="nav-link">Measure Guide</a>
     <a href="#admin" class="nav-link" id="nav-admin-link" style="display:none">Admin</a>
     <a href="#about" class="nav-link">About Us</a>
   </div>
@@ -146,6 +147,7 @@
   <a href="#home" class="nav-link">Home</a>
   <a href="#order" class="nav-link">Place Order</a>
   <a href="#track" class="nav-link">Track Order</a>
+  <a href="#measure" class="nav-link">Measure Guide</a>
   <a href="#profile" class="nav-link">My Profile</a>
 </div>
 <div class="toast-container"></div>
@@ -260,6 +262,83 @@
   </section>
 
   
+  <!-- Cultural Divider -->
+  <div class="container"><div class="cultural-divider"><div class="cultural-divider-icon">✦</div></div></div>
+
+  <!-- Lookbook Section -->
+  <section class="lookbook-section">
+    <div class="container">
+      <div class="text-center mb-2xl">
+        <span class="section-label">✦ Style Lookbook</span>
+        <h2 class="section-heading">Collections for Every Occasion</h2>
+        <p class="section-subheading" style="margin:0 auto">From everyday cotton kurtas to grand bridal ensembles — explore our range of stitching styles.</p>
+      </div>
+      <div class="lookbook-filters">
+        <button class="lb-filter active" data-filter="all" onclick="filterLookbook('all',this)">All Styles</button>
+        <button class="lb-filter" data-filter="casual" onclick="filterLookbook('casual',this)">Casual</button>
+        <button class="lb-filter" data-filter="formal" onclick="filterLookbook('formal',this)">Formal</button>
+        <button class="lb-filter" data-filter="bridal" onclick="filterLookbook('bridal',this)">Bridal</button>
+      </div>
+      <div class="lookbook-masonry" id="lookbook-grid">
+
+        <div class="lookbook-card" data-cat="casual">
+          <img src="/assets/images/pak_fabric.png" alt="Casual Lawn Suit" style="height:280px; object-fit:cover;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Casual</div>
+            Everyday Lawn Suit
+          </div>
+        </div>
+
+        <div class="lookbook-card" data-cat="formal">
+          <img src="/assets/images/womens_dress.png" alt="Formal Chiffon" style="height:380px; object-fit:cover; object-position:top;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Formal</div>
+            Chiffon Shalwar Kameez
+          </div>
+        </div>
+
+        <div class="lookbook-card" data-cat="bridal">
+          <img src="/assets/images/after_dress.png" alt="Bridal Party Wear" style="height:320px; object-fit:cover; object-position:top;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Bridal</div>
+            Party &amp; Bridal Wear
+          </div>
+        </div>
+
+        <div class="lookbook-card" data-cat="formal">
+          <img src="/assets/images/mens_sherwani.png" alt="Men's Sherwani" style="height:340px; object-fit:cover; object-position:top;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Formal</div>
+            Men's Sherwani
+          </div>
+        </div>
+
+        <div class="lookbook-card" data-cat="casual">
+          <img src="/assets/images/pak_suit.png" alt="Cotton Kurta" style="height:260px; object-fit:cover;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Casual</div>
+            Cotton Kurta Set
+          </div>
+        </div>
+
+        <div class="lookbook-card" data-cat="bridal">
+          <img src="/assets/images/pak_sewing.png" alt="Embroidered Bridal" style="height:300px; object-fit:cover;">
+          <div class="lookbook-card-label">
+            <div class="lookbook-card-category">Bridal</div>
+            Embroidered 3-Piece
+          </div>
+        </div>
+
+      </div>
+      <div class="text-center mt-2xl">
+        <a href="#order" class="btn btn-primary">✂️ Order Your Style</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cultural Divider -->
+  <div class="container"><div class="cultural-divider"><div class="cultural-divider-icon">🧵</div></div></div>
+
   <!-- Process Flowchart Section -->
   <section class="process-flowchart" style="padding:var(--space-3xl) 0; background:var(--background-alt); position:relative; overflow:hidden;">
     <div class="container text-center mb-2xl z-10 position-relative">
@@ -397,7 +476,7 @@
         <h2>Not sure where to start?</h2>
         <p style="margin-top:var(--space-md)">Chat with us on WhatsApp — we'll help you choose the right style, fabric, and measurements for your perfect fit.</p>
       </div>
-      <a href="https://wa.me/923001234567" target="_blank" class="btn btn-whatsapp btn-lg">Chat on WhatsApp</a>
+      <a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27m%20interested%20in%20getting%20a%20suit%20stitched%20from%20Silai.pk.%20Could%20you%20please%20guide%20me%3F" target="_blank" class="btn btn-whatsapp btn-lg">Chat on WhatsApp</a>
     </div>
   </section>
 
@@ -411,7 +490,7 @@
       </div>
       <div class="footer-col"><h5>Services</h5><div class="footer-links"><a href="#order" class="footer-link">Shalwar Kameez</a><a href="#order" class="footer-link">Bridal Wear</a><a href="#order" class="footer-link">Sherwani</a></div></div>
       <div class="footer-col"><h5>Explore</h5><div class="footer-links"><a href="#home" class="footer-link">How it Works</a><a href="#track" class="footer-link">Track Order</a><a href="#profile" class="footer-link">My Profile</a></div></div>
-      <div class="footer-col"><h5>Contact</h5><div class="footer-links"><a href="https://wa.me/923001234567" class="footer-link">WhatsApp</a><a href="mailto:hello@silai.pk" class="footer-link">Email Us</a></div></div>
+      <div class="footer-col"><h5>Contact</h5><div class="footer-links"><a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27m%20interested%20in%20getting%20a%20suit%20stitched%20from%20Silai.pk.%20Could%20you%20please%20guide%20me%3F" class="footer-link">WhatsApp</a><a href="mailto:hello@silai.pk" class="footer-link">Email Us</a></div></div>
     </div>
     <div class="container footer-bottom"><div>© 2026 Silai. All rights reserved.</div><div>Made with ❤️ in Lahore, Pakistan 🇵🇰</div></div>
   </footer>
@@ -467,6 +546,7 @@
                   <option value="Canada">🇨🇦 Canada</option>
                   <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
                   <option value="Australia">🇦🇺 Australia</option>
+                  <option value="Pakistan">🇵🇰 Pakistan (Domestic)</option>
                 </select>
               </div>
             </div>
@@ -504,11 +584,43 @@
             <h2 class="step-title">Style &amp; Add-ons</h2>
             <div class="form-row">
               <div class="form-group"><label class="form-label">Fabric Type</label><select id="fabric-type" class="form-select"><option value="Lawn">Lawn</option><option value="Chiffon">Chiffon</option><option value="Silk">Silk</option><option value="Velvet">Velvet</option><option value="Cotton">Cotton</option><option value="Organza">Organza</option></select></div>
-              <div class="form-group"><label class="form-label">Neckline</label><select id="neckline" class="form-select"><option value="Round">Round</option><option value="V-Neck">V-Neck</option><option value="Boat">Boat Neck</option><option value="Collar">Collar</option><option value="Square">Square</option></select></div>
+            </div>
+            <div class="form-group mt-md">
+              <label class="form-label">Neckline (Gala) Style</label>
+              <input type="hidden" id="neckline" value="Round">
+              <div class="neckline-grid">
+                <input type="radio" name="necklineOpt" id="nl-round" value="Round" class="neckline-radio" checked>
+                <label for="nl-round" class="neckline-tile">
+                  <svg viewBox="0 0 48 48"><ellipse cx="24" cy="20" rx="10" ry="7" /><line x1="14" y1="20" x2="8" y2="36"/><line x1="34" y1="20" x2="40" y2="36"/></svg>
+                  <span>Round</span>
+                </label>
+                <input type="radio" name="necklineOpt" id="nl-vneck" value="V-Neck" class="neckline-radio">
+                <label for="nl-vneck" class="neckline-tile">
+                  <svg viewBox="0 0 48 48"><polyline points="14,14 24,30 34,14"/><line x1="14" y1="14" x2="8" y2="38"/><line x1="34" y1="14" x2="40" y2="38"/></svg>
+                  <span>V-Neck</span>
+                </label>
+                <input type="radio" name="necklineOpt" id="nl-boat" value="Boat Neck" class="neckline-radio">
+                <label for="nl-boat" class="neckline-tile">
+                  <svg viewBox="0 0 48 48"><path d="M10,18 Q24,26 38,18"/><line x1="10" y1="18" x2="6" y2="38"/><line x1="38" y1="18" x2="42" y2="38"/></svg>
+                  <span>Boat Neck</span>
+                </label>
+                <input type="radio" name="necklineOpt" id="nl-collar" value="Ban Collar" class="neckline-radio">
+                <label for="nl-collar" class="neckline-tile">
+                  <svg viewBox="0 0 48 48"><rect x="17" y="12" width="14" height="8" rx="2"/><line x1="17" y1="20" x2="10" y2="38"/><line x1="31" y1="20" x2="38" y2="38"/></svg>
+                  <span>Ban Collar</span>
+                </label>
+                <input type="radio" name="necklineOpt" id="nl-square" value="Square" class="neckline-radio">
+                <label for="nl-square" class="neckline-tile">
+                  <svg viewBox="0 0 48 48"><rect x="15" y="14" width="18" height="12" rx="1"/><line x1="15" y1="26" x2="8" y2="38"/><line x1="33" y1="26" x2="40" y2="38"/></svg>
+                  <span>Square</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:var(--space-md)">
             </div>
             <div class="form-row" id="trouser-style-group" style="display:none">
               <div class="form-group"><label class="form-label">Sleeve Style</label><select id="sleeve-style" class="form-select"><option value="Full">Full Sleeves</option><option value="Three-Quarter">3/4 Sleeves</option><option value="Half">Half Sleeves</option><option value="Sleeveless">Sleeveless</option></select></div>
-              <div class="form-group"><label class="form-label">Trouser Style</label><select id="trouser-style" class="form-select"><option value="Straight">Straight Pants</option><option value="Shalwar">Shalwar</option><option value="Bell-Bottom">Bell Bottom</option><option value="Palazzo">Palazzo</option></select></div>
+              <div class="form-group"><label class="form-label">Bottom Style</label><select id="trouser-style" class="form-select"><option value="Straight">Straight Pants</option><option value="Shalwar">Shalwar</option><option value="Tulip Shalwar">Tulip Shalwar</option><option value="Cigarette Pants">Cigarette Pants</option><option value="Patiala">Patiala Shalwar</option><option value="Bell-Bottom">Bell Bottom</option><option value="Palazzo">Palazzo</option></select></div>
             </div>
             
             <div class="form-section-title mt-lg">Reference Design Picture</div>
@@ -528,7 +640,8 @@
             <div class="addons-grid">
               <label class="addon-item"><div class="addon-left"><div class="addon-icon">⚡</div><div><div class="addon-name">Express Stitching</div><div class="addon-desc">4-day turnaround</div></div></div><div class="addon-right"><div class="addon-price">+$10</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="express"><div class="toggle-track"></div></div></div></label>
               <label class="addon-item"><div class="addon-left"><div class="addon-icon">🧵</div><div><div class="addon-name">Inner Lining</div><div class="addon-desc">For sheer fabrics</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="lining"><div class="toggle-track"></div></div></div></label>
-              <label class="addon-item"><div class="addon-left"><div class="addon-icon">✨</div><div><div class="addon-name">Tassels, Laces & Buttons</div><div class="addon-desc">Custom designs</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="trims" id="addon-trims-check"><div class="toggle-track"></div></div></div></label>
+              <label class="addon-item"><div class="addon-left"><div class="addon-icon">✨</div><div><div class="addon-name">Tassels, Laces & Buttons</div><div class="addon-desc">Latkan, lace trim, custom buttons</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="trims" id="addon-trims-check"><div class="toggle-track"></div></div></div></label>
+              <label class="addon-item"><div class="addon-left"><div class="addon-icon">〰️</div><div><div class="addon-name">Piping</div><div class="addon-desc">Contrast edge detail on neckline &amp; sleeves</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="addon-toggle" data-addon="piping"><div class="toggle-track"></div></div></div></label>
               <!-- Upload panel for trims -->
               <div id="trims-upload-panel" style="display:none; margin-top:8px; margin-bottom:12px; padding:12px; border-radius:8px; border:1px dashed var(--border);">
                  <label class="form-label mb-sm" style="font-size:0.85rem">Upload lacces or tassels designs photo</label>
@@ -632,6 +745,17 @@
                   <div class="form-row">
                     <div class="form-group"><label class="form-label">Zip *</label><input type="text" id="co-zip" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
+                  </div>
+                </div>
+
+                <!-- Shipping Tier Panel -->
+                <div id="shipping-tier-panel" class="card mb-md" style="padding:var(--space-lg); border:1px solid rgba(42,157,143,0.3);">
+                  <h4 class="mb-md">🚚 Shipping Estimate</h4>
+                  <div class="price-line" style="font-size:0.9rem;"><span>Items</span><span id="shipping-item-count">1 clothing item</span></div>
+                  <div class="price-line" style="font-size:0.9rem;"><span>Rate</span><span id="shipping-tier-rate" class="text-teal">Calculating…</span></div>
+                  <div id="shipping-upsell-bar" style="margin-top:12px; display:none;">
+                    <div class="progress-track" style="height:6px;"><div class="progress-fill" id="upsell-progress" style="width:0%"></div></div>
+                    <p id="upsell-msg" style="font-size:0.82rem; color:var(--gold); margin-top:6px;"></p>
                   </div>
                 </div>
 
@@ -850,6 +974,134 @@
   </div>
 </div>
 
+<!-- ========================================================
+     MEASURE GUIDE VIEW
+======================================================== -->
+<div id="view-measure" class="spa-view">
+  <div class="page-header">
+    <div class="container page-header-content text-center">
+      <h1>📏 Measurement Guide</h1>
+      <p class="section-subheading" style="margin:0 auto">How to measure yourself at home — in 6 easy steps.</p>
+    </div>
+  </div>
+  <div class="container" style="padding-top:var(--space-3xl); padding-bottom:var(--space-4xl);">
+
+    <div class="measure-guide-grid">
+
+      <!-- Body Diagram -->
+      <div class="measure-body-diagram">
+        <svg viewBox="0 0 200 420" xmlns="http://www.w3.org/2000/svg" style="max-width:220px;">
+          <!-- Body silhouette -->
+          <ellipse cx="100" cy="38" rx="22" ry="26" fill="none" stroke="rgba(212,175,55,0.5)" stroke-width="2"/>
+          <!-- Neck -->
+          <line x1="88" y1="62" x2="85" y2="80" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <line x1="112" y1="62" x2="115" y2="80" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <!-- Shoulders -->
+          <path d="M85,80 Q60,85 50,95" fill="none" stroke="rgba(212,175,55,0.5)" stroke-width="2"/>
+          <path d="M115,80 Q140,85 150,95" fill="none" stroke="rgba(212,175,55,0.5)" stroke-width="2"/>
+          <!-- Torso -->
+          <path d="M50,95 L45,180 L70,185 L100,182 L130,185 L155,180 L150,95" fill="rgba(212,175,55,0.05)" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <!-- Arms -->
+          <path d="M50,95 L35,175" fill="none" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <path d="M150,95 L165,175" fill="none" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <!-- Legs -->
+          <path d="M70,185 L65,320 L85,320 L100,280 L115,320 L135,320 L130,185" fill="rgba(212,175,55,0.04)" stroke="rgba(212,175,55,0.4)" stroke-width="2"/>
+          <!-- Measurement lines -->
+          <!-- Chest line -->
+          <line x1="38" y1="112" x2="162" y2="112" stroke="rgba(42,157,143,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="168" y="116" font-size="9" fill="#3DBDAD" font-family="Inter,sans-serif">①</text>
+          <!-- Waist line -->
+          <line x1="42" y1="145" x2="158" y2="145" stroke="rgba(201,123,75,0.7)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="164" y="149" font-size="9" fill="#E08C58" font-family="Inter,sans-serif">②</text>
+          <!-- Hip line -->
+          <line x1="40" y1="175" x2="160" y2="175" stroke="rgba(196,123,138,0.7)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="166" y="179" font-size="9" fill="#C47B8A" font-family="Inter,sans-serif">③</text>
+          <!-- Shoulder line -->
+          <line x1="50" y1="88" x2="150" y2="88" stroke="rgba(212,175,55,0.8)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="155" y="92" font-size="9" fill="#D4AF37" font-family="Inter,sans-serif">④</text>
+          <!-- Kameez length -->
+          <line x1="25" y1="82" x2="25" y2="185" stroke="rgba(212,175,55,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="10" y="140" font-size="9" fill="#D4AF37" font-family="Inter,sans-serif">⑤</text>
+          <!-- Trouser length -->
+          <line x1="175" y1="185" x2="175" y2="318" stroke="rgba(42,157,143,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="178" y="258" font-size="9" fill="#3DBDAD" font-family="Inter,sans-serif">⑥</text>
+        </svg>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-top:var(--space-md); text-align:center;">Measurements in inches</p>
+
+        <div class="measure-tip-box mt-lg">
+          <h4>💡 Tips for Best Results</h4>
+          <ul>
+            <li>Use a soft measuring tape</li>
+            <li>Measure over your undergarments, not over clothes</li>
+            <li>Keep the tape snug but not tight</li>
+            <li>Ask a friend to help for accuracy</li>
+            <li>Still unsure? WhatsApp us a photo of a well-fitting outfit</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Guide -->
+      <div class="measure-steps">
+        <div class="measure-point">
+          <div class="measure-point-num">①</div>
+          <div>
+            <h4>Chest (Seena)</h4>
+            <p>Measure around the fullest part of your chest, keeping the tape horizontal. Note this in inches.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num">②</div>
+          <div>
+            <h4>Waist (Kamar)</h4>
+            <p>Measure around the narrowest part of your natural waist — usually about 1 inch above your belly button.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num">③</div>
+          <div>
+            <h4>Hips (Kamar/Koolha)</h4>
+            <p>Measure around the fullest part of your hips and buttocks, about 8 inches below the waist.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num">④</div>
+          <div>
+            <h4>Shoulder Width (Kandha)</h4>
+            <p>Measure from the edge of one shoulder to the other, across the back. This determines the kameez width at the top.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num">⑤</div>
+          <div>
+            <h4>Kameez Length (Lambai)</h4>
+            <p>From the top of your shoulder down to where you want the kameez to end. Typical: 42–50 inches depending on style.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num">⑥</div>
+          <div>
+            <h4>Trouser / Shalwar Length</h4>
+            <p>From your natural waist down to your ankle. Usually 38–42 inches. For Tulip Shalwar, measure to just below the knee.</p>
+          </div>
+        </div>
+        <div class="measure-point">
+          <div class="measure-point-num" style="background:rgba(201,123,75,0.12); border-color:rgba(201,123,75,0.3); color:var(--terracotta);">✂</div>
+          <div>
+            <h4>Sleeve Length (Aastaeen)</h4>
+            <p>From the shoulder point down to the wrist. For full sleeves: ~21–23 inches. For 3/4 sleeves: ~16–18 inches.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:var(--space-2xl); display:flex; flex-direction:column; gap:var(--space-md);">
+          <a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27d%20like%20help%20with%20my%20measurements%20for%20a%20Silai.pk%20order." target="_blank" class="btn btn-whatsapp">💬 Send Measurements via WhatsApp</a>
+          <a href="#order" class="btn btn-primary">✂️ Place Your Order Now</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ─── Before/After Slider Script ─────────────────── -->
 <script>
 (function(){
@@ -895,6 +1147,7 @@ function handleHashChange() {
   // Lazy load views
   if (hash === 'profile') loadProfile();
   if (hash === 'admin') { /* gate handles it */ }
+  if (hash === 'measure') { /* static view, no load needed */ }
 }
 window.addEventListener('hashchange', handleHashChange);
 window.addEventListener('load', handleHashChange);
@@ -905,8 +1158,23 @@ window.addEventListener('load', handleHashChange);
 <script src="/js/track.js"></script>
 <script src="/js/auth.js"></script>
 
+<!-- ─── Lookbook Filter ──────────────────────────────── -->
+<script>
+function filterLookbook(cat, btn) {
+  document.querySelectorAll('.lb-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.lookbook-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
+
 <!-- WhatsApp Float -->
-<a href="https://wa.me/923001234567" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+<a href="https://wa.me/923001234567?text=Assalam-o-Alaikum%2C%20I%27m%20interested%20in%20getting%20a%20suit%20stitched%20from%20Silai.pk.%20Could%20you%20please%20guide%20me%3F" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
 </a>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

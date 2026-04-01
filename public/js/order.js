@@ -5,8 +5,145 @@
 
 const PRICES = {
   base: { 'kameez': 22, 'fullsuit': 32, '3piece': 45, 'party': 60 },
-  addons: { 'express': 10, 'lining': 5, 'neckline': 6, 'consult': 5, 'trims': 5 }
+  addons: { 'express': 10, 'lining': 5, 'neckline': 6, 'consult': 5, 'trims': 5, 'piping': 5 }
 };
+
+// ─── Tiered Shipping Zones ──────────────────────────────────
+const SHIPPING_ZONES = {
+  north_america: {
+    countries: ['United States', 'Canada'],
+    tiers: [
+      { min: 1, max: 5,  rate: 39, label: '$39 flat rate' },
+      { min: 6, max: 10, rate: 55, label: '$55 flat rate' },
+      { min: 11, max: null, rate: 0, label: 'Free Shipping 🎉' }
+    ]
+  },
+  uk_europe: {
+    countries: ['United Kingdom'],
+    tiers: [
+      { min: 1, max: 5,  rate: 35, label: '$35 flat rate' },
+      { min: 6, max: 10, rate: 48, label: '$48 flat rate' },
+      { min: 11, max: null, rate: 0, label: 'Free Shipping 🎉' }
+    ]
+  },
+  middle_east: {
+    countries: ['United Arab Emirates'],
+    tiers: [
+      { min: 1, max: 5,  rate: 30, label: '$30 flat rate' },
+      { min: 6, max: null, rate: 0, label: 'Free Shipping 🎉' }
+    ]
+  },
+  australia: {
+    countries: ['Australia'],
+    tiers: [
+      { min: 1, max: 5,  rate: 42, label: '$42 flat rate' },
+      { min: 6, max: null, rate: 0, label: 'Free Shipping 🎉' }
+    ]
+  },
+  domestic: {
+    countries: ['Pakistan']
+  }
+};
+const CLOTHING_TYPES = ['kameez', 'fullsuit', '3piece', 'party'];
+
+function calculateTieredShipping(cartItems, destinationCountry) {
+  // Count only clothing items (not accessories)
+  const clothingCount = cartItems.filter(item => CLOTHING_TYPES.includes(item.type)).length;
+  const totalValueUSD = cartItems.reduce((sum, i) => sum + (i.price || 0), 0);
+
+  // Find zone
+  let zone = null;
+  let zoneName = null;
+  for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
+    if (z.countries.includes(destinationCountry)) { zone = z; zoneName = name; break; }
+  }
+
+  // Domestic Pakistan — value-based
+  if (zoneName === 'domestic') {
+    const pkrValue = totalValueUSD * 280; // rough PKR conversion
+    if (pkrValue >= 3000) {
+      return { rate: 0, label: 'Free Shipping 🎉', upsell: null, tierIndex: 1, zone: 'domestic' };
+    }
+    return { rate: 0, label: 'Rs. 200', upsell: null, tierIndex: 0, zone: 'domestic' };
+  }
+
+  if (!zone || !zone.tiers) return null; // unknown zone — fall back to Shippo
+
+  // Find matching tier
+  let matchedTier = null;
+  let matchedIndex = 0;
+  for (let i = 0; i < zone.tiers.length; i++) {
+    const t = zone.tiers[i];
+    const inRange = clothingCount >= t.min && (t.max === null || clothingCount <= t.max);
+    if (inRange) { matchedTier = t; matchedIndex = i; break; }
+  }
+  if (!matchedTier) matchedTier = zone.tiers[zone.tiers.length - 1];
+
+  // Calculate upsell message
+  let upsell = null;
+  const nextTier = zone.tiers[matchedIndex + 1];
+  if (nextTier && matchedTier.rate > 0) {
+    const itemsNeeded = nextTier.min - clothingCount;
+    if (nextTier.rate === 0) {
+      upsell = { itemsNeeded, msg: `Add ${itemsNeeded} more suit${itemsNeeded !== 1 ? 's' : ''} to unlock Free Shipping! 🎉`, progress: (clothingCount / nextTier.min) * 100 };
+    } else {
+      const saving = matchedTier.rate - nextTier.rate;
+      upsell = { itemsNeeded, msg: `Add ${itemsNeeded} more suit${itemsNeeded !== 1 ? 's' : ''} without paying any extra shipping!`, progress: (clothingCount / nextTier.min) * 100 };
+    }
+  } else if (matchedTier.rate === 0) {
+    upsell = { itemsNeeded: 0, msg: 'You have Free Shipping on this order! 🎉', progress: 100 };
+  }
+
+  return { rate: matchedTier.rate, label: matchedTier.label, upsell, tierIndex: matchedIndex, zone: zoneName, clothingCount };
+}
+
+function updateShippingUI(result) {
+  if (!result) return;
+
+  // Update sidebar "Shipping" line
+  const shipElem = document.querySelector('.price-line span.text-teal');
+  if (shipElem) shipElem.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
+
+  // Update checkout panel rate display
+  const tierRateEl = document.getElementById('shipping-tier-rate');
+  if (tierRateEl) tierRateEl.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
+
+  // Update item count display
+  const itemCountEl = document.getElementById('shipping-item-count');
+  if (itemCountEl) {
+    const c = result.clothingCount || 1;
+    itemCountEl.textContent = `${c} clothing item${c !== 1 ? 's' : ''}`;
+  }
+
+  // Update upsell bar
+  const upsellBar = document.getElementById('shipping-upsell-bar');
+  const upsellProgress = document.getElementById('upsell-progress');
+  const upsellMsg = document.getElementById('upsell-msg');
+  if (upsellBar && result.upsell) {
+    upsellBar.style.display = 'block';
+    if (upsellProgress) upsellProgress.style.width = Math.min(100, result.upsell.progress) + '%';
+    if (upsellMsg) upsellMsg.textContent = result.upsell.msg;
+  } else if (upsellBar) {
+    upsellBar.style.display = 'none';
+  }
+
+  // Update order summary shipping in checkout sidebar
+  const coShipEl = document.querySelector('#shipping-tier-rate');
+  if (coShipEl) coShipEl.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
+}
+
+function runTieredShipping() {
+  const country = document.getElementById('shipping-country')?.value || 'United States';
+  const garmentType = state.garmentType || 'kameez';
+  const cartItems = [{ type: garmentType, price: state.basePrice + state.addonsPrice }];
+  const result = calculateTieredShipping(cartItems, country);
+  if (result !== null) {
+    state.shippingRate = result.rate;
+    updateShippingUI(result);
+    recalcPrice();
+  }
+  return result;
+}
 
 let state = {
   currentStep: 1,
@@ -230,6 +367,7 @@ document.querySelectorAll('.garment-option').forEach(radio => {
     const trouserGroup = document.getElementById('trouser-style-group');
     if (trouserGroup) trouserGroup.style.display = ['fullsuit', '3piece', 'party'].includes(radio.value) ? 'flex' : 'none';
     recalcPrice();
+    runTieredShipping();
     populateReview();
   });
 });
@@ -238,6 +376,7 @@ const countrySelect = document.getElementById('shipping-country');
 if (countrySelect) {
   countrySelect.addEventListener('change', () => {
     state.orderData.shipping_country = countrySelect.value;
+    runTieredShipping();
   });
 }
 
@@ -319,42 +458,50 @@ function populateReview() {
   }
 }
 
-// ─── Shippo Integration for Step 5 ──────────────────
+// ─── Shipping Quote: Tiered first, Shippo fallback ───────────
 async function fetchShippingQuote() {
-  const address = document.getElementById('co-address')?.value;
   const city = document.getElementById('co-city')?.value;
-  const zip = document.getElementById('co-zip')?.value;
-  const name = document.getElementById('co-fname')?.value;
-  
+  const zip  = document.getElementById('co-zip')?.value;
   if (!city || !zip) return;
 
+  // Try tiered logic first
+  const tieredResult = runTieredShipping();
+  if (tieredResult !== null) {
+    // Tiered rate applied — no need for Shippo
+    if (typeof showToast === 'function') showToast('Shipping rate calculated!', 'success');
+    return;
+  }
+
+  // Fallback: Shippo for unknown zones
   const btn = document.getElementById('btn-submit');
   const ogText = btn ? btn.textContent : '';
   if (btn) btn.innerHTML = '<span class="spinner"></span> Quoting...';
-  
+
   try {
-     const reqBody = { name, street1: address, city, state: '', zip, country: localStorage.getItem('silai-country-code') || 'US' };
-     const req = await fetch('/api/shipping/rates', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(reqBody)
-     });
-     const data = await req.json();
-     if(data.success) {
-         let quoteUsd = data.rate;
-         if (data.currency !== 'USD' && liveExchangeRates[data.currency]) {
-             quoteUsd = data.rate / liveExchangeRates[data.currency];
-         }
-         state.shippingRate = quoteUsd;
-         if (typeof showToast === 'function') showToast('Real-time shipping rate applied!', 'success');
-     } else {
-         console.warn(data.error);
-         state.shippingRate = 20; 
-     }
+    const address = document.getElementById('co-address')?.value;
+    const name    = document.getElementById('co-fname')?.value;
+    const reqBody = { name, street1: address, city, state: '', zip, country: localStorage.getItem('silai-country-code') || 'US' };
+    const req = await fetch('/api/shipping/rates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqBody)
+    });
+    const data = await req.json();
+    if (data.success) {
+      let quoteUsd = data.rate;
+      if (data.currency !== 'USD' && liveExchangeRates[data.currency]) {
+        quoteUsd = data.rate / liveExchangeRates[data.currency];
+      }
+      state.shippingRate = quoteUsd;
+      if (typeof showToast === 'function') showToast('Real-time shipping rate applied!', 'success');
+    } else {
+      console.warn(data.error);
+      state.shippingRate = 20;
+    }
   } catch(e) {
-     state.shippingRate = 20; 
+    state.shippingRate = 20;
   }
-  
+
   if (btn) btn.innerHTML = ogText || 'Place Order Securely';
   recalcPrice();
 }
@@ -456,11 +603,21 @@ if (orderForm) {
   });
 }
 
+// ─── Neckline icon grid sync ───────────────────────────────
+document.querySelectorAll('.neckline-radio').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const hidden = document.getElementById('neckline');
+    if (hidden) hidden.value = radio.value;
+    populateReview();
+  });
+});
+
 // ─── Initialize ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initLocation();
   updateNavButtons();
   populateReview();
+  runTieredShipping();
   
   const nextBtn = document.getElementById('btn-next');
   if (nextBtn) {
