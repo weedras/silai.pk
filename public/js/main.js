@@ -17,27 +17,41 @@ if (navbar) {
 // ─── Mobile menu ──────────────────────────────────────────
 const hamburger = document.querySelector('.nav-hamburger');
 const mobileMenu = document.querySelector('.mobile-menu');
+const menuOverlay = document.querySelector('.mobile-menu-overlay');
+
+function closeMenu() {
+  if (mobileMenu) mobileMenu.classList.remove('open');
+  if (menuOverlay) menuOverlay.classList.remove('open');
+  if (hamburger) {
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+}
+
 if (hamburger && mobileMenu) {
   hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('open');
+    const isOpen = mobileMenu.classList.toggle('open');
+    if (menuOverlay) menuOverlay.classList.toggle('open', isOpen);
+    
     const spans = hamburger.querySelectorAll('span');
-    const isOpen = mobileMenu.classList.contains('open');
     if (isOpen) {
-      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[0].style.transform = 'translateY(8px) rotate(45deg)';
       spans[1].style.opacity = '0';
-      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      spans[2].style.transform = 'translateY(-8px) rotate(-45deg)';
     } else {
       spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
     }
   });
+
+
   // Close menu on link click
   mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu.classList.remove('open');
-      hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
-    });
+    link.addEventListener('click', closeMenu);
   });
+  
+  // Close on overlay click
+  if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 }
+
 
 // ─── Scroll Reveal ────────────────────────────────────────
 const revealObserver = new IntersectionObserver((entries) => {

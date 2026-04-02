@@ -134,8 +134,7 @@ function updateShippingUI(result) {
 
 function runTieredShipping() {
   const country = document.getElementById('shipping-country')?.value || 'United States';
-  const garmentType = state.garmentType || 'kameez';
-  const cartItems = [{ type: garmentType, price: state.basePrice + state.addonsPrice }];
+  const cartItems = state.cart.length > 0 ? state.cart : [{ type: state.garmentType || 'kameez', price: state.basePrice + state.addonsPrice }];
   const result = calculateTieredShipping(cartItems, country);
   if (result !== null) {
     state.shippingRate = result.rate;
@@ -144,6 +143,7 @@ function runTieredShipping() {
   }
   return result;
 }
+
 
 let state = {
   currentStep: 1,
@@ -160,8 +160,128 @@ let state = {
   sourcePicBase64: '',
   trimsPicBase64: '',
   measPicBase64: '',
-  shippingRate: 0
+  shippingRate: 0,
+  cart: []
 };
+
+window.addItemToCart = function() {
+  const garmentType = document.getElementById('garment-type-val')?.value || 'kameez';
+  const item = {
+    id: Date.now(),
+    type: garmentType,
+    fabric: document.getElementById('fabric-type')?.value,
+    neckline: document.getElementById('neckline')?.value,
+    sleeve: document.getElementById('sleeve-style')?.value,
+    bottom: document.getElementById('trouser-style')?.value,
+    addons: Object.entries(state.addons).filter(([,v]) => v).map(([k]) => k),
+    price: state.basePrice + state.addonsPrice,
+    base_price: state.basePrice,
+    addons_price: state.addonsPrice,
+    measurements: {
+      method: state.measurementMethod,
+      standard_size: document.getElementById('meas-standard-size')?.value,
+      chest: document.getElementById('meas-chest')?.value,
+      waist: document.getElementById('meas-waist')?.value,
+      hips: document.getElementById('meas-hips')?.value,
+      klength: document.getElementById('meas-klength')?.value,
+      sleeve: document.getElementById('meas-sleeve')?.value,
+      shoulder: document.getElementById('meas-shoulder')?.value,
+      trouser: document.getElementById('meas-trouser')?.value,
+      inseam: document.getElementById('meas-inseam')?.value,
+      pic: state.measPicBase64
+    },
+    style: {
+      notes: document.getElementById('special-instructions')?.value,
+      reference: state.referenceDesignBase64,
+      fabric_sourcing: document.getElementById('source-fabric-check')?.checked 
+        ? {
+            link: document.getElementById('source-fabric-link')?.value,
+            desc: document.getElementById('source-fabric-desc')?.value,
+            pic: state.sourcePicBase64
+          }
+        : null
+    }
+  };
+  state.cart.push(item);
+  clearGarmentForm();
+  renderCart();
+  runTieredShipping();
+  recalcPrice();
+  if (typeof showToast === 'function') showToast('Garment added to cart!', 'success');
+  goToStep(4); // Go to Cart/Review step
+};
+
+window.removeItemFromCart = function(id) {
+  state.cart = state.cart.filter(item => item.id !== id);
+  renderCart();
+  runTieredShipping();
+  recalcPrice();
+};
+
+function clearGarmentForm() {
+  state.addons = {};
+  state.referenceDesignBase64 = '';
+  state.sourcePicBase64 = '';
+  state.trimsPicBase64 = '';
+  state.measPicBase64 = '';
+  document.querySelectorAll('.addon-toggle').forEach(t => t.checked = false);
+  document.querySelectorAll('.addon-item').forEach(i => i.classList.remove('selected'));
+  const instr = document.getElementById('special-instructions');
+  if (instr) instr.value = '';
+  const sfCheck = document.getElementById('source-fabric-check');
+  if (sfCheck) sfCheck.checked = false;
+  const sfDetails = document.getElementById('source-fabric-details');
+  if (sfDetails) sfDetails.style.display = 'none';
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items-list');
+  if (!container) return;
+  
+  if (state.cart.length === 0) {
+    container.innerHTML = '<div class="text-center p-lg"><p>Your cart is empty.</p></div>';
+    recalcPrice();
+    return;
+  }
+  
+  container.innerHTML = state.cart.map(item => `
+    <div class="cart-item-card card mb-md" style="padding:var(--space-md); border:1px solid var(--border); background:rgba(255,255,255,0.02)">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="font-size:1.5rem">${item.type === 'kameez' ? '👘' : '👗'}</div>
+          <div>
+            <div style="font-weight:600; text-transform:capitalize; font-size:0.95rem;">${item.type} (${item.fabric})</div>
+            <div style="font-size:0.8rem; color:var(--text-muted)">Neck: ${item.neckline} | Size: ${item.measurements.standard_size || 'Custom'}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700; color:var(--gold);">${formatPrice(item.price)}</div>
+          <button type="button" onclick="removeItemFromCart(${item.id})" style="background:none; border:none; color:var(--rose); font-size:0.8rem; cursor:pointer; padding:4px 0; text-decoration:underline;">Remove</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const sidebarList = document.getElementById('sidebar-cart-list');
+  if (sidebarList) {
+    sidebarList.innerHTML = state.cart.map(item => `
+      <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; color:var(--text-secondary)">
+        <span>1x ${item.type}</span>
+        <span>${formatPrice(item.price)}</span>
+      </div>
+    `).join('');
+  }
+
+  const coGarment = document.getElementById('checkout-garment');
+  if (coGarment) coGarment.textContent = `${state.cart.length} Garment${state.cart.length !== 1 ? 's' : ''}`;
+  
+  const coTitle = document.getElementById('checkout-summary-title');
+  if (coTitle) coTitle.textContent = `Order summary (${state.cart.length} item${state.cart.length !== 1 ? 's' : ''})`;
+  
+  const stepCount = document.getElementById('shipping-item-count');
+  if (stepCount) stepCount.textContent = `${state.cart.length} clothing item${state.cart.length !== 1 ? 's' : ''}`;
+}
+
 
 // ─── IP Geolocation & Live Currency ────────────────────────
 const countryToCurrencyMap = { 'US': 'USD', 'GB': 'GBP', 'CA': 'CAD', 'AE': 'AED', 'AU': 'AUD' };
@@ -273,9 +393,14 @@ function updateNavButtons() {
 
 function nextStep() {
   if (validateStep(state.currentStep)) {
-    goToStep(state.currentStep + 1);
+    if (state.currentStep === 3) {
+      window.addItemToCart();
+    } else {
+      goToStep(state.currentStep + 1);
+    }
   }
 }
+
 
 function prevStep() {
   goToStep(state.currentStep - 1);
@@ -319,37 +444,47 @@ function recalcPrice() {
     if (state.addons[key]) state.addonsPrice += PRICES.addons[key] || 0;
   });
 
-  const total = (state.basePrice || 0) + (state.addonsPrice || 0) + (state.shippingRate || 0);
+  // Calculate Subtotal (Cart items + current garment if not added yet)
+  let subtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
+  if (state.currentStep <= 3) {
+      subtotal += (state.basePrice + state.addonsPrice);
+  }
+
+  const total = subtotal + (state.shippingRate || 0);
   const deposit = total; // 100% upfront
   
   state.loyaltyPoints = Math.floor(deposit * 10) || 0;
 
-  const shipElem = document.querySelector('.price-line span.text-teal');
-  if (shipElem) {
-    if (state.shippingRate > 0) shipElem.textContent = formatPrice(state.shippingRate);
-    else shipElem.textContent = 'At dispatch';
-  }
-  const coShipElem = document.querySelector('#co-subtotal')?.parentElement?.nextElementSibling?.querySelector('span:nth-child(2)');
-  if (coShipElem) {
-    if (state.shippingRate > 0) coShipElem.textContent = formatPrice(state.shippingRate);
-    else coShipElem.textContent = 'TBD';
-  }
+  // Update EVERY shipping element
+  const shipElems = document.querySelectorAll('.price-line span.text-teal, #shipping-tier-rate');
+  shipElems.forEach(el => {
+    if (state.shippingRate > 0) el.textContent = formatPrice(state.shippingRate);
+    else if (state.shippingRate === 0 && total > 0) el.textContent = 'Free Shipping 🎉';
+    else el.textContent = 'At dispatch';
+  });
 
   const elems = {
     base: document.getElementById('price-base'),
     addons: document.getElementById('price-addons'),
     total: document.getElementById('price-total'),
     bigTotal: document.getElementById('price-big-total'),
-    coSubtotal: document.getElementById('co-subtotal'),
-    coTotal: document.getElementById('co-total'),
+    coSubtotal: document.getElementById('co-subtotal'), 
+    coTotal: document.getElementById('co-total'),       
     coPoints: document.getElementById('co-points')
   };
   
-  if (elems.base) elems.base.textContent = formatPrice(state.basePrice);
-  if (elems.addons) elems.addons.textContent = formatPrice(state.addonsPrice);
+  if (elems.base) {
+      const itemsBase = state.cart.reduce((s,i)=>s+i.base_price, 0);
+      elems.base.textContent = formatPrice(state.currentStep <= 3 ? itemsBase + state.basePrice : itemsBase);
+  }
+  if (elems.addons) {
+      const itemsAddons = state.cart.reduce((s,i)=>s+i.addons_price, 0);
+      elems.addons.textContent = formatPrice(state.currentStep <= 3 ? itemsAddons + state.addonsPrice : itemsAddons);
+  }
+
   if (elems.total) elems.total.textContent = formatPrice(total);
   if (elems.bigTotal) elems.bigTotal.textContent = formatPrice(total);
-  if (elems.coSubtotal) elems.coSubtotal.textContent = formatPrice(total);
+  if (elems.coSubtotal) elems.coSubtotal.textContent = formatPrice(subtotal);
   if (elems.coTotal) elems.coTotal.textContent = formatPrice(total);
   if (elems.coPoints) elems.coPoints.textContent = state.loyaltyPoints;
 
@@ -359,10 +494,9 @@ function recalcPrice() {
   if (reviewDeposit) reviewDeposit.textContent = formatPrice(deposit);
 
   state.orderData.total_price = total;
-  state.orderData.addons_price = state.addonsPrice;
-  state.orderData.base_price = state.basePrice;
   state.orderData.amount_paid = deposit;
 }
+
 
 // ─── Garment type & Country logic ─────────────────────────
 document.querySelectorAll('.garment-option').forEach(radio => {
@@ -546,38 +680,25 @@ if (orderForm) {
       customer_whatsapp: cPhone,
       shipping_country: coCountry,
       shipping_address: coAddress,
-      garment_type: document.getElementById('garment-type-val')?.value,
-      fabric_type: document.getElementById('fabric-type')?.value,
-      fabric_sourcing: document.getElementById('source-fabric-check')?.checked 
-        ? JSON.stringify({
-            link: document.getElementById('source-fabric-link')?.value || '',
-            desc: document.getElementById('source-fabric-desc')?.value || '',
-            pic: state.sourcePicBase64 || ''
-          })
-        : '',
-      neckline: document.getElementById('neckline')?.value,
-      sleeve_style: document.getElementById('sleeve-style')?.value,
-      trouser_style: document.getElementById('trouser-style')?.value,
-      style_notes: document.getElementById('special-instructions')?.value + 
-                   (state.trimsPicBase64 ? ' [Includes Trims Photo]' : ''),
-      reference_design: state.referenceDesignBase64 || (document.getElementById('rm-whatsapp')?.checked ? 'whatsapp' : ''),
-      measurement_method: state.measurementMethod,
-      standard_size: document.getElementById('meas-standard-size')?.value,
-      chest: document.getElementById('meas-chest')?.value,
-      waist: document.getElementById('meas-waist')?.value,
-      hips: document.getElementById('meas-hips')?.value,
-      kameez_length: document.getElementById('meas-klength')?.value,
-      sleeve_length: document.getElementById('meas-sleeve')?.value,
-      shoulder_width: document.getElementById('meas-shoulder')?.value,
-      trouser_length: document.getElementById('meas-trouser')?.value,
-      inseam: document.getElementById('meas-inseam')?.value,
-      addons: Object.entries(state.addons).filter(([,v]) => v).map(([k]) => k),
-      base_price: state.basePrice,
-      addons_price: state.addonsPrice,
+      // Map cart items for backend
+      items: state.cart.map(item => ({
+          garment_type: item.type,
+          fabric_type: item.fabric,
+          neckline: item.neckline,
+          sleeve_style: item.sleeve,
+          trouser_style: item.bottom,
+          add_ons: item.addons,
+          style_notes: item.style.notes,
+          reference_design: item.style.reference,
+          measurements: item.measurements,
+          base_price: item.base_price,
+          addons_price: item.addons_price
+      })),
       total_price: state.orderData.total_price || 0,
       amount_paid: state.orderData.total_price || 0,
       loyalty_points_earned: state.loyaltyPoints || 0
     };
+
 
     try {
       const resp = await fetch('/api/orders', {

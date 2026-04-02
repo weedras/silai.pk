@@ -143,7 +143,7 @@
     <a href="#about" class="nav-link">About Us</a>
   </div>
     <div class="nav-actions">
-    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle Menu" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle Menu">
       <span></span><span></span><span></span>
     </button>
     <div class="header-delivery" onclick="document.getElementById('location-modal').classList.add('open')" style="cursor:pointer; font-size:0.75rem; line-height:1.2; padding-right:1rem; border-right:1px solid var(--border); margin-right:1rem; display:flex; flex-direction:column; align-items:flex-end; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">
@@ -161,7 +161,9 @@
   </div>
 </nav>
 
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('mobile-menu-overlay').classList.remove('open');"></div>
 <div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" onclick="document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('mobile-menu-overlay').classList.remove('open');">✕</button>
   <a href="#home" class="nav-link">Home</a>
   <a href="#order" class="nav-link">Place Order</a>
   <a href="#track" class="nav-link">Track Order</a>
@@ -704,22 +706,28 @@
             </div>
           </div>          <!-- Step 4 -->
           <div id="step-4" class="form-step">
-            <h2 class="step-title">Review Your Order</h2>
-            <div class="card card-glass mb-lg">
-              <div class="form-section-title">Customer</div>
-              <div class="price-line"><span>Name</span><strong id="review-customer-name">—</strong></div>
-              <div class="price-line"><span>Email</span><strong id="review-customer-email">—</strong></div>
-              <div class="price-line"><span>WhatsApp</span><strong id="review-customer-whatsapp">—</strong></div>
-              <div class="price-line"><span>Country</span><strong id="review-shipping-country">—</strong></div>
+            <h2 class="step-title">Review Your Cart</h2>
+            <p class="section-subheading mb-lg" style="margin:0 auto">You can add multiple suits to a single order and save on shipping!</p>
+            
+            <div id="cart-items-list" class="mb-xl">
+              <!-- Cart items will be injected here via JS -->
+              <div class="text-center p-xl card card-glass">
+                <p>Your cart is empty.</p>
+              </div>
             </div>
-            <div class="card card-glass">
-              <div class="form-section-title">Style</div>
-              <div class="price-line"><span>Garment</span><strong id="review-garment">—</strong></div>
-              <div class="price-line"><span>Fabric</span><strong id="review-fabric-type">—</strong></div>
-              <div class="price-line"><span>Neckline</span><strong id="review-neckline">—</strong></div>
-              <div class="price-line"><span>Add-ons</span><strong id="review-addons">None</strong></div>
+
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <button type="button" class="btn btn-outline w-full" onclick="goToStep(1)">+ Add Another Garment</button>
+              <div class="card card-glass mt-lg">
+                <div class="form-section-title">Order Total</div>
+                <div class="price-line"><span>Subtotal</span><strong id="review-total">—</strong></div>
+                <div class="price-line"><span>Shipping</span><strong class="text-teal" id="shipping-tier-rate-review">Calculating…</strong></div>
+                <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;" />
+                <div class="price-line total"><span>Total Due Now</span><strong id="review-deposit">—</strong></div>
+              </div>
             </div>
           </div>
+
 
                     <!-- Step 5 -->
           <div id="step-5" class="form-step">
@@ -814,7 +822,7 @@
               <!-- Order Summary Side -->
               <div style="width:100%; max-width:320px;">
                 <div class="card" style="padding:var(--space-lg); border:1px solid var(--border); position:sticky; top:100px;">
-                  <h4 class="mb-md">Order summary (1 item)</h4>
+                  <h4 class="mb-md" id="checkout-summary-title">Order summary (1 item)</h4>
                   <div style="display:flex; gap:12px; margin-bottom:var(--space-md);">
                      <div style="width:60px; height:80px; background:var(--glass-bg); display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:1.5rem;">👘</div>
                      <div>
@@ -852,15 +860,19 @@
       <div class="price-sidebar">
         <div class="price-box">
           <h4>💰 Order Summary</h4>
-          <div class="price-line"><span>Base Stitching</span><span id="price-base">$22.00</span></div>
+          <div id="sidebar-cart-list" style="margin-bottom:var(--space-md)">
+             <!-- Current form garment shown if cart is empty or we are in steps 1-3 -->
+          </div>
+          <div class="price-line"><span>Stitching</span><span id="price-base">$0.00</span></div>
           <div class="price-line"><span>Add-ons</span><span id="price-addons">$0.00</span></div>
           <div class="price-line"><span>Shipping</span><span class="text-teal">At dispatch</span></div>
-          <div class="price-line total"><span>Total</span><span id="price-total">$22.00</span></div>
+          <div class="price-line total"><span>Total</span><span id="price-total">$0.00</span></div>
           <div class="price-total-big mt-lg" style="display:none"><div class="amount" id="price-deposit">$0</div></div>
-          <div class="price-deposit mt-md">100% Total Due Now. Shipping calculated later.</div>
+          <div class="price-deposit mt-md">100% Total Due Now. Secure your slot!</div>
           <div class="badge badge-gold w-full flex-center mt-md" style="justify-content:center">🔒 Secure Payment</div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
