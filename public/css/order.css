@@ -256,8 +256,44 @@
 .tracking-info-card .label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 .tracking-info-card .value { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
 
+/* ─── Product Cards (Shopify-style garment selection) ─────── */
+.garment-product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+.product-card-shopify {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex; flex-direction: column; gap: var(--space-md);
+  transition: all var(--dur-med); height: 100%;
+}
+.product-card-shopify:hover { border-color: var(--gold); background: rgba(255,255,255,0.06); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.25); }
+.product-card-main { display: flex; gap: var(--space-md); align-items: center; }
+.product-card-image { font-size: 2.2rem; background: rgba(255,255,255,0.05); width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); flex-shrink: 0; }
+.product-card-details { flex: 1; }
+.product-name { font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 2px; color: var(--gold); }
+.product-price-display { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.product-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin: 0; }
+.product-options-row { display: flex; gap: var(--space-lg); align-items: flex-end; flex-wrap: wrap; }
+.option-group { display: flex; flex-direction: column; gap: 6px; }
+.option-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.btn-premium { background: var(--cream, #f5f0e8); color: var(--midnight, #0d1117); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px; border: none; border-radius: var(--radius-md); transition: all var(--dur-fast); cursor: pointer; font-size: 0.82rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.btn-premium:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+.btn-text-gold { background: none; border: none; color: var(--gold); font-weight: 600; text-decoration: underline; cursor: pointer; }
+/* Size chips */
+.size-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.size-chip { cursor: pointer; }
+.size-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.size-chip span { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 600; transition: all var(--dur-fast); color: var(--text-secondary); background: rgba(255,255,255,0.02); }
+.size-chip input:checked + span { background: var(--gold); color: var(--midnight, #0d1117); border-color: var(--gold); }
+.size-chip:hover span { border-color: var(--gold); }
+/* Qty selector */
+.qty-selector { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; height: 36px; }
+.qty-selector button { background: none; border: none; color: var(--text-primary); width: 30px; height: 100%; cursor: pointer; font-size: 1rem; transition: background var(--dur-fast); }
+.qty-selector button:hover { background: rgba(255,255,255,0.1); }
+.qty-selector input { width: 34px; background: transparent !important; border: none !important; color: var(--text-primary) !important; text-align: center; font-weight: 700; font-size: 0.88rem; }
+
 /* Responsive */
-@media (max-width: 1024px) { .order-layout { grid-template-columns: 1fr; } .price-sidebar { position: static; } }
+@media (max-width: 860px) { .order-layout { grid-template-columns: 1fr; } .price-sidebar { position: static; } .garment-product-grid { grid-template-columns: 1fr; } }
 @media (max-width: 768px) {
   .garment-selector { grid-template-columns: 1fr 1fr; }
   .meas-grid { grid-template-columns: 1fr; }

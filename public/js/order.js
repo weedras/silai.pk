@@ -170,6 +170,8 @@ let state = {
   measPicBase64: '',
   shippingRate: -1,
   shippingLabel: 'TBD',
+  tempSize: 'M',
+  tempQty: 1,
   cart: []
 };
 
@@ -199,17 +201,19 @@ function loadCartFromStorage() {
 
 window.addItemToCart = function() {
   const garmentType = document.getElementById('garment-type-val')?.value || 'kameez';
-  const item = {
-    id: Date.now(),
+  const qty = state.tempQty || 1;
+  const unitPrice = state.basePrice + state.addonsPrice;
+  const baseItem = {
     type: garmentType,
     fabric: document.getElementById('fabric-type')?.value,
     neckline: document.getElementById('neckline')?.value,
     sleeve: document.getElementById('sleeve-style')?.value,
     bottom: document.getElementById('trouser-style')?.value,
     addons: Object.entries(state.addons).filter(([,v]) => v).map(([k]) => k),
-    price: state.basePrice + state.addonsPrice,
+    price: unitPrice,
     base_price: state.basePrice,
     addons_price: state.addonsPrice,
+    size: state.tempSize || 'M',
     measurements: {
       method: state.measurementMethod,
       standard_size: document.getElementById('meas-standard-size')?.value,
@@ -226,7 +230,7 @@ window.addItemToCart = function() {
     style: {
       notes: document.getElementById('special-instructions')?.value,
       reference: state.referenceDesignBase64,
-      fabric_sourcing: document.getElementById('source-fabric-check')?.checked 
+      fabric_sourcing: document.getElementById('source-fabric-check')?.checked
         ? {
             link: document.getElementById('source-fabric-link')?.value,
             desc: document.getElementById('source-fabric-desc')?.value,
@@ -235,14 +239,18 @@ window.addItemToCart = function() {
         : null
     }
   };
-  state.cart.push(item);
+  for (let i = 0; i < qty; i++) {
+    state.cart.push({ ...baseItem, id: Date.now() + i });
+  }
   saveCartToStorage();
   clearGarmentForm();
+  state.tempQty = 1;
   renderCart();
   runTieredShipping();
   recalcPrice();
-  if (typeof showToast === 'function') showToast('Garment added to cart!', 'success');
-  goToStep(4); // Go to Cart/Review step
+  const msg = qty > 1 ? `${qty} garments added to cart!` : 'Garment added to cart!';
+  if (typeof showToast === 'function') showToast(msg, 'success');
+  goToStep(4);
 };
 
 window.removeItemFromCart = function(id) {
@@ -254,6 +262,58 @@ window.removeItemFromCart = function(id) {
   renderCart();
   runTieredShipping();
   recalcPrice();
+};
+
+window.clearCart = function() {
+  if (!confirm('Clear all items from cart?')) return;
+  state.cart = [];
+  state.basePrice = 0;
+  state.addonsPrice = 0;
+  state.addons = {};
+  state.shippingRate = -1;
+  state.shippingLabel = 'TBD';
+  saveCartToStorage();
+  clearGarmentForm();
+  renderCart();
+  runTieredShipping();
+};
+
+window.duplicateItemInCart = function(id) {
+  const item = state.cart.find(i => i.id === id);
+  if (!item) return;
+  const copy = JSON.parse(JSON.stringify(item));
+  copy.id = Date.now();
+  state.cart.push(copy);
+  saveCartToStorage();
+  renderCart();
+  runTieredShipping();
+  recalcPrice();
+  if (typeof showToast === 'function') showToast('Garment duplicated!', 'success');
+};
+
+window.startConfiguration = function(garmentType) {
+  const size = document.querySelector(`input[name="size-${garmentType}"]:checked`)?.value || 'M';
+  const qtyInput = document.getElementById(`qty-${garmentType}`);
+  const qty = parseInt(qtyInput?.value || 1);
+  state.garmentType = garmentType;
+  state.tempSize = size;
+  state.tempQty = qty;
+  const hidden = document.getElementById('garment-type-val');
+  if (hidden) hidden.value = garmentType;
+  const sizeSelect = document.getElementById('meas-standard-size');
+  if (sizeSelect) sizeSelect.value = size;
+  state.basePrice = PRICES.base[garmentType] || PRICES.base['kameez'];
+  recalcPrice();
+  goToStep(2);
+};
+
+window.changeQty = function(garmentType, delta) {
+  const input = document.getElementById(`qty-${garmentType}`);
+  if (!input) return;
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  input.value = val;
+  state.tempQty = val;
 };
 
 function clearGarmentForm() {
@@ -294,7 +354,10 @@ function renderCart() {
         </div>
         <div style="text-align:right">
           <div style="font-weight:700; color:var(--gold);">${formatPrice(item.price)}</div>
-          <button type="button" onclick="removeItemFromCart(${item.id})" style="background:none; border:none; color:var(--rose); font-size:0.8rem; cursor:pointer; padding:4px 0; text-decoration:underline;">Remove</button>
+          <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:4px;">
+              <button type="button" onclick="window.duplicateItemInCart(${item.id})" style="background:none; border:none; color:var(--gold); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Duplicate</button>
+              <button type="button" onclick="removeItemFromCart(${item.id})" style="background:none; border:none; color:var(--rose); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Remove</button>
+            </div>
         </div>
       </div>
     </div>
@@ -770,7 +833,7 @@ function showOrderSuccess(orderId) {
   const wrapper = document.getElementById('order-form-wrapper');
   if (wrapper) wrapper.style.display = 'none';
   const sc = document.getElementById('order-success');
-  if (sc) sc.style.display = 'block';
+  if (sc) { sc.style.display = ''; sc.classList.add('visible'); }
   const sId = document.getElementById('success-order-id');
   if (sId) sId.textContent = orderId;
   const trackLink = document.getElementById('success-track-link');
@@ -781,7 +844,7 @@ function showOrderSuccess(orderId) {
 // ─── Reset order form for a new order ──────────────────────
 window.initOrderForm = function() {
   const sc = document.getElementById('order-success');
-  if (sc) sc.style.display = 'none';
+  if (sc) { sc.classList.remove('visible'); }
   const wrapper = document.getElementById('order-form-wrapper');
   if (wrapper) wrapper.style.display = 'block';
   // Reset state

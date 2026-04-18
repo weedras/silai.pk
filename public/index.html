@@ -674,7 +674,7 @@
   <div class="container order-page">
     <div class="order-layout">
       <div class="order-main">
-        <div id="order-success" class="order-success" style="display:none">
+        <div id="order-success" class="order-success">
           <div class="success-icon">🎉</div>
           <h2>Order Placed!</h2>
           <p>Your garment is now in our expert hands.</p>
@@ -744,15 +744,123 @@
   </div>
   <div class="form-section-title mt-lg">Select Garment Type</div>
             <input type="hidden" id="garment-type-val" value="kameez"/>
-            <div class="garment-selector">
-              <input type="radio" name="garmentType" id="gt-kameez" value="kameez" class="garment-option" checked>
-              <label for="gt-kameez" class="garment-label"><div class="garment-icon">👘</div><div class="garment-name">Kameez Only</div><div class="garment-price">from $22</div></label>
-              <input type="radio" name="garmentType" id="gt-fullsuit" value="fullsuit" class="garment-option">
-              <label for="gt-fullsuit" class="garment-label"><div class="garment-icon">👗</div><div class="garment-name">Full Suit (2pc)</div><div class="garment-price">from $32</div></label>
-              <input type="radio" name="garmentType" id="gt-3piece" value="3piece" class="garment-option">
-              <label for="gt-3piece" class="garment-label"><div class="garment-icon">✨</div><div class="garment-name">3-Piece Suit</div><div class="garment-price">from $45</div></label>
-              <input type="radio" name="garmentType" id="gt-party" value="party" class="garment-option">
-              <label for="gt-party" class="garment-label"><div class="garment-icon">👑</div><div class="garment-name">Party Wear</div><div class="garment-price">from $60</div></label>
+            <div style="background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.2); border-radius:var(--radius-md); padding:var(--space-md); display:flex; gap:12px; align-items:center; margin-bottom:var(--space-md);">
+              <div style="font-size:1.6rem">📦</div>
+              <div><div style="font-weight:700; color:var(--gold); font-size:0.9rem;">One box. One flat shipping rate.</div><p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Add multiple suits — the shipping stays the same!</p></div>
+            </div>
+            <div class="garment-product-grid">
+              <!-- Kameez Only -->
+              <div class="product-card-shopify">
+                <div class="product-card-main">
+                  <div class="product-card-image">👕</div>
+                  <div class="product-card-details">
+                    <div class="product-name">Kameez Only</div>
+                    <div class="product-price-display">$22</div>
+                    <p class="product-desc">Traditional custom-stitched shirt or kurta.</p>
+                  </div>
+                </div>
+                <div class="product-options-row">
+                  <div class="option-group">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;"><span class="option-label">Size</span><button type="button" class="btn-text-gold" style="font-size:0.62rem;" onclick="document.getElementById('size-chart-modal').classList.add('open')">SIZE CHART</button></div>
+                    <div class="size-chips">
+                      <label class="size-chip"><input type="radio" name="size-kameez" value="XS"><span>XS</span></label>
+                      <label class="size-chip"><input type="radio" name="size-kameez" value="S"><span>S</span></label>
+                      <label class="size-chip"><input type="radio" name="size-kameez" value="M" checked><span>M</span></label>
+                      <label class="size-chip"><input type="radio" name="size-kameez" value="L"><span>L</span></label>
+                      <label class="size-chip"><input type="radio" name="size-kameez" value="XL"><span>XL</span></label>
+                    </div>
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">Qty</span>
+                    <div class="qty-selector"><button type="button" onclick="window.changeQty('kameez',-1)">−</button><input type="number" id="qty-kameez" value="1" min="1" readonly><button type="button" onclick="window.changeQty('kameez',1)">+</button></div>
+                  </div>
+                </div>
+                <button type="button" class="btn-premium w-full" onclick="window.startConfiguration('kameez')">CONFIGURE &amp; ADD →</button>
+              </div>
+              <!-- Full Suit (2pc) -->
+              <div class="product-card-shopify">
+                <div class="product-card-main">
+                  <div class="product-card-image">👗</div>
+                  <div class="product-card-details">
+                    <div class="product-name">Full Suit (2pc)</div>
+                    <div class="product-price-display">$32</div>
+                    <p class="product-desc">Shirt and trouser set, custom made to your style.</p>
+                  </div>
+                </div>
+                <div class="product-options-row">
+                  <div class="option-group">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;"><span class="option-label">Size</span><button type="button" class="btn-text-gold" style="font-size:0.62rem;" onclick="document.getElementById('size-chart-modal').classList.add('open')">SIZE CHART</button></div>
+                    <div class="size-chips">
+                      <label class="size-chip"><input type="radio" name="size-fullsuit" value="XS"><span>XS</span></label>
+                      <label class="size-chip"><input type="radio" name="size-fullsuit" value="S"><span>S</span></label>
+                      <label class="size-chip"><input type="radio" name="size-fullsuit" value="M" checked><span>M</span></label>
+                      <label class="size-chip"><input type="radio" name="size-fullsuit" value="L"><span>L</span></label>
+                      <label class="size-chip"><input type="radio" name="size-fullsuit" value="XL"><span>XL</span></label>
+                    </div>
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">Qty</span>
+                    <div class="qty-selector"><button type="button" onclick="window.changeQty('fullsuit',-1)">−</button><input type="number" id="qty-fullsuit" value="1" min="1" readonly><button type="button" onclick="window.changeQty('fullsuit',1)">+</button></div>
+                  </div>
+                </div>
+                <button type="button" class="btn-premium w-full" onclick="window.startConfiguration('fullsuit')">CONFIGURE &amp; ADD →</button>
+              </div>
+              <!-- 3-Piece Suit -->
+              <div class="product-card-shopify">
+                <div class="product-card-main">
+                  <div class="product-card-image">✨</div>
+                  <div class="product-card-details">
+                    <div class="product-name">3-Piece Suit</div>
+                    <div class="product-price-display">$45</div>
+                    <p class="product-desc">Shirt, trouser, and dupatta. Complete formal look.</p>
+                  </div>
+                </div>
+                <div class="product-options-row">
+                  <div class="option-group">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;"><span class="option-label">Size</span><button type="button" class="btn-text-gold" style="font-size:0.62rem;" onclick="document.getElementById('size-chart-modal').classList.add('open')">SIZE CHART</button></div>
+                    <div class="size-chips">
+                      <label class="size-chip"><input type="radio" name="size-3piece" value="XS"><span>XS</span></label>
+                      <label class="size-chip"><input type="radio" name="size-3piece" value="S"><span>S</span></label>
+                      <label class="size-chip"><input type="radio" name="size-3piece" value="M" checked><span>M</span></label>
+                      <label class="size-chip"><input type="radio" name="size-3piece" value="L"><span>L</span></label>
+                      <label class="size-chip"><input type="radio" name="size-3piece" value="XL"><span>XL</span></label>
+                    </div>
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">Qty</span>
+                    <div class="qty-selector"><button type="button" onclick="window.changeQty('3piece',-1)">−</button><input type="number" id="qty-3piece" value="1" min="1" readonly><button type="button" onclick="window.changeQty('3piece',1)">+</button></div>
+                  </div>
+                </div>
+                <button type="button" class="btn-premium w-full" onclick="window.startConfiguration('3piece')">CONFIGURE &amp; ADD →</button>
+              </div>
+              <!-- Party Wear -->
+              <div class="product-card-shopify">
+                <div class="product-card-main">
+                  <div class="product-card-image">👑</div>
+                  <div class="product-card-details">
+                    <div class="product-name">Party Wear</div>
+                    <div class="product-price-display">$60</div>
+                    <p class="product-desc">Heavily detailed suit for weddings and events.</p>
+                  </div>
+                </div>
+                <div class="product-options-row">
+                  <div class="option-group">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;"><span class="option-label">Size</span><button type="button" class="btn-text-gold" style="font-size:0.62rem;" onclick="document.getElementById('size-chart-modal').classList.add('open')">SIZE CHART</button></div>
+                    <div class="size-chips">
+                      <label class="size-chip"><input type="radio" name="size-party" value="XS"><span>XS</span></label>
+                      <label class="size-chip"><input type="radio" name="size-party" value="S"><span>S</span></label>
+                      <label class="size-chip"><input type="radio" name="size-party" value="M" checked><span>M</span></label>
+                      <label class="size-chip"><input type="radio" name="size-party" value="L"><span>L</span></label>
+                      <label class="size-chip"><input type="radio" name="size-party" value="XL"><span>XL</span></label>
+                    </div>
+                  </div>
+                  <div class="option-group">
+                    <span class="option-label">Qty</span>
+                    <div class="qty-selector"><button type="button" onclick="window.changeQty('party',-1)">−</button><input type="number" id="qty-party" value="1" min="1" readonly><button type="button" onclick="window.changeQty('party',1)">+</button></div>
+                  </div>
+                </div>
+                <button type="button" class="btn-premium w-full" onclick="window.startConfiguration('party')">CONFIGURE &amp; ADD →</button>
+              </div>
             </div>
           </div>
 
@@ -890,7 +998,10 @@
             <div id="review-upsell-container" style="display:none; margin-bottom:var(--space-lg)"></div>
 
             <div style="display:flex; flex-direction:column; gap:12px;">
-              <button type="button" class="btn btn-outline w-full" onclick="goToStep(1)">+ Add Another Garment</button>
+              <div style="display:flex; gap:12px;">
+                <button type="button" class="btn btn-outline" style="flex:1" onclick="goToStep(1)">+ Add Another Garment</button>
+                <button type="button" class="btn btn-outline" style="border-color:var(--rose); color:var(--rose);" onclick="window.clearCart()">🗑️ Clear Cart</button>
+              </div>
               <div class="card card-glass mt-lg">
                 <div class="form-section-title">Order Total</div>
                 <div class="price-line"><span>Subtotal</span><strong id="review-total">—</strong></div>
