@@ -292,6 +292,8 @@ window.duplicateItemInCart = function(id) {
 };
 
 window.startConfiguration = function(garmentType) {
+  // Validate step 1 required fields before proceeding
+  if (!validateStep(1)) return;
   const size = document.querySelector(`input[name="size-${garmentType}"]:checked`)?.value || 'M';
   const qtyInput = document.getElementById(`qty-${garmentType}`);
   const qty = parseInt(qtyInput?.value || 1);
@@ -537,7 +539,7 @@ function updateNavButtons() {
 
   if (state.currentStep === 1) {
     if (prevBtn) prevBtn.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'block';
+    if (nextBtn) nextBtn.style.display = 'none'; // product card buttons handle step 1 navigation
     if (submitBtn) submitBtn.style.display = 'none';
   } else if (state.currentStep === state.totalSteps) {
     if (prevBtn) prevBtn.style.display = 'block';
@@ -574,8 +576,8 @@ function validateStep(step) {
   reqs.forEach(input => {
     let isValidInput = true;
     if (!input.value) isValidInput = false;
-    else if (input.type === 'email' && !/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/.test(input.value)) isValidInput = false;
-    else if (input.type === 'tel' && !/^\\+?[0-9\\s\\-\\(\\)]{7,20}$/.test(input.value)) isValidInput = false;
+    else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) isValidInput = false;
+    else if (input.type === 'tel' && !/^\+?[0-9\s\-()]{7,20}$/.test(input.value)) isValidInput = false;
 
     if (!isValidInput) {
       valid = false;
