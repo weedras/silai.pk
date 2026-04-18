@@ -1,0 +1,42 @@
+{
+  "zones": {
+    "north_america": {
+      "countries": ["United States", "Canada"],
+      "tiers": [
+        { "min": 1, "max": 5,  "rate": 39, "currency": "USD", "label": "$39 flat rate" },
+        { "min": 6, "max": 10, "rate": 55, "currency": "USD", "label": "$55 flat rate" },
+        { "min": 11, "max": null, "rate": 0, "currency": "USD", "label": "Free Shipping" }
+      ]
+    },
+    "uk_europe": {
+      "countries": ["United Kingdom"],
+      "tiers": [
+        { "min": 1, "max": 5,  "rate": 35, "currency": "USD", "label": "$35 flat rate" },
+        { "min": 6, "max": 10, "rate": 48, "currency": "USD", "label": "$48 flat rate" },
+        { "min": 11, "max": null, "rate": 0, "currency": "USD", "label": "Free Shipping" }
+      ]
+    },
+    "middle_east": {
+      "countries": ["United Arab Emirates"],
+      "tiers": [
+        { "min": 1, "max": 5,  "rate": 30, "currency": "USD", "label": "$30 flat rate" },
+        { "min": 6, "max": null, "rate": 0, "currency": "USD", "label": "Free Shipping" }
+      ]
+    },
+    "australia": {
+      "countries": ["Australia"],
+      "tiers": [
+        { "min": 1, "max": 5,  "rate": 42, "currency": "USD", "label": "$42 flat rate" },
+        { "min": 6, "max": null, "rate": 0, "currency": "USD", "label": "Free Shipping" }
+      ]
+    },
+    "domestic": {
+      "countries": ["Pakistan"],
+      "value_tiers": [
+        { "max_value_pkr": 3000, "rate_pkr": 200, "label": "Rs. 200" },
+        { "min_value_pkr": 3000, "rate_pkr": 0,   "label": "Free Shipping" }
+      ]
+    }
+  },
+  "clothing_types": ["kameez", "fullsuit", "3piece", "party"]
+}

@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/admin
+Disallow: /api/orders
+Disallow: /api/auth
+Disallow: /api/shipping
+
+Sitemap: https://silai.pk/sitemap.xml
