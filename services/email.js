@@ -102,7 +102,7 @@ async function sendOrderConfirmation(order) {
     <div style="background:#fffbeb;border-left:4px solid #d4af37;padding:16px 20px;border-radius:4px;margin:0 0 24px;">
       <div style="font-weight:600;color:#0d1117;margin-bottom:8px;">⏭️ What happens next?</div>
       <ol style="margin:0;padding-left:20px;color:#64748b;font-size:0.88rem;line-height:1.8;">
-        <li>Ship your fabric to: <strong>Workshop, Old City, Lahore, Pakistan</strong></li>
+        <li>Ship your fabric to: <strong>House 82D, Block D, PCSIR Staff Colony, College Road, Lahore, Pakistan</strong></li>
         <li>We receive & quality-check your fabric</li>
         <li>Tailoring begins — we'll keep you updated</li>
         <li>Finished garment shipped back to you ✈️</li>

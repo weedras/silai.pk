@@ -42,17 +42,17 @@ function updateNavForUser() {
 }
 
 // ─── Modal helpers ─────────────────────────────────────────
-function openAuthModal(tab = 'login', onSuccessCallback = null) {
+window.openAuthModal = function openAuthModal(tab = 'login', onSuccessCallback = null) {
   window._authCallback = onSuccessCallback || null;
   const modal = document.getElementById('auth-modal');
   if (modal) modal.classList.add('open');
   switchAuthTab(tab);
-}
+};
 
-function closeAuthModal() {
+window.closeAuthModal = function closeAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (modal) modal.classList.remove('open');
-}
+};
 
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));

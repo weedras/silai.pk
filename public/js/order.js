@@ -12,7 +12,7 @@ const PRICES = {
 // All international rates in USD. Domestic flat PKR.
 const SHIPPING_ZONES = {
   north_america: { countries: ['United States', 'Canada'],        flat: 35 },
-  uk_europe:     { countries: ['United Kingdom'],                  flat: 24 },  // ~£19
+  uk_europe:     { countries: ['United Kingdom'],                  flatGBP: 19 },  // £19 flat (stored in GBP)
   middle_east:   { countries: ['United Arab Emirates'],            flat: 20 },
   australia:     { countries: ['Australia'],                       flat: 30 },
   domestic:      { countries: ['Pakistan'],            flatPKR: 300 }
@@ -40,6 +40,13 @@ function calculateTieredShipping(cartItems, destinationCountry) {
   if (zoneName === 'domestic') {
     const pkrRate = (liveExchangeRates?.PKR) || 280;
     return { rate: zone.flatPKR / pkrRate, label: `Rs. ${zone.flatPKR}`, upsell: null, zone: 'domestic', clothingCount: clothingItems.length };
+  }
+
+  // UK/Europe: stored as GBP, convert to USD for calculation, display as £
+  if (zone.flatGBP) {
+    const gbpRate = (liveExchangeRates?.GBP) || 0.79;
+    const usdEquivalent = zone.flatGBP / gbpRate;
+    return { rate: usdEquivalent, label: `£${zone.flatGBP}`, upsell: null, zone: zoneName, clothingCount: clothingItems.length };
   }
 
   return { rate: zone.flat, label: formatPrice(zone.flat), upsell: null, zone: zoneName, clothingCount: clothingItems.length };
@@ -365,6 +372,24 @@ function renderCart() {
 
   updateNavMiniCart();
 
+  // Mini item list inside checkout summary bar (step 5 top)
+  const miniList = document.getElementById('co-items-mini');
+  if (miniList) {
+    const garmentEmojiMap = { kameez: '👘', fullsuit: '👗', '3piece': '🥻', party: '✨' };
+    miniList.innerHTML = state.cart.map(item => `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="font-size:1.2rem;">${garmentEmojiMap[item.type] || '👘'}</span>
+          <div>
+            <div style="font-weight:600; text-transform:capitalize; font-size:0.88rem;">${item.type} (${item.fabric || '—'})</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Size: ${item.measurements?.standard_size || 'Custom'}</div>
+          </div>
+        </div>
+        <span style="font-weight:600; color:var(--gold); font-size:0.88rem;">${formatPrice(item.price)}</span>
+      </div>
+    `).join('');
+  }
+
   // check for upsell
   const upsellContainer = document.getElementById('review-upsell-container');
   if (upsellContainer) {
@@ -638,6 +663,9 @@ function recalcPrice() {
   if (bigTotalEl)    bigTotalEl.textContent     = formatPrice(total);
   if (coSubtotal)    coSubtotal.textContent     = formatPrice(subtotal);
   if (coTotal)       coTotal.textContent        = formatPrice(total);
+  // Also update the separate body total in the collapsible summary bar
+  const coTotalBody = document.getElementById('co-total-body');
+  if (coTotalBody)   coTotalBody.textContent    = formatPrice(total);
   if (coPoints)      coPoints.textContent       = state.loyaltyPoints;
   if (reviewTotal)   reviewTotal.textContent    = formatPrice(subtotal);
   if (reviewDeposit) reviewDeposit.textContent  = formatPrice(total);
@@ -878,6 +906,16 @@ async function fetchShippingQuote() {
     el.addEventListener('blur', fetchShippingQuote);
   }
 });
+
+// ─── Checkout summary bar toggle ──────────────────────────
+window.toggleSummary = function() {
+  const body = document.getElementById('co-summary-body');
+  const chevron = document.getElementById('summary-chevron');
+  if (!body) return;
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+};
 
 // ─── Show order success screen ──────────────────────────────
 function showOrderSuccess(orderId, userCreated) {
@@ -1143,7 +1181,9 @@ async function initStripe() {
     const resp = await fetch('/api/config');
     const data = await resp.json();
     if (!data.stripePublishableKey) {
-      // No Stripe key — show fallback notice
+      // No Stripe key — hide the empty card box, show fallback notice
+      const cardEl = document.getElementById('stripe-card-element');
+      if (cardEl) cardEl.style.display = 'none';
       const notice = document.getElementById('stripe-no-key-notice');
       if (notice) notice.style.display = 'block';
       return;
