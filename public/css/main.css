@@ -762,3 +762,124 @@ p  { color: var(--text-secondary); line-height: 1.75; }
 .w-full { width: 100%; }
 .hidden { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+/* ═══════════════════════════════════════════════════════════
+   UI/UX Enhancement Layer — 2026 Polish
+═══════════════════════════════════════════════════════════ */
+
+/* ─── Page fade-in on load ───────────────────────────────── */
+@keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
+body { animation: page-fade-in 0.5s ease both; }
+
+/* ─── Card hover lift ────────────────────────────────────── */
+.card:hover { transform: translateY(-4px); }
+.card { will-change: transform; }
+
+/* ─── Button ripple ─────────────────────────────────────── */
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(0);
+  animation: ripple-out 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple-out { to { transform: scale(4); opacity: 0; } }
+
+/* ─── Nav link animated underline ───────────────────────── */
+.nav-link {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%;
+  width: 0; height: 1.5px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.25s var(--ease), left 0.25s var(--ease);
+}
+.nav-link:hover::after, .nav-link.active::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ─── Section reveal smooth ─────────────────────────────── */
+.reveal, .reveal-left, .reveal-right {
+  will-change: opacity, transform;
+}
+
+/* ─── Stats strip ────────────────────────────────────────── */
+.stats-strip {
+  background: linear-gradient(90deg,
+    rgba(212,175,55,0.05) 0%,
+    rgba(42,157,143,0.05) 50%,
+    rgba(212,175,55,0.05) 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-xl) 0;
+}
+.stats-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3xl);
+  flex-wrap: wrap;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--gold);
+  font-family: var(--font-sans);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+.stat-divider { width: 1px; height: 40px; background: var(--border); }
+@media (max-width: 600px) {
+  .stats-strip-inner { gap: var(--space-xl); }
+  .stat-divider { display: none; }
+  .stat-num { font-size: 1.9rem; }
+}
+
+/* ─── Section heading reveal ─────────────────────────────── */
+.section-label { transition: color 0.3s var(--ease); }
+
+/* ─── Improved pricing card hover ───────────────────────── */
+.pricing-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 24px 64px rgba(212,175,55,0.18) !important;
+}
+.pricing-card.featured:hover {
+  transform: scale(1.03) translateY(-6px) !important;
+}
+
+/* ─── Review card reveal ─────────────────────────────────── */
+.review-card { transition: transform var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease); }
+.review-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+
+/* ─── WhatsApp button pulse glow ─────────────────────────── */
+.btn-whatsapp { animation: wa-glow 3s ease-in-out infinite; }
+@keyframes wa-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.3); }
+  50%       { box-shadow: 0 4px 32px rgba(37,211,102,0.55); }
+}
+
+/* ─── Smooth SPA transition ─────────────────────────────── */
+.spa-view.active-view {
+  animation: spa-in 0.35s var(--ease) both;
+}
+@keyframes spa-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

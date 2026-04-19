@@ -212,3 +212,41 @@ window.addEventListener('load', handleHashChange);
 // Expose toast globally
 window.showToast = showToast;
 window.handleHashChange = handleHashChange;
+
+// ─── Button ripple effect ─────────────────────────────────
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const ripple = document.createElement('span');
+  ripple.className = 'btn-ripple';
+  ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+  btn.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+});
+
+// ─── Nav active link highlight ────────────────────────────
+function updateActiveNavLink() {
+  const hash = (window.location.hash || '#home').replace('#', '');
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+    const href = (link.getAttribute('href') || '').replace('#', '');
+    link.classList.toggle('active', href === hash);
+  });
+}
+window.addEventListener('hashchange', updateActiveNavLink);
+window.addEventListener('load', updateActiveNavLink);
+
+// ─── Scroll reveal re-trigger on SPA view change ─────────
+function revealVisibleElements() {
+  document.querySelectorAll('.reveal:not(.visible), .reveal-left:not(.visible), .reveal-right:not(.visible)').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 60) {
+      el.classList.add('visible');
+    }
+  });
+}
+window.addEventListener('hashchange', () => setTimeout(revealVisibleElements, 50));
+
+// ─── Smooth number count on first enter ──────────────────
+// (counterObserver already handles [data-count] via IntersectionObserver in main.js)
