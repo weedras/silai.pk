@@ -8,48 +8,44 @@ const PRICES = {
   addons: { 'express': 10, 'lining': 5, 'neckline': 6, 'consult': 5, 'trims': 5, 'piping': 5 }
 };
 
-// ─── Tiered Shipping Zones ──────────────────────────────────
+// ─── Weight-based Shipping (like laam.pk) ─────────────────
+// Each garment type has an estimated finished weight in grams
+const GARMENT_WEIGHTS_G = {
+  kameez:   400,   // kameez only — light
+  fullsuit: 650,   // 2-piece suit
+  '3piece': 900,   // 3-piece — heavier fabric + extra piece
+  party:    750    // party wear — embellished
+};
+
+// Zones: base = charge for first 500 g, perKg = each additional kg
+// All rates in USD. Domestic uses flat PKR.
 const SHIPPING_ZONES = {
   north_america: {
     countries: ['United States', 'Canada'],
-    tiers: [
-      { min: 1, max: 5,  rate: 39, label: '$39 flat rate' },
-      { min: 6, max: 10, rate: 55, label: '$55 flat rate' },
-      { min: 11, max: null, rate: 0, label: 'Free Shipping 🎉' }
-    ]
+    base: 18, perKg: 12, minG: 500
   },
   uk_europe: {
     countries: ['United Kingdom'],
-    tiers: [
-      { min: 1, max: 5,  rate: 35, label: '$35 flat rate' },
-      { min: 6, max: 10, rate: 48, label: '$48 flat rate' },
-      { min: 11, max: null, rate: 0, label: 'Free Shipping 🎉' }
-    ]
+    base: 20, perKg: 11, minG: 500
   },
   middle_east: {
     countries: ['United Arab Emirates'],
-    tiers: [
-      { min: 1, max: 5,  rate: 30, label: '$30 flat rate' },
-      { min: 6, max: null, rate: 0, label: 'Free Shipping 🎉' }
-    ]
+    base: 14, perKg: 9,  minG: 500
   },
   australia: {
     countries: ['Australia'],
-    tiers: [
-      { min: 1, max: 5,  rate: 42, label: '$42 flat rate' },
-      { min: 6, max: null, rate: 0, label: 'Free Shipping 🎉' }
-    ]
+    base: 22, perKg: 13, minG: 500
   },
   domestic: {
-    countries: ['Pakistan']
+    countries: ['Pakistan'],
+    flatPKR: 300
   }
 };
+
 const CLOTHING_TYPES = ['kameez', 'fullsuit', '3piece', 'party'];
 
 function calculateTieredShipping(cartItems, destinationCountry) {
-  // Count only clothing items (not accessories)
-  const clothingCount = cartItems.filter(item => CLOTHING_TYPES.includes(item.type)).length;
-  const totalValueUSD = cartItems.reduce((sum, i) => sum + (i.price || 0), 0);
+  const clothingItems = cartItems.filter(item => CLOTHING_TYPES.includes(item.type));
 
   // Find zone
   let zone = null;
@@ -57,79 +53,78 @@ function calculateTieredShipping(cartItems, destinationCountry) {
   for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
     if (z.countries.includes(destinationCountry)) { zone = z; zoneName = name; break; }
   }
+  if (!zone) return null; // unknown country — TBD
 
-  // Domestic Pakistan — value-based
+  // ── Domestic Pakistan ──────────────────────────────────────
   if (zoneName === 'domestic') {
-    const pkrValue = totalValueUSD * 280; // rough PKR conversion
-    if (pkrValue >= 3000) {
-      return { rate: 0, label: 'Free Shipping 🎉', upsell: null, tierIndex: 1, zone: 'domestic' };
-    }
-    return { rate: 0, label: 'Rs. 200', upsell: null, tierIndex: 0, zone: 'domestic' };
+    const pkrRate = (liveExchangeRates && liveExchangeRates['PKR']) ? liveExchangeRates['PKR'] : 280;
+    const flatUSD = zone.flatPKR / pkrRate; // convert Rs.300 → USD for internal accounting
+    return {
+      rate: flatUSD,
+      label: `Rs. ${zone.flatPKR} flat`,
+      upsell: null,
+      zone: 'domestic',
+      clothingCount: clothingItems.length
+    };
   }
 
-  if (!zone || !zone.tiers) return null; // unknown zone — fall back to Shippo
+  // ── International weight-based ─────────────────────────────
+  const totalWeightG = clothingItems.reduce((sum, item) => {
+    return sum + (GARMENT_WEIGHTS_G[item.type] || 500);
+  }, 0);
 
-  // Find matching tier
-  let matchedTier = null;
-  let matchedIndex = 0;
-  for (let i = 0; i < zone.tiers.length; i++) {
-    const t = zone.tiers[i];
-    const inRange = clothingCount >= t.min && (t.max === null || clothingCount <= t.max);
-    if (inRange) { matchedTier = t; matchedIndex = i; break; }
-  }
-  if (!matchedTier) matchedTier = zone.tiers[zone.tiers.length - 1];
-
-  // Calculate upsell message
-  let upsell = null;
-  const nextTier = zone.tiers[matchedIndex + 1];
-  if (nextTier && matchedTier.rate > 0) {
-    const itemsNeeded = nextTier.min - clothingCount;
-    if (nextTier.rate === 0) {
-      upsell = { itemsNeeded, msg: `Add ${itemsNeeded} more suit${itemsNeeded !== 1 ? 's' : ''} to unlock Free Shipping! 🎉`, progress: (clothingCount / nextTier.min) * 100 };
-    } else {
-      const saving = matchedTier.rate - nextTier.rate;
-      upsell = { itemsNeeded, msg: `Add ${itemsNeeded} more suit${itemsNeeded !== 1 ? 's' : ''} without paying any extra shipping!`, progress: (clothingCount / nextTier.min) * 100 };
-    }
-  } else if (matchedTier.rate === 0) {
-    upsell = { itemsNeeded: 0, msg: 'You have Free Shipping on this order! 🎉', progress: 100 };
+  if (totalWeightG === 0) {
+    // Empty cart or non-clothing items only
+    return { rate: 0, label: '—', upsell: null, zone: zoneName, clothingCount: 0 };
   }
 
-  return { rate: matchedTier.rate, label: matchedTier.label, upsell, tierIndex: matchedIndex, zone: zoneName, clothingCount };
+  const extraKg  = Math.max(0, (totalWeightG - zone.minG) / 1000);
+  const rate     = parseFloat((zone.base + extraKg * zone.perKg).toFixed(2));
+  const weightKg = (totalWeightG / 1000).toFixed(2);
+  const label    = `$${rate.toFixed(2)} · ${weightKg} kg`; // raw USD label, recalcPrice() will reformat
+
+  // Upsell: show how shipping grows with next garment
+  const nextExtra = Math.max(0, (totalWeightG + 500 - zone.minG) / 1000);
+  const nextRate  = parseFloat((zone.base + nextExtra * zone.perKg).toFixed(2));
+  const diff      = parseFloat((nextRate - rate).toFixed(2));
+
+  const upsell = diff > 0
+    ? { msg: `Adding another garment increases shipping by ~$${diff.toFixed(2)}`, progress: null }
+    : null;
+
+  return { rate, label, upsell, zone: zoneName, clothingCount: clothingItems.length, weightG: totalWeightG };
 }
 
 function updateShippingUI(result) {
   if (!result) return;
 
-  // Update sidebar "Shipping" line
-  const shipElem = document.querySelector('#sidebar-shipping') || document.querySelector('.price-line span.text-teal');
-  if (shipElem) shipElem.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
+  const shippingText = result.rate > 0 ? formatPrice(result.rate) : (result.label || '—');
 
-  // Update checkout panel rate display
-  const tierRateEl = document.getElementById('shipping-tier-rate-review') || document.getElementById('shipping-tier-rate');
-  if (tierRateEl) tierRateEl.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
+  // All shipping display elements
+  document.querySelectorAll('#sidebar-shipping, #shipping-tier-rate, #shipping-tier-rate-review, .shipping-rate-val')
+    .forEach(el => { el.textContent = shippingText; });
 
-  // Update item count display
+  // Item count / weight info
   const itemCountEl = document.getElementById('shipping-item-count');
   if (itemCountEl) {
-    const c = result.clothingCount || 1;
-    itemCountEl.textContent = `${c} clothing item${c !== 1 ? 's' : ''}`;
+    const c = result.clothingCount || 0;
+    const wKg = result.weightG ? ` · ${(result.weightG / 1000).toFixed(2)} kg` : '';
+    itemCountEl.textContent = `${c} garment${c !== 1 ? 's' : ''}${wKg}`;
   }
 
-  // Update upsell bar
+  // Upsell bar — show weight-based info if available
   const upsellBar = document.getElementById('shipping-upsell-bar');
-  const upsellProgress = document.getElementById('upsell-progress');
   const upsellMsg = document.getElementById('upsell-msg');
-  if (upsellBar && result.upsell) {
-    upsellBar.style.display = 'block';
-    if (upsellProgress) upsellProgress.style.width = Math.min(100, result.upsell.progress) + '%';
-    if (upsellMsg) upsellMsg.textContent = result.upsell.msg;
-  } else if (upsellBar) {
-    upsellBar.style.display = 'none';
+  const upsellProgress = document.getElementById('upsell-progress');
+  if (upsellBar) {
+    if (result.upsell && result.upsell.msg) {
+      upsellBar.style.display = 'block';
+      if (upsellMsg)      upsellMsg.textContent          = result.upsell.msg;
+      if (upsellProgress) upsellProgress.style.width     = '100%'; // no threshold bar for weight model
+    } else {
+      upsellBar.style.display = 'none';
+    }
   }
-
-  // Update order summary shipping in checkout sidebar
-  const coShipEl = document.querySelector('#shipping-tier-rate');
-  if (coShipEl) coShipEl.textContent = result.rate > 0 ? formatPrice(result.rate) : result.label;
 }
 
 function runTieredShipping() {
@@ -627,11 +622,12 @@ function pkrToUSD(pkr) {
   return pkr / rate;
 }
 
-// Format a shipping label: if rate > 0 use formatPrice(), else show label text
+// Format shipping for display
 function formatShipping() {
-  if (state.shippingRate > 0) return formatPrice(state.shippingRate);
-  if (state.shippingRate === 0) return state.cart.length === 0 ? formatPrice(0) : (state.shippingLabel || formatPrice(0));
-  return 'TBD';
+  if (state.cart.length === 0)  return '—';
+  if (state.shippingRate > 0)   return formatPrice(state.shippingRate);
+  if (state.shippingRate === 0) return state.shippingLabel || '—';
+  return 'Calculating…';
 }
 
 function recalcPrice() {
