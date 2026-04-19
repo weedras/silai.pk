@@ -342,14 +342,21 @@ function clearGarmentForm() {
 
 function renderCart() {
   const container = document.getElementById('cart-items-list');
-  if (!container) return;
-  
+  const sidebarList = document.getElementById('sidebar-cart-list');
+
   if (state.cart.length === 0) {
-    container.innerHTML = '<div class="text-center p-lg"><p>Your cart is empty.</p></div>';
+    if (container) container.innerHTML = '<div class="text-center p-lg"><p>Your cart is empty.</p></div>';
+    if (sidebarList) sidebarList.innerHTML = '';
+    // Clear nav badge
+    const navBadge = document.getElementById('nav-cart-badge');
+    if (navBadge) { navBadge.textContent = '0'; navBadge.style.display = 'none'; }
+    updateNavMiniCart();
     recalcPrice();
     return;
   }
-  
+
+  if (!container) return;
+
   container.innerHTML = state.cart.map(item => `
     <div class="cart-item-card card mb-md" style="padding:var(--space-md); border:1px solid var(--border); background:rgba(255,255,255,0.02)">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -371,7 +378,6 @@ function renderCart() {
     </div>
   `).join('');
 
-  const sidebarList = document.getElementById('sidebar-cart-list');
   if (sidebarList) {
     sidebarList.innerHTML = state.cart.map(item => `
       <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; color:var(--text-secondary)">
@@ -383,10 +389,10 @@ function renderCart() {
 
   const coGarment = document.getElementById('checkout-garment');
   if (coGarment) coGarment.textContent = `${state.cart.length} Garment${state.cart.length !== 1 ? 's' : ''}`;
-  
+
   const coTitle = document.getElementById('checkout-summary-title');
   if (coTitle) coTitle.textContent = `Order summary (${state.cart.length} item${state.cart.length !== 1 ? 's' : ''})`;
-  
+
   const stepCount = document.getElementById('shipping-item-count');
   if (stepCount) stepCount.textContent = `${state.cart.length} clothing item${state.cart.length !== 1 ? 's' : ''}`;
 
@@ -395,6 +401,8 @@ function renderCart() {
     navBadge.textContent = state.cart.length;
     navBadge.style.display = state.cart.length > 0 ? 'inline-block' : 'none';
   }
+
+  updateNavMiniCart();
 
   // check for upsell
   const upsellContainer = document.getElementById('review-upsell-container');
@@ -992,6 +1000,258 @@ async function initStripe() {
   }
 }
 
+// ─── Config Modal ──────────────────────────────────────────
+const GARMENT_META = {
+  kameez:   { icon: '👕', name: 'Kameez Only',     price: 22 },
+  fullsuit: { icon: '👗', name: 'Full Suit (2pc)',  price: 32 },
+  '3piece': { icon: '✨', name: '3-Piece Suit',     price: 45 },
+  party:    { icon: '👑', name: 'Party Wear',       price: 60 }
+};
+
+const cmState = { step: 1, garmentType: 'kameez', qty: 1, size: 'M', basePrice: 22 };
+
+function cmUpdateLivePrice() {
+  const addonsTotal = [...document.querySelectorAll('.cm-addon:checked')]
+    .reduce((sum, cb) => sum + parseFloat(cb.dataset.price || 0), 0);
+  const unit = cmState.basePrice + addonsTotal;
+  const total = unit * cmState.qty;
+  const el = document.getElementById('cm-live-price');
+  if (el) el.textContent = formatPrice(total) + (cmState.qty > 1 ? ` (${cmState.qty}×)` : '');
+}
+
+function cmUpdateStep() {
+  const s1 = document.getElementById('cm-step-1');
+  const s2 = document.getElementById('cm-step-2');
+  const btnBack = document.getElementById('cm-btn-back');
+  const btnNext = document.getElementById('cm-btn-next');
+  const btnAdd  = document.getElementById('cm-btn-add');
+  const pill1   = document.getElementById('cm-pill-1');
+  const pill2   = document.getElementById('cm-pill-2');
+  if (s1) s1.style.display = cmState.step === 1 ? '' : 'none';
+  if (s2) s2.style.display = cmState.step === 2 ? '' : 'none';
+  if (btnBack) btnBack.style.display = cmState.step > 1 ? '' : 'none';
+  if (btnNext) btnNext.style.display = cmState.step < 2 ? '' : 'none';
+  if (btnAdd)  btnAdd.style.display  = cmState.step === 2 ? '' : 'none';
+  if (pill1) pill1.classList.toggle('active', cmState.step === 1);
+  if (pill2) pill2.classList.toggle('active', cmState.step === 2);
+}
+
+window.openConfigModal = function(garmentType) {
+  cmState.step = 1;
+  cmState.garmentType = garmentType;
+  const size = document.querySelector(`input[name="size-${garmentType}"]:checked`)?.value || 'M';
+  const qty  = parseInt(document.getElementById(`qty-${garmentType}`)?.value || 1);
+  cmState.size = size;
+  cmState.qty  = qty;
+  const meta = GARMENT_META[garmentType] || GARMENT_META.kameez;
+  cmState.basePrice = meta.price;
+
+  // Populate header
+  const iconEl  = document.getElementById('cm-icon');
+  const nameEl  = document.getElementById('cm-name');
+  const priceEl = document.getElementById('cm-price-label');
+  if (iconEl)  iconEl.textContent  = meta.icon;
+  if (nameEl)  nameEl.textContent  = meta.name;
+  if (priceEl) priceEl.textContent = `$${meta.price} base · ${qty > 1 ? qty + '× ' : ''}Size ${size}`;
+
+  // Show trouser options for multi-piece
+  const tg = document.getElementById('cm-trouser-group');
+  if (tg) tg.style.display = ['fullsuit', '3piece', 'party'].includes(garmentType) ? 'flex' : 'none';
+
+  // Set standard size select to match chosen size chip
+  const stdSel = document.getElementById('cm-std-size');
+  if (stdSel) {
+    const valid = ['XS','S','M','L','XL'];
+    stdSel.value = valid.includes(size) ? size : 'M';
+  }
+
+  // Reset form
+  document.querySelectorAll('.cm-addon').forEach(cb => cb.checked = false);
+  const notesEl = document.getElementById('cm-notes');
+  if (notesEl) notesEl.value = '';
+  const firstNl = document.querySelector('input[name="cm-nl"]');
+  if (firstNl) firstNl.checked = true;
+  const stdRadio = document.getElementById('cm-mm-standard');
+  if (stdRadio) { stdRadio.checked = true; cmToggleMeasPanel('standard'); }
+
+  cmUpdateLivePrice();
+  cmUpdateStep();
+  const modal = document.getElementById('config-modal');
+  if (modal) modal.classList.add('open');
+};
+
+window.closeConfigModal = function() {
+  const modal = document.getElementById('config-modal');
+  if (modal) modal.classList.remove('open');
+};
+
+window.cmNext = function() {
+  cmState.step = 2;
+  cmUpdateStep();
+};
+
+window.cmBack = function() {
+  cmState.step = 1;
+  cmUpdateStep();
+};
+
+function cmToggleMeasPanel(method) {
+  const sizePanel   = document.getElementById('cm-size-panel');
+  const customPanel = document.getElementById('cm-custom-panel');
+  if (sizePanel)   sizePanel.style.display   = method === 'standard' ? '' : 'none';
+  if (customPanel) customPanel.style.display = method === 'form'     ? '' : 'none';
+}
+
+window.cmAddToBag = function() {
+  const fabric   = document.getElementById('cm-fabric')?.value  || 'Lawn';
+  const neckline = document.querySelector('input[name="cm-nl"]:checked')?.value || 'Round';
+  const sleeve   = document.getElementById('cm-sleeve')?.value  || 'Full';
+  const bottom   = document.getElementById('cm-bottom')?.value  || 'Straight';
+  const notes    = document.getElementById('cm-notes')?.value   || '';
+
+  const addonsCbs = [...document.querySelectorAll('.cm-addon:checked')];
+  const addonsList  = addonsCbs.map(cb => cb.dataset.addon);
+  const addonsTotal = addonsCbs.reduce((s, cb) => s + parseFloat(cb.dataset.price || 0), 0);
+
+  const measMethod = document.querySelector('input[name="cm-measMethod"]:checked')?.value || 'standard';
+  const stdSize    = document.getElementById('cm-std-size')?.value || cmState.size;
+
+  const measurements = {
+    method: measMethod,
+    standard_size: measMethod === 'standard' ? stdSize : null,
+    chest:    measMethod === 'form' ? document.getElementById('cm-chest')?.value    : null,
+    waist:    measMethod === 'form' ? document.getElementById('cm-waist')?.value    : null,
+    hips:     measMethod === 'form' ? document.getElementById('cm-hips')?.value     : null,
+    shoulder: measMethod === 'form' ? document.getElementById('cm-shoulder')?.value : null,
+    klength:  measMethod === 'form' ? document.getElementById('cm-klength')?.value  : null,
+    sleeve:   measMethod === 'form' ? document.getElementById('cm-sleeve-len')?.value : null,
+    trouser:  measMethod === 'form' ? document.getElementById('cm-trouser-len')?.value : null,
+    inseam:   measMethod === 'form' ? document.getElementById('cm-inseam')?.value   : null,
+    pic: null
+  };
+
+  const unitPrice = cmState.basePrice + addonsTotal;
+
+  for (let i = 0; i < cmState.qty; i++) {
+    state.cart.push({
+      id: Date.now() + i,
+      type: cmState.garmentType,
+      fabric, neckline, sleeve, bottom,
+      addons: addonsList,
+      price: unitPrice,
+      base_price: cmState.basePrice,
+      addons_price: addonsTotal,
+      size: cmState.size,
+      measurements,
+      style: { notes, reference: null, fabric_sourcing: null }
+    });
+  }
+
+  saveCartToStorage();
+  renderCart();
+  runTieredShipping();
+  recalcPrice();
+  window.closeConfigModal();
+
+  const msg = cmState.qty > 1
+    ? `${cmState.qty} garments added to bag! 🛍️`
+    : 'Added to bag! 🛍️';
+  if (typeof showToast === 'function') showToast(msg, 'success');
+
+  // Auto-show mini cart for 3s then close
+  showNavMiniCartBriefly();
+};
+
+// Wire up add-on toggle live price update inside config modal
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('cm-addon')) cmUpdateLivePrice();
+  if (e.target.name === 'cm-measMethod') cmToggleMeasPanel(e.target.value);
+});
+
+
+// ─── Navbar Mini-Cart ───────────────────────────────────────
+let _nmcAutoCloseTimer = null;
+
+function updateNavMiniCart() {
+  const itemsEl    = document.getElementById('nmc-items');
+  const totalEl    = document.getElementById('nmc-total');
+  const shippingEl = document.getElementById('nmc-shipping');
+  const navBadge   = document.getElementById('nav-cart-badge');
+
+  if (navBadge) {
+    navBadge.textContent = state.cart.length || '';
+    navBadge.style.display = state.cart.length > 0 ? 'inline-block' : 'none';
+  }
+
+  if (!itemsEl) return;
+
+  if (state.cart.length === 0) {
+    itemsEl.innerHTML = '<p class="nmc-empty">Your bag is empty</p>';
+    if (totalEl)    totalEl.textContent    = formatPrice(0);
+    if (shippingEl) shippingEl.textContent = '$0.00';
+    return;
+  }
+
+  const iconMap = { kameez: '👕', fullsuit: '👗', '3piece': '✨', party: '👑' };
+  const nameMap = { kameez: 'Kameez Only', fullsuit: 'Full Suit', '3piece': '3-Piece Suit', party: 'Party Wear' };
+
+  itemsEl.innerHTML = state.cart.map(item => `
+    <div class="nmc-item">
+      <div class="nmc-item-icon">${iconMap[item.type] || '👕'}</div>
+      <div class="nmc-item-details">
+        <div class="nmc-item-name">${nameMap[item.type] || item.type}</div>
+        <div class="nmc-item-meta">${item.fabric || ''} · ${item.measurements?.standard_size || 'Custom'}</div>
+      </div>
+      <div class="nmc-item-price">${formatPrice(item.price)}</div>
+    </div>
+  `).join('');
+
+  const subtotal = state.cart.reduce((s, i) => s + i.price, 0);
+  if (totalEl) totalEl.textContent = formatPrice(subtotal);
+  if (shippingEl) {
+    if (state.shippingRate > 0) shippingEl.textContent = formatPrice(state.shippingRate);
+    else if (state.shippingRate === 0) shippingEl.textContent = 'Free 🎉';
+    else shippingEl.textContent = 'Calculated at checkout';
+  }
+}
+
+window.toggleNavMiniCart = function() {
+  const popup = document.getElementById('nav-mini-cart');
+  if (!popup) return;
+  const isOpen = popup.classList.contains('open');
+  if (isOpen) {
+    popup.classList.remove('open');
+  } else {
+    updateNavMiniCart();
+    popup.classList.add('open');
+  }
+};
+
+window.closeNavMiniCart = function() {
+  const popup = document.getElementById('nav-mini-cart');
+  if (popup) popup.classList.remove('open');
+  if (_nmcAutoCloseTimer) clearTimeout(_nmcAutoCloseTimer);
+};
+
+function showNavMiniCartBriefly() {
+  if (_nmcAutoCloseTimer) clearTimeout(_nmcAutoCloseTimer);
+  const popup = document.getElementById('nav-mini-cart');
+  if (!popup) return;
+  updateNavMiniCart();
+  popup.classList.add('open');
+  _nmcAutoCloseTimer = setTimeout(() => {
+    popup.classList.remove('open');
+  }, 3500);
+}
+
+// Close mini-cart when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.nav-cart-wrapper') && !e.target.closest('#config-modal')) {
+    window.closeNavMiniCart();
+  }
+});
+
+
 // ─── Initialize ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadCartFromStorage();
@@ -1000,7 +1260,8 @@ document.addEventListener('DOMContentLoaded', () => {
   populateReview();
   runTieredShipping();
   initStripe();
-  
+  updateNavMiniCart();
+
   const nextBtn = document.getElementById('btn-next');
   if (nextBtn) {
     nextBtn.addEventListener('click', (e) => {
@@ -1008,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       nextStep();
     });
   }
-  
+
   const prevBtn = document.getElementById('btn-prev');
   if (prevBtn) {
     prevBtn.addEventListener('click', (e) => {
