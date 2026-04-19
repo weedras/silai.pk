@@ -178,7 +178,9 @@ let state = {
   shippingLabel: 'TBD',
   tempSize: 'M',
   tempQty: 1,
-  cart: []
+  cart: [],
+  sourcingFee: 0,
+  fabricEstimate: 0
 };
 
 function saveCartToStorage() {
@@ -278,6 +280,15 @@ window.clearCart = function() {
   state.addons = {};
   state.shippingRate = -1;
   state.shippingLabel = 'TBD';
+  state.sourcingFee = 0;
+  state.fabricEstimate = 0;
+  // Reset sourcing UI
+  const fbCk = document.getElementById('source-fabric-check');
+  if (fbCk) fbCk.checked = false;
+  const fbDet = document.getElementById('source-fabric-details');
+  if (fbDet) fbDet.style.display = 'none';
+  const estInp = document.getElementById('source-fabric-est-price');
+  if (estInp) estInp.value = '';
   saveCartToStorage();
   clearGarmentForm();
   renderCart();
@@ -603,47 +614,78 @@ function validateStep(step) {
 }
 
 // ─── Price calculation ──────────────────────────────────────
+
+// Convert a USD amount to the user's selected currency for display
 function formatPrice(usdAmount) {
   const converted = (usdAmount * state.currency.rate).toFixed(2);
   return `${state.currency.symbol}${converted}`;
 }
 
+// Convert PKR amount → USD using live exchange rates (fallback 280)
+function pkrToUSD(pkr) {
+  const rate = (liveExchangeRates && liveExchangeRates['PKR']) ? liveExchangeRates['PKR'] : 280;
+  return pkr / rate;
+}
+
+// Format a shipping label: if rate > 0 use formatPrice(), else show label text
+function formatShipping() {
+  if (state.shippingRate > 0) return formatPrice(state.shippingRate);
+  if (state.shippingRate === 0) return state.cart.length === 0 ? formatPrice(0) : (state.shippingLabel || formatPrice(0));
+  return 'TBD';
+}
+
 function recalcPrice() {
-  // Subtotal = confirmed cart items ONLY (no phantom draft prices)
-  const subtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
-  const shipping = state.shippingRate > 0 ? state.shippingRate : 0;
-  const total = subtotal + shipping;
+  // ── USD base amounts ──────────────────────────────────────
+  const garmentSubtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
+  const fabricUSD       = state.fabricEstimate > 0 ? pkrToUSD(state.fabricEstimate) : 0;
+  const subtotal        = garmentSubtotal + state.sourcingFee + fabricUSD;
+  const shippingUSD     = state.shippingRate > 0 ? state.shippingRate : 0;
+  const total           = subtotal + shippingUSD;
 
   state.loyaltyPoints = Math.floor(total * 10) || 0;
 
-  // Shipping display
-  const shipElems = document.querySelectorAll('.shipping-rate-val, #shipping-tier-rate, #shipping-tier-rate-review, #sidebar-shipping');
-  shipElems.forEach(el => {
-    if (state.shippingRate > 0) el.textContent = formatPrice(state.shippingRate);
-    else if (state.shippingRate === 0) el.textContent = state.cart.length === 0 ? '$0.00' : (state.shippingLabel || '$0.00');
-    else el.textContent = 'TBD';
-  });
+  // ── Shipping display (all instances) ─────────────────────
+  const shippingText = formatShipping();
+  document.querySelectorAll('.shipping-rate-val, #shipping-tier-rate, #shipping-tier-rate-review, #sidebar-shipping')
+    .forEach(el => { el.textContent = shippingText; });
 
-  // Sidebar order cost (confirmed items only)
+  // ── Sidebar line items ────────────────────────────────────
   const orderCostEl = document.getElementById('price-order-cost');
-  if (orderCostEl) orderCostEl.textContent = formatPrice(subtotal);
+  if (orderCostEl) orderCostEl.textContent = formatPrice(garmentSubtotal);
 
-  const totalEl    = document.getElementById('price-total');
-  const bigTotalEl = document.getElementById('price-big-total');
-  const coSubtotal = document.getElementById('co-subtotal');
-  const coTotal    = document.getElementById('co-total');
-  const coPoints   = document.getElementById('co-points');
+  const sourcingRow   = document.getElementById('sidebar-sourcing-row');
+  const sourcingValEl = document.getElementById('sidebar-sourcing-fee');
+  if (sourcingRow)   sourcingRow.style.display   = state.sourcingFee > 0 ? 'flex' : 'none';
+  if (sourcingValEl) sourcingValEl.textContent   = formatPrice(state.sourcingFee);
+
+  const fabricEstRow   = document.getElementById('sidebar-fabric-est-row');
+  const fabricEstValEl = document.getElementById('sidebar-fabric-est');
+  if (fabricEstRow)   fabricEstRow.style.display = fabricUSD > 0 ? 'flex' : 'none';
+  if (fabricEstValEl) {
+    // Show converted price + PKR original in brackets
+    fabricEstValEl.textContent = fabricUSD > 0
+      ? `${formatPrice(fabricUSD)} (Rs. ${Math.round(state.fabricEstimate).toLocaleString()})`
+      : formatPrice(0);
+  }
+
+  // ── Totals ────────────────────────────────────────────────
+  const totalEl       = document.getElementById('price-total');
+  const bigTotalEl    = document.getElementById('price-big-total');
+  const coSubtotal    = document.getElementById('co-subtotal');
+  const coTotal       = document.getElementById('co-total');
+  const coPoints      = document.getElementById('co-points');
   const reviewTotal   = document.getElementById('review-total');
   const reviewDeposit = document.getElementById('review-deposit');
 
-  if (totalEl)    totalEl.textContent    = formatPrice(total);
-  if (bigTotalEl) bigTotalEl.textContent = formatPrice(total);
-  if (coSubtotal) coSubtotal.textContent = formatPrice(subtotal);
-  if (coTotal)    coTotal.textContent    = formatPrice(total);
-  if (coPoints)   coPoints.textContent   = state.loyaltyPoints;
-  if (reviewTotal)   reviewTotal.textContent   = formatPrice(subtotal);
-  if (reviewDeposit) reviewDeposit.textContent = formatPrice(total);
+  if (totalEl)       totalEl.textContent       = formatPrice(total);
+  if (bigTotalEl)    bigTotalEl.textContent     = formatPrice(total);
+  if (coSubtotal)    coSubtotal.textContent     = formatPrice(subtotal);
+  if (coTotal)       coTotal.textContent        = formatPrice(total);
+  if (coPoints)      coPoints.textContent       = state.loyaltyPoints;
+  if (reviewTotal)   reviewTotal.textContent    = formatPrice(subtotal);
+  if (reviewDeposit) reviewDeposit.textContent  = formatPrice(total);
 
+  // Store in USD for server
   state.orderData.total_price = total;
   state.orderData.amount_paid = total;
 }
@@ -680,12 +722,64 @@ document.querySelectorAll('.garment-option').forEach(radio => {
 });
 
 // ─── Reference Image & Fabric Sourcing ───────────────────────
+const SOURCING_SERVICE_FEE = 5; // $5 sourcing service fee
+
 const fbCheck = document.getElementById('source-fabric-check');
 if (fbCheck) {
   fbCheck.addEventListener('change', (e) => {
-    document.getElementById('source-fabric-details').style.display = e.target.checked ? 'block' : 'none';
+    const details = document.getElementById('source-fabric-details');
+    if (details) details.style.display = e.target.checked ? 'flex' : 'none';
+    state.sourcingFee = e.target.checked ? SOURCING_SERVICE_FEE : 0;
+    // Reset fabric estimate when unchecked
+    if (!e.target.checked) {
+      state.fabricEstimate = 0;
+      const estInput = document.getElementById('source-fabric-est-price');
+      if (estInput) estInput.value = '';
+    }
+    recalcPrice();
   });
 }
+
+// Estimated fabric price input (PKR)
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'source-fabric-est-price') {
+    const val = parseFloat(e.target.value.replace(/,/g, '')) || 0;
+    state.fabricEstimate = val >= 0 ? val : 0;
+    recalcPrice();
+  }
+});
+
+// Auto-detect price from pasted fabric link
+let fabricLinkDebounce = null;
+document.addEventListener('input', (e) => {
+  if (!e.target || e.target.id !== 'source-fabric-link') return;
+  clearTimeout(fabricLinkDebounce);
+  const url = e.target.value.trim();
+  if (!url.startsWith('http')) return;
+
+  const estInput = document.getElementById('source-fabric-est-price');
+  const detectBtn = document.getElementById('fabric-detect-status');
+  if (detectBtn) { detectBtn.textContent = '🔍 Detecting price...'; detectBtn.style.color = 'var(--gold)'; }
+
+  fabricLinkDebounce = setTimeout(async () => {
+    try {
+      const resp = await fetch(`/api/scrape-price?url=${encodeURIComponent(url)}`);
+      const data = await resp.json();
+      if (data.success && data.price > 0) {
+        if (estInput) {
+          estInput.value = data.price;
+          state.fabricEstimate = data.price;
+          recalcPrice();
+        }
+        if (detectBtn) { detectBtn.textContent = `✅ Price detected: Rs. ${data.price.toLocaleString()}`; detectBtn.style.color = '#4caf50'; }
+      } else {
+        if (detectBtn) { detectBtn.textContent = '⚠️ Could not detect price — enter manually'; detectBtn.style.color = 'var(--text-muted)'; }
+      }
+    } catch(err) {
+      if (detectBtn) { detectBtn.textContent = '⚠️ Detection failed — enter manually'; detectBtn.style.color = 'var(--text-muted)'; }
+    }
+  }, 900); // wait 900ms after user stops typing
+});
 
 const handleBase64Upload = (elementId, stateKey) => {
   const el = document.getElementById(elementId);
@@ -953,7 +1047,18 @@ if (orderForm) {
       total_price: state.orderData.total_price || 0,
       amount_paid: state.orderData.total_price || 0,
       loyalty_points_earned: state.loyaltyPoints || 0,
-      shipping_cost: state.shippingRate > 0 ? state.shippingRate : 0
+      shipping_cost: state.shippingRate > 0 ? state.shippingRate : 0,
+      sourcing_fee: state.sourcingFee || 0,
+      fabric_estimate_pkr: state.fabricEstimate || 0,
+      fabric_estimate_usd: state.fabricEstimate > 0 ? pkrToUSD(state.fabricEstimate) : 0,
+      fabric_sourcing: document.getElementById('source-fabric-check')?.checked
+        ? {
+            link: document.getElementById('source-fabric-link')?.value || '',
+            desc: document.getElementById('source-fabric-desc')?.value || '',
+            est_price: state.fabricEstimate || 0,
+            pic: state.sourcePicBase64 || ''
+          }
+        : null
     };
 
 

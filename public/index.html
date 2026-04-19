@@ -904,12 +904,31 @@
       </div>
     </label>
     <div id="source-fabric-details" style="display:none; margin-top:12px; flex-direction:column; gap:8px;">
-      <div style="background:rgba(212,175,55,0.08); padding:var(--space-md); border-radius:8px; font-size:0.85rem; border:1px solid rgba(212,175,55,0.2); margin-bottom:var(--space-sm);">
-        <strong>💡 Example:</strong> Shop from <a href="https://laam.pk" target="_blank" style="color:var(--gold);text-decoration:underline;">Laam.pk</a> and set our workshop as the delivery address!
+      <!-- Sourcing fee notice -->
+      <div style="background:rgba(212,175,55,0.12); padding:var(--space-md); border-radius:8px; font-size:0.85rem; border:1px solid rgba(212,175,55,0.3); margin-bottom:var(--space-sm); display:flex; align-items:flex-start; gap:10px;">
+        <span style="font-size:1.2rem; flex-shrink:0;">🛍️</span>
+        <div>
+          <strong style="color:var(--gold);">$5 Sourcing Service Fee</strong> added to your order total.<br>
+          <span style="color:var(--text-muted);">Enter the fabric price in PKR — it will be converted to your currency and included in your total. Final amount confirmed via WhatsApp before we purchase.</span>
+        </div>
       </div>
-      <div class="form-group"><label class="form-label">Paste link of product/item (Optional)</label><input type="url" id="source-fabric-link" class="form-input" placeholder="https://laam.pk/products/..."></div>
+      <div class="form-group">
+        <label class="form-label">Paste link of product/item <span style="color:var(--text-muted); font-weight:400;">— price auto-detects</span></label>
+        <input type="url" id="source-fabric-link" class="form-input" placeholder="https://laam.pk/products/... or khaadi.com/...">
+        <div id="fabric-detect-status" style="font-size:0.78rem; margin-top:5px; min-height:18px; color:var(--text-muted);"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimated Fabric Price (PKR) <span style="color:var(--text-muted); font-weight:400;">— or enter manually</span></label>
+        <div style="position:relative; display:flex; align-items:center;">
+          <span style="position:absolute; left:12px; color:var(--text-muted); font-weight:600; pointer-events:none; font-size:0.8rem;">Rs.</span>
+          <input type="number" id="source-fabric-est-price" class="form-input" placeholder="e.g. 3500" min="0" step="1" style="padding-left:40px;">
+        </div>
+      </div>
       <div class="form-group"><label class="form-label">Upload Picture of Product</label><input type="file" id="source-fabric-upload" class="form-input" accept="image/*"></div>
-      <div class="form-group"><label class="form-label">Details, Colors, Price, etc.</label><textarea id="source-fabric-desc" class="form-input" placeholder="e.g. Size medium, Blue color, Rs. 5000"></textarea></div>
+      <div class="form-group"><label class="form-label">Details, Colors, etc.</label><textarea id="source-fabric-desc" class="form-input" placeholder="e.g. Blue lawn suit, size M, ref: KL-24-01"></textarea></div>
+      <div style="font-size:0.8rem; color:var(--text-muted); padding:8px 0; border-top:1px solid var(--border); margin-top:4px;">
+        ⚠️ Fabric amount is an estimate shown for reference. Actual PKR cost confirmed via WhatsApp before we buy.
+      </div>
     </div>
   </div>
   <div class="form-section-title mt-lg">Select Garment Type</div>
@@ -1317,6 +1336,8 @@
              <!-- Cart items injected by renderCart() -->
           </div>
           <div class="price-line"><span>Order Cost</span><span id="price-order-cost">$0.00</span></div>
+          <div class="price-line" id="sidebar-sourcing-row" style="display:none;"><span style="display:flex;align-items:center;gap:6px;">🛍️ Sourcing Fee</span><span id="sidebar-sourcing-fee">$5.00</span></div>
+          <div class="price-line" id="sidebar-fabric-est-row" style="display:none;"><span>🧵 Est. Fabric Cost</span><span id="sidebar-fabric-est">—</span></div>
           <div class="price-line"><span>Shipping</span><span class="text-teal" id="sidebar-shipping">At dispatch</span></div>
           <div class="price-line total"><span>Total</span><span id="price-total">$0.00</span></div>
           <div class="price-total-big mt-lg" style="display:none"><div class="amount" id="price-deposit">$0</div></div>
