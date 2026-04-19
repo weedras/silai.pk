@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
       customer_name, customer_email, customer_whatsapp,
       shipping_country, shipping_address,
       style_notes, items, loyalty_points_earned, shipping_cost,
-      stripe_pi_id, password
+      stripe_pi_id, password, newsletter_opt_in
     } = req.body;
 
     if (!customer_name || !customer_email) {
@@ -37,12 +37,16 @@ router.post('/', async (req, res) => {
       if (existingUser) {
         // Link order to existing account (they'll sign in separately to view it)
         userId = existingUser.id;
+        // Update newsletter opt-in if they ticked it
+        if (newsletter_opt_in) {
+          db.prepare('UPDATE users SET newsletter_opt_in = 1 WHERE id = ?').run(userId);
+        }
       } else if (password && password.length >= 6) {
         // Create new account automatically at checkout
         const passwordHash = await bcrypt.hash(password, 12);
         const result = db.prepare(
-          'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
-        ).run(customer_name.trim(), customer_email.toLowerCase().trim(), passwordHash, 'customer');
+          'INSERT INTO users (name, email, password_hash, role, newsletter_opt_in) VALUES (?, ?, ?, ?, ?)'
+        ).run(customer_name.trim(), customer_email.toLowerCase().trim(), passwordHash, 'customer', newsletter_opt_in ? 1 : 0);
         userId = result.lastInsertRowid;
         userCreated = true;
 

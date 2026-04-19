@@ -124,6 +124,7 @@ safeAlter(`ALTER TABLE orders ADD COLUMN loyalty_points_earned INTEGER DEFAULT 0
 safeAlter(`ALTER TABLE order_items ADD COLUMN fabric_sourcing TEXT`);
 safeAlter(`ALTER TABLE order_items ADD COLUMN reference_design TEXT`);
 safeAlter(`ALTER TABLE measurements ADD COLUMN standard_size TEXT`);
+safeAlter(`ALTER TABLE users ADD COLUMN newsletter_opt_in INTEGER DEFAULT 0`);
 
 // ─── Seed demo orders ─────────────────────────────────────
 const existingDemo = db.prepare('SELECT id FROM orders WHERE order_id = ?').get('SB-2025-00001');

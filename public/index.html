@@ -1233,6 +1233,15 @@
             
             <div style="display:flex; gap:var(--space-xl); flex-wrap:wrap;">
               <div style="flex:1; min-width:300px;">
+                <!-- Login / Signup prompt -->
+                <div id="checkout-login-prompt" style="display:flex; align-items:center; justify-content:space-between; background:var(--glass-bg); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:var(--space-md); font-size:0.85rem;">
+                  <span style="color:var(--text-muted);">Already have an account?</span>
+                  <div style="display:flex; gap:12px;">
+                    <button type="button" onclick="openAuthModal('login', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--gold); font-weight:600; cursor:pointer; font-size:0.85rem;">Log in →</button>
+                    <button type="button" onclick="openAuthModal('register', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--teal); font-weight:600; cursor:pointer; font-size:0.85rem;">Sign up</button>
+                  </div>
+                </div>
+
                 <!-- Contact Info -->
                 <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
                   <h4 class="mb-md">Contact Info</h4>
@@ -1275,12 +1284,12 @@
                     <div class="form-group mt-sm"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
                     <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
                     <div class="form-row">
+                      <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
                       <div class="form-group">
                         <label class="form-label">Zip / Postal Code *</label>
                         <input type="text" id="co-zip" class="form-input" required>
                         <div id="co-zip-hint" style="font-size:0.75rem; margin-top:4px; min-height:16px;"></div>
                       </div>
-                      <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
                     </div>
                   </div>
 
@@ -1316,10 +1325,13 @@
                         💳 Card payment will be collected on order confirmation. We'll contact you via WhatsApp/email.
                       </div>
                       <div id="stripe-card-errors" style="color:#ef4444; font-size:0.82rem; margin-top:6px;"></div>
-                      <!-- Accepted cards -->
+                      <!-- Accepted card brand logos -->
                       <div style="display:flex; gap:6px; margin-top:10px; align-items:center; flex-wrap:wrap;">
-                        <span style="font-size:1.3rem;" title="Visa">💳</span>
-                        <span style="font-size:0.72rem; color:var(--text-muted);">Visa · Mastercard · Amex · Apple Pay · Google Pay</span>
+                        <span title="Visa" style="background:#1A1F71; color:#fff; font-weight:900; font-size:0.62rem; padding:3px 8px; border-radius:4px; letter-spacing:0.08em; font-family:sans-serif;">VISA</span>
+                        <span title="Mastercard" style="background:linear-gradient(90deg,#EB001B 40%,#F79E1B 60%); color:#fff; font-weight:700; font-size:0.62rem; padding:3px 8px; border-radius:4px; letter-spacing:0.04em; font-family:sans-serif;">MC</span>
+                        <span title="American Express" style="background:#2E77BC; color:#fff; font-weight:700; font-size:0.62rem; padding:3px 8px; border-radius:4px; letter-spacing:0.04em; font-family:sans-serif;">AMEX</span>
+                        <span title="Apple Pay" style="background:#000; color:#fff; font-weight:500; font-size:0.62rem; padding:3px 8px; border-radius:4px; font-family:sans-serif;">🍎 Pay</span>
+                        <span title="Google Pay" style="background:#fff; color:#333; font-weight:600; font-size:0.62rem; padding:3px 8px; border-radius:4px; border:1px solid #ddd; font-family:sans-serif;"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span> Pay</span>
                       </div>
                     </div>
                     
@@ -1364,7 +1376,12 @@
                   <div class="price-line" style="font-size:0.9rem;"><span>Shipping</span><span class="text-teal shipping-rate-val" id="co-shipping">TBD</span></div>
                   <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;" />
                   <div class="price-line total" style="font-size:1.1rem;"><span>Total</span><span id="co-total">$22.00</span></div>
-                  
+
+                  <!-- Estimated delivery -->
+                  <div id="sidebar-est-delivery" style="display:none; background:rgba(42,157,143,0.08); color:var(--teal); padding:8px 12px; border-radius:4px; margin-top:12px; font-size:0.8rem; border:1px solid rgba(42,157,143,0.2);">
+                    📅 Est. delivery: —
+                  </div>
+
                   <div style="background:rgba(233,196,106,0.1); color:var(--gold); padding:8px 12px; border-radius:4px; margin-top:12px; font-size:0.8rem; display:flex; gap:8px; align-items:center;">
                     <span>✨</span> Earn <strong id="co-points">198</strong> points on this purchase!
                   </div>
@@ -1377,11 +1394,25 @@
             </div>
             <!-- Note: buttons are handled globally below -->
           </div> <!-- end step-5 -->
-          <div class="form-nav" style="margin-top:var(--space-xl)">
+          <!-- Newsletter + Terms (shown only on step 5) -->
+          <div id="checkout-footer-options" style="display:none; max-width:620px; margin:var(--space-lg) auto 0;">
+            <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">
+              <input type="checkbox" id="newsletter-opt-in" style="margin-top:2px; accent-color:var(--gold);">
+              <span>Subscribe to our newsletter for exclusive offers, style tips, and new collection alerts. You can unsubscribe anytime.</span>
+            </label>
+            <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.5; margin:0;">
+              By placing your order, you agree to our
+              <a href="#policy-terms" style="color:var(--gold); text-decoration:none;">Terms of Service</a>
+              and
+              <a href="#policy-privacy" style="color:var(--gold); text-decoration:none;">Privacy Policy</a>.
+            </p>
+          </div>
+
+          <div class="form-nav" style="margin-top:var(--space-md)">
             <button class="btn btn-outline" id="btn-prev" style="display:none">← Back</button>
             <div style="flex:1"></div>
             <button class="btn btn-primary" id="btn-next">Continue →</button>
-            <button class="btn btn-teal" id="btn-submit" type="submit" style="display:none; width:100%; max-width:300px;">Place Order</button>
+            <button class="btn btn-teal" id="btn-submit" type="submit" style="display:none; width:100%; max-width:300px;">🔒 Place Order Securely</button>
           </div>
         </form>
       </div>

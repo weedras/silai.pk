@@ -8,91 +8,41 @@ const PRICES = {
   addons: { 'express': 10, 'lining': 5, 'neckline': 6, 'consult': 5, 'trims': 5, 'piping': 5 }
 };
 
-// ─── Weight-based Shipping (like laam.pk) ─────────────────
-// Each garment type has an estimated finished weight in grams
-const GARMENT_WEIGHTS_G = {
-  kameez:   400,   // kameez only — light
-  fullsuit: 650,   // 2-piece suit
-  '3piece': 900,   // 3-piece — heavier fabric + extra piece
-  party:    750    // party wear — embellished
-};
-
-// Zones: base = charge for first 500 g, perKg = each additional kg
-// All rates in USD. Domestic uses flat PKR.
+// ─── Flat-rate Shipping Zones (same rate for any quantity) ─
+// All international rates in USD. Domestic flat PKR.
 const SHIPPING_ZONES = {
-  north_america: {
-    countries: ['United States', 'Canada'],
-    base: 18, perKg: 12, minG: 500
-  },
-  uk_europe: {
-    countries: ['United Kingdom'],
-    base: 20, perKg: 11, minG: 500
-  },
-  middle_east: {
-    countries: ['United Arab Emirates'],
-    base: 14, perKg: 9,  minG: 500
-  },
-  australia: {
-    countries: ['Australia'],
-    base: 22, perKg: 13, minG: 500
-  },
-  domestic: {
-    countries: ['Pakistan'],
-    flatPKR: 300
-  }
+  north_america: { countries: ['United States', 'Canada'],        flat: 35 },
+  uk_europe:     { countries: ['United Kingdom'],                  flat: 24 },  // ~£19
+  middle_east:   { countries: ['United Arab Emirates'],            flat: 20 },
+  australia:     { countries: ['Australia'],                       flat: 30 },
+  domestic:      { countries: ['Pakistan'],            flatPKR: 300 }
 };
 
 const CLOTHING_TYPES = ['kameez', 'fullsuit', '3piece', 'party'];
 
+// Estimated delivery: stitching service takes ~6 weeks total
+function getEstimatedDelivery(zone) {
+  const days = zone === 'domestic' ? 21 : 42; // 3 wks domestic, 6 wks international
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 function calculateTieredShipping(cartItems, destinationCountry) {
   const clothingItems = cartItems.filter(item => CLOTHING_TYPES.includes(item.type));
 
-  // Find zone
-  let zone = null;
-  let zoneName = null;
+  let zone = null, zoneName = null;
   for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
     if (z.countries.includes(destinationCountry)) { zone = z; zoneName = name; break; }
   }
-  if (!zone) return null; // unknown country — TBD
+  if (!zone) return null;
 
-  // ── Domestic Pakistan ──────────────────────────────────────
   if (zoneName === 'domestic') {
-    const pkrRate = (liveExchangeRates && liveExchangeRates['PKR']) ? liveExchangeRates['PKR'] : 280;
-    const flatUSD = zone.flatPKR / pkrRate; // convert Rs.300 → USD for internal accounting
-    return {
-      rate: flatUSD,
-      label: `Rs. ${zone.flatPKR} flat`,
-      upsell: null,
-      zone: 'domestic',
-      clothingCount: clothingItems.length
-    };
+    const pkrRate = (liveExchangeRates?.PKR) || 280;
+    return { rate: zone.flatPKR / pkrRate, label: `Rs. ${zone.flatPKR}`, upsell: null, zone: 'domestic', clothingCount: clothingItems.length };
   }
 
-  // ── International weight-based ─────────────────────────────
-  const totalWeightG = clothingItems.reduce((sum, item) => {
-    return sum + (GARMENT_WEIGHTS_G[item.type] || 500);
-  }, 0);
-
-  if (totalWeightG === 0) {
-    // Empty cart or non-clothing items only
-    return { rate: 0, label: '—', upsell: null, zone: zoneName, clothingCount: 0 };
-  }
-
-  const extraKg  = Math.max(0, (totalWeightG - zone.minG) / 1000);
-  const rate     = parseFloat((zone.base + extraKg * zone.perKg).toFixed(2));
-  const weightKg = (totalWeightG / 1000).toFixed(2);
-  const label    = `$${rate.toFixed(2)} · ${weightKg} kg`; // raw USD label, recalcPrice() will reformat
-
-  // Upsell: show how shipping grows with next garment
-  const nextExtra = Math.max(0, (totalWeightG + 500 - zone.minG) / 1000);
-  const nextRate  = parseFloat((zone.base + nextExtra * zone.perKg).toFixed(2));
-  const diff      = parseFloat((nextRate - rate).toFixed(2));
-
-  const upsell = diff > 0
-    ? { msg: `Adding another garment increases shipping by ~$${diff.toFixed(2)}`, progress: null }
-    : null;
-
-  return { rate, label, upsell, zone: zoneName, clothingCount: clothingItems.length, weightG: totalWeightG };
+  return { rate: zone.flat, label: formatPrice(zone.flat), upsell: null, zone: zoneName, clothingCount: clothingItems.length };
 }
 
 function updateShippingUI(result) {
@@ -363,22 +313,27 @@ function renderCart() {
 
   if (!container) return;
 
-  container.innerHTML = state.cart.map(item => `
+  const garmentEmoji = { kameez: '👘', fullsuit: '👗', '3piece': '🥻', party: '✨' };
+  container.innerHTML = state.cart.map((item, idx) => `
     <div class="cart-item-card card mb-md" style="padding:var(--space-md); border:1px solid var(--border); background:rgba(255,255,255,0.02)">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:flex; gap:12px; align-items:center;">
-          <div style="font-size:1.5rem">${item.type === 'kameez' ? '👘' : '👗'}</div>
-          <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div style="display:flex; gap:12px; align-items:center; flex:1; min-width:0;">
+          <div style="font-size:1.5rem; flex-shrink:0;">${garmentEmoji[item.type] || '👘'}</div>
+          <div style="min-width:0;">
             <div style="font-weight:600; text-transform:capitalize; font-size:0.95rem;">${item.type} (${item.fabric})</div>
-            <div style="font-size:0.8rem; color:var(--text-muted)">Neck: ${item.neckline} | Size: ${item.measurements.standard_size || 'Custom'}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted)">Neck: ${item.neckline || '—'} · Size: ${item.measurements?.standard_size || 'Custom'}</div>
           </div>
         </div>
-        <div style="text-align:right">
-          <div style="font-weight:700; color:var(--gold);">${formatPrice(item.price)}</div>
-          <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:4px;">
-              <button type="button" onclick="window.duplicateItemInCart(${item.id})" style="background:none; border:none; color:var(--gold); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Duplicate</button>
-              <button type="button" onclick="removeItemFromCart(${item.id})" style="background:none; border:none; color:var(--rose); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Remove</button>
-            </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div style="font-weight:700; color:var(--gold); margin-bottom:8px;">${formatPrice(item.price)}</div>
+          <!-- +/- Quantity controls -->
+          <div style="display:flex; align-items:center; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden; justify-content:flex-end;">
+            <button type="button" onclick="window.removeItemFromCart(${item.id})"
+              style="background:var(--glass-bg); border:none; width:30px; height:30px; font-size:1.1rem; cursor:pointer; color:var(--rose); display:flex; align-items:center; justify-content:center; line-height:1;">−</button>
+            <span style="min-width:24px; text-align:center; font-size:0.85rem; font-weight:600; padding:0 4px;">1</span>
+            <button type="button" onclick="window.duplicateItemInCart(${item.id})"
+              style="background:var(--glass-bg); border:none; width:30px; height:30px; font-size:1.1rem; cursor:pointer; color:var(--teal); display:flex; align-items:center; justify-content:center; line-height:1;">+</button>
+          </div>
         </div>
       </div>
     </div>
@@ -516,11 +471,17 @@ function goToStep(step) {
   updateNavButtons();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
+  // Show newsletter/terms footer only on step 5
+  const footerOpts = document.getElementById('checkout-footer-options');
+  if (footerOpts) footerOpts.style.display = step === 5 ? 'block' : 'none';
+
   if (step === 5) {
     // Sync country from step-1 selector into checkout country
     const shipCountry = document.getElementById('shipping-country')?.value;
     const coCountryEl = document.getElementById('co-country');
     if (coCountryEl && shipCountry && !coCountryEl.value) coCountryEl.value = shipCountry;
+    // Refresh estimated delivery when landing on step 5
+    recalcPrice();
 
     // Mount Stripe card element if available
     if (cardElement) {
@@ -684,6 +645,22 @@ function recalcPrice() {
   // Store in USD for server
   state.orderData.total_price = total;
   state.orderData.amount_paid = total;
+
+  // ── Estimated delivery date ───────────────────────────────
+  const estDeliveryEl = document.getElementById('sidebar-est-delivery');
+  if (estDeliveryEl) {
+    const country = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value || '';
+    let zone = 'international';
+    for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
+      if (z.countries && z.countries.includes(country)) { zone = name; break; }
+    }
+    if (state.cart.length > 0) {
+      estDeliveryEl.textContent = 'Est. delivery: ' + getEstimatedDelivery(zone);
+      estDeliveryEl.style.display = '';
+    } else {
+      estDeliveryEl.style.display = 'none';
+    }
+  }
 }
 
 
@@ -1047,8 +1024,16 @@ window.checkAuthForCheckout = async function() {
     const r = await fetch('/api/auth/me');
     const d = await r.json();
     const section = document.getElementById('account-creation-section');
-    if (section) section.style.display = d.user ? 'none' : '';
-  } catch(e) { /* not logged in — show it */ }
+    const loginPrompt = document.getElementById('checkout-login-prompt');
+    if (d.user) {
+      // User is logged in — hide account creation and login prompt
+      if (section)      section.style.display = 'none';
+      if (loginPrompt)  loginPrompt.style.display = 'none';
+    } else {
+      if (section)      section.style.display = '';
+      if (loginPrompt)  loginPrompt.style.display = '';
+    }
+  } catch(e) { /* not logged in — show both */ }
 };
 
 // ─── Form Submission ───────────────────────────────────────
@@ -1115,6 +1100,7 @@ if (orderForm) {
       amount_paid:          state.orderData.total_price || 0,
       loyalty_points_earned: state.loyaltyPoints || 0,
       shipping_cost:        state.shippingRate > 0 ? state.shippingRate : 0,
+      newsletter_opt_in:    document.getElementById('newsletter-opt-in')?.checked || false,
       sourcing_fee:         state.sourcingFee || 0,
       fabric_estimate_pkr:  state.fabricEstimate || 0,
       fabric_estimate_usd:  state.fabricEstimate > 0 ? pkrToUSD(state.fabricEstimate) : 0,
