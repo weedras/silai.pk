@@ -137,8 +137,14 @@ function runTieredShipping() {
   const c2 = document.getElementById('shipping-country')?.value;
   const country = c1 || c2 || 'United States';
   
-  console.log('Calculating shipping for:', country);
-  const cartItems = state.cart.length > 0 ? state.cart : [{ type: state.garmentType || 'kameez', price: state.basePrice + state.addonsPrice }];
+  if (state.cart.length === 0) {
+    state.shippingRate = 0;
+    state.shippingLabel = '$0.00';
+    updateShippingUI({ rate: 0, label: '$0.00', upsell: null, clothingCount: 0 });
+    recalcPrice();
+    return null;
+  }
+  const cartItems = state.cart;
   const result = calculateTieredShipping(cartItems, country);
   if (result !== null) {
     state.shippingRate = result.rate;
@@ -497,17 +503,10 @@ function goToStep(step) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (step === 5) {
-    // Auto-fill contact info from step-1 so user doesn't re-enter it
-    const fullName = (document.getElementById('customer-name')?.value || '').trim();
-    const nameParts = fullName.split(' ');
-    const fnameEl = document.getElementById('co-fname');
-    const lnameEl = document.getElementById('co-lname');
-    if (fnameEl && !fnameEl.value) fnameEl.value = nameParts[0] || '';
-    if (lnameEl && !lnameEl.value) lnameEl.value = nameParts.slice(1).join(' ') || '';
-    const emailEl = document.getElementById('co-email');
-    if (emailEl && !emailEl.value) emailEl.value = document.getElementById('customer-email')?.value || '';
-    const phoneEl = document.getElementById('co-phone');
-    if (phoneEl && !phoneEl.value) phoneEl.value = document.getElementById('customer-whatsapp')?.value || '';
+    // Sync country from step-1 selector into checkout country
+    const shipCountry = document.getElementById('shipping-country')?.value;
+    const coCountryEl = document.getElementById('co-country');
+    if (coCountryEl && shipCountry && !coCountryEl.value) coCountryEl.value = shipCountry;
 
     // Mount Stripe card element if available
     if (cardElement) {
@@ -602,66 +601,43 @@ function formatPrice(usdAmount) {
 }
 
 function recalcPrice() {
-  const garmentSelect = document.getElementById('garment-type-val');
-  if (garmentSelect) state.garmentType = garmentSelect.value;
-  state.basePrice = PRICES.base[state.garmentType] || 0;
+  // Subtotal = confirmed cart items ONLY (no phantom draft prices)
+  const subtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
+  const shipping = state.shippingRate > 0 ? state.shippingRate : 0;
+  const total = subtotal + shipping;
 
-  state.addonsPrice = 0;
-  Object.keys(state.addons).forEach(key => {
-    if (state.addons[key]) state.addonsPrice += PRICES.addons[key] || 0;
-  });
+  state.loyaltyPoints = Math.floor(total * 10) || 0;
 
-  // Calculate Subtotal (Cart items + current garment if not added yet)
-  let subtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
-  if (state.currentStep <= 3) {
-      subtotal += (state.basePrice + state.addonsPrice);
-  }
-
-  const total = subtotal + (state.shippingRate > 0 ? state.shippingRate : 0);
-  const deposit = total; // 100% upfront
-  
-  state.loyaltyPoints = Math.floor(deposit * 10) || 0;
-
-  // Update EVERY shipping element
+  // Shipping display
   const shipElems = document.querySelectorAll('.shipping-rate-val, #shipping-tier-rate, #shipping-tier-rate-review, #sidebar-shipping');
   shipElems.forEach(el => {
     if (state.shippingRate > 0) el.textContent = formatPrice(state.shippingRate);
-    else if (state.shippingRate === 0) el.textContent = state.shippingLabel;
-    else el.textContent = 'At dispatch';
+    else if (state.shippingRate === 0) el.textContent = state.cart.length === 0 ? '$0.00' : (state.shippingLabel || '$0.00');
+    else el.textContent = 'TBD';
   });
 
-  const elems = {
-    base: document.getElementById('price-base'),
-    addons: document.getElementById('price-addons'),
-    total: document.getElementById('price-total'),
-    bigTotal: document.getElementById('price-big-total'),
-    coSubtotal: document.getElementById('co-subtotal'), 
-    coTotal: document.getElementById('co-total'),       
-    coPoints: document.getElementById('co-points')
-  };
-  
-  if (elems.base) {
-      const itemsBase = state.cart.reduce((s,i)=>s+i.base_price, 0);
-      elems.base.textContent = formatPrice(state.currentStep <= 3 ? itemsBase + state.basePrice : itemsBase);
-  }
-  if (elems.addons) {
-      const itemsAddons = state.cart.reduce((s,i)=>s+i.addons_price, 0);
-      elems.addons.textContent = formatPrice(state.currentStep <= 3 ? itemsAddons + state.addonsPrice : itemsAddons);
-  }
+  // Sidebar order cost (confirmed items only)
+  const orderCostEl = document.getElementById('price-order-cost');
+  if (orderCostEl) orderCostEl.textContent = formatPrice(subtotal);
 
-  if (elems.total) elems.total.textContent = formatPrice(total);
-  if (elems.bigTotal) elems.bigTotal.textContent = formatPrice(total);
-  if (elems.coSubtotal) elems.coSubtotal.textContent = formatPrice(subtotal);
-  if (elems.coTotal) elems.coTotal.textContent = formatPrice(total);
-  if (elems.coPoints) elems.coPoints.textContent = state.loyaltyPoints;
-
-  const reviewTotal = document.getElementById('review-total');
+  const totalEl    = document.getElementById('price-total');
+  const bigTotalEl = document.getElementById('price-big-total');
+  const coSubtotal = document.getElementById('co-subtotal');
+  const coTotal    = document.getElementById('co-total');
+  const coPoints   = document.getElementById('co-points');
+  const reviewTotal   = document.getElementById('review-total');
   const reviewDeposit = document.getElementById('review-deposit');
-  if (reviewTotal) reviewTotal.textContent = formatPrice(total);
-  if (reviewDeposit) reviewDeposit.textContent = formatPrice(deposit);
+
+  if (totalEl)    totalEl.textContent    = formatPrice(total);
+  if (bigTotalEl) bigTotalEl.textContent = formatPrice(total);
+  if (coSubtotal) coSubtotal.textContent = formatPrice(subtotal);
+  if (coTotal)    coTotal.textContent    = formatPrice(total);
+  if (coPoints)   coPoints.textContent   = state.loyaltyPoints;
+  if (reviewTotal)   reviewTotal.textContent   = formatPrice(subtotal);
+  if (reviewDeposit) reviewDeposit.textContent = formatPrice(total);
 
   state.orderData.total_price = total;
-  state.orderData.amount_paid = deposit;
+  state.orderData.amount_paid = total;
 }
 
 
@@ -943,8 +919,8 @@ if (orderForm) {
     const coCountry = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value;
     const coAddress = (document.getElementById('co-address')?.value || '') + ', ' + (document.getElementById('co-city')?.value || '') + ' ' + (document.getElementById('co-zip')?.value || '') + ', ' + coCountry;
     
-    const cPhone = document.getElementById('co-phone')?.value || document.getElementById('customer-whatsapp')?.value;
-    const cEmail = document.getElementById('co-email')?.value || document.getElementById('customer-email')?.value;
+    const cPhone = document.getElementById('co-phone')?.value || '';
+    const cEmail = document.getElementById('co-email')?.value || '';
 
     const formData = {
       customer_name: cName,
