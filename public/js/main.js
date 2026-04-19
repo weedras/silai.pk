@@ -202,7 +202,13 @@ function handleHashChange() {
 
   // 6. Run specific view logic
   if (hash === 'profile' && window.loadProfile) window.loadProfile();
-  if (hash === 'order' && window.initOrderForm) window.initOrderForm();
+  if (hash === 'order') {
+    // Re-render cart display WITHOUT clearing it (initOrderForm would wipe the cart)
+    if (window.renderCart)        window.renderCart();
+    if (window.recalcPrice)       window.recalcPrice();
+    if (window.runTieredShipping) window.runTieredShipping();
+    if (window.checkAuthForCheckout) window.checkAuthForCheckout();
+  }
 }
 
 // Global initialization

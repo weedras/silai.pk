@@ -114,6 +114,17 @@ db.exec(`
   );
 `);
 
+// ─── Safe migrations (idempotent — run on every startup) ──
+const safeAlter = (sql) => { try { db.exec(sql); } catch(e) { /* column already exists */ } };
+safeAlter(`ALTER TABLE orders ADD COLUMN shipping_cost REAL DEFAULT 0`);
+safeAlter(`ALTER TABLE orders ADD COLUMN stripe_pi_id TEXT`);
+safeAlter(`ALTER TABLE orders ADD COLUMN payment_status TEXT DEFAULT 'pending'`);
+safeAlter(`ALTER TABLE orders ADD COLUMN user_id INTEGER REFERENCES users(id)`);
+safeAlter(`ALTER TABLE orders ADD COLUMN loyalty_points_earned INTEGER DEFAULT 0`);
+safeAlter(`ALTER TABLE order_items ADD COLUMN fabric_sourcing TEXT`);
+safeAlter(`ALTER TABLE order_items ADD COLUMN reference_design TEXT`);
+safeAlter(`ALTER TABLE measurements ADD COLUMN standard_size TEXT`);
+
 // ─── Seed demo orders ─────────────────────────────────────
 const existingDemo = db.prepare('SELECT id FROM orders WHERE order_id = ?').get('SB-2025-00001');
 if (!existingDemo) {

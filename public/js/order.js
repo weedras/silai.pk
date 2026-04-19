@@ -903,7 +903,7 @@ async function fetchShippingQuote() {
 });
 
 // ─── Show order success screen ──────────────────────────────
-function showOrderSuccess(orderId) {
+function showOrderSuccess(orderId, userCreated) {
   state.cart = [];
   saveCartToStorage();
   const wrapper = document.getElementById('order-form-wrapper');
@@ -915,6 +915,9 @@ function showOrderSuccess(orderId) {
   const trackLink = document.getElementById('success-track-link');
   if (trackLink) trackLink.href = '#track?id=' + orderId;
   if (cardElement) cardElement.clear();
+  // Show "account created" notice on success screen
+  const acNotice = document.getElementById('success-account-notice');
+  if (acNotice) acNotice.style.display = userCreated ? 'block' : 'none';
 }
 
 // ─── Reset order form for a new order ──────────────────────
@@ -943,7 +946,7 @@ window.initOrderForm = function() {
 
 // ─── Stripe Submit ─────────────────────────────────────────
 async function submitWithStripe(formData, btn, originalText) {
-  // If Stripe is not configured (local dev / no keys), skip payment and create order directly
+  // If Stripe is not configured, submit order directly (dev/no-key mode)
   if (!stripe || !cardElement) {
     const resp = await fetch('/api/orders', {
       method: 'POST',
@@ -952,8 +955,8 @@ async function submitWithStripe(formData, btn, originalText) {
     });
     const data = await resp.json();
     if (!resp.ok || !data.success) throw new Error(data.error || 'Failed to submit order.');
-    if (typeof showToast === 'function') showToast('Order placed successfully!', 'success');
-    showOrderSuccess(data.order_id);
+    if (typeof showToast === 'function') showToast('Order placed! Check your email for confirmation.', 'success');
+    showOrderSuccess(data.order_id, data.user_created);
     btn.innerHTML = originalText;
     btn.disabled = false;
     return;
@@ -993,70 +996,137 @@ async function submitWithStripe(formData, btn, originalText) {
   const data = await resp.json();
   if (!resp.ok || !data.success) throw new Error(data.error || 'Failed to submit order.');
 
-  if (typeof showToast === 'function') showToast('Order placed successfully!', 'success');
-  showOrderSuccess(data.order_id);
+  if (typeof showToast === 'function') showToast('Order placed! Check your email for confirmation.', 'success');
+  showOrderSuccess(data.order_id, data.user_created);
   btn.innerHTML = originalText;
   btn.disabled = false;
 }
+
+// ─── Address postal code validation ──────────────────────
+const POSTAL_PATTERNS = {
+  'United States':          { re: /^\d{5}(-\d{4})?$/,          hint: '5 digits, e.g. 90210' },
+  'Canada':                 { re: /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/, hint: 'A1A 1A1 format' },
+  'United Kingdom':         { re: /^[A-Za-z]{1,2}\d[A-Za-z\d]?\s?\d[A-Za-z]{2}$/, hint: 'e.g. SW1A 2AA' },
+  'United Arab Emirates':   { re: /^\d{5,6}$/,                 hint: '5–6 digits' },
+  'Australia':              { re: /^\d{4}$/,                    hint: '4 digits, e.g. 2000' },
+  'Pakistan':               { re: /^\d{5}$/,                    hint: '5 digits, e.g. 54000' },
+};
+
+function validateZip(zipVal, country) {
+  const p = POSTAL_PATTERNS[country];
+  if (!p) return null; // Unknown country — don't block
+  return p.re.test(zipVal.trim()) ? 'valid' : `Invalid format — ${p.hint}`;
+}
+
+(function wireAddressValidation() {
+  const zipEl    = document.getElementById('co-zip');
+  const hintEl   = document.getElementById('co-zip-hint');
+  const countryEl = document.getElementById('co-country');
+  if (!zipEl || !hintEl) return;
+
+  function check() {
+    const res = validateZip(zipEl.value, countryEl?.value);
+    if (res === null || zipEl.value === '') { hintEl.textContent = ''; return; }
+    if (res === 'valid') {
+      hintEl.textContent = '✅ Looks good';
+      hintEl.style.color = '#22c55e';
+      zipEl.style.borderColor = '#22c55e';
+    } else {
+      hintEl.textContent = `⚠️ ${res}`;
+      hintEl.style.color = '#f59e0b';
+      zipEl.style.borderColor = '#f59e0b';
+    }
+  }
+  zipEl.addEventListener('input', check);
+  countryEl?.addEventListener('change', check);
+})();
+
+// ─── Show / hide account creation section based on auth ──
+window.checkAuthForCheckout = async function() {
+  try {
+    const r = await fetch('/api/auth/me');
+    const d = await r.json();
+    const section = document.getElementById('account-creation-section');
+    if (section) section.style.display = d.user ? 'none' : '';
+  } catch(e) { /* not logged in — show it */ }
+};
 
 // ─── Form Submission ───────────────────────────────────────
 const orderForm = document.getElementById('orderForm');
 if (orderForm) {
   orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    // Explicitly validate Step 5 before submission
     if (!validateStep(state.currentStep)) return;
 
     const btn = document.getElementById('btn-submit');
     const originalText = btn.innerHTML;
+
+    // ── Password validation ───────────────────────────────
+    const section = document.getElementById('account-creation-section');
+    const isAccountSectionVisible = section && section.style.display !== 'none';
+    if (isAccountSectionVisible) {
+      const pass        = document.getElementById('co-password')?.value || '';
+      const passConfirm = document.getElementById('co-password-confirm')?.value || '';
+      const passErr     = document.getElementById('co-password-error');
+      if (pass.length > 0 && pass.length < 6) {
+        if (passErr) { passErr.textContent = 'Password must be at least 6 characters.'; passErr.style.display = 'block'; }
+        return;
+      }
+      if (pass !== passConfirm) {
+        if (passErr) { passErr.textContent = "Passwords don't match."; passErr.style.display = 'block'; }
+        return;
+      }
+      if (passErr) passErr.style.display = 'none';
+    }
+
     btn.innerHTML = '<span class="spinner"></span> Processing...';
     btn.disabled = true;
 
-    const cName = document.getElementById('co-fname')?.value + ' ' + (document.getElementById('co-lname')?.value || '');
+    const cName    = (document.getElementById('co-fname')?.value.trim() + ' ' + (document.getElementById('co-lname')?.value.trim() || '')).trim();
     const coCountry = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value;
-    const coAddress = (document.getElementById('co-address')?.value || '') + ', ' + (document.getElementById('co-city')?.value || '') + ' ' + (document.getElementById('co-zip')?.value || '') + ', ' + coCountry;
-    
-    const cPhone = document.getElementById('co-phone')?.value || '';
-    const cEmail = document.getElementById('co-email')?.value || '';
+    const apt      = document.getElementById('co-apt')?.value ? ', ' + document.getElementById('co-apt').value : '';
+    const coAddress = `${document.getElementById('co-address')?.value || ''}${apt}, ${document.getElementById('co-city')?.value || ''} ${document.getElementById('co-zip')?.value || ''}, ${coCountry}`;
+    const cPhone   = document.getElementById('co-phone')?.value || '';
+    const cEmail   = document.getElementById('co-email')?.value || '';
+    const password = isAccountSectionVisible ? (document.getElementById('co-password')?.value || '') : '';
 
     const formData = {
-      customer_name: cName,
-      customer_email: cEmail,
+      customer_name:    cName,
+      customer_email:   cEmail,
       customer_whatsapp: cPhone,
       shipping_country: coCountry,
       shipping_address: coAddress,
-      // Map cart items for backend
+      password,
+      // ── Safe item mapping (item.style may be absent on old cart items) ──
       items: state.cart.map(item => ({
-          garment_type: item.type,
-          fabric_type: item.fabric,
-          neckline: item.neckline,
-          sleeve_style: item.sleeve,
-          trouser_style: item.bottom,
-          add_ons: item.addons,
-          style_notes: item.style.notes,
-          reference_design: item.style.reference,
-          measurements: item.measurements,
-          base_price: item.base_price,
-          addons_price: item.addons_price
+        garment_type:     item.type,
+        fabric_type:      item.fabric,
+        neckline:         item.neckline,
+        sleeve_style:     item.sleeve,
+        trouser_style:    item.bottom,
+        add_ons:          item.addons || [],
+        style_notes:      item.style?.notes || '',
+        reference_design: item.style?.reference || '',
+        measurements:     item.measurements || {},
+        base_price:       item.base_price  || item.price || 0,
+        addons_price:     item.addons_price || 0,
       })),
-      total_price: state.orderData.total_price || 0,
-      amount_paid: state.orderData.total_price || 0,
+      total_price:          state.orderData.total_price || 0,
+      amount_paid:          state.orderData.total_price || 0,
       loyalty_points_earned: state.loyaltyPoints || 0,
-      shipping_cost: state.shippingRate > 0 ? state.shippingRate : 0,
-      sourcing_fee: state.sourcingFee || 0,
-      fabric_estimate_pkr: state.fabricEstimate || 0,
-      fabric_estimate_usd: state.fabricEstimate > 0 ? pkrToUSD(state.fabricEstimate) : 0,
+      shipping_cost:        state.shippingRate > 0 ? state.shippingRate : 0,
+      sourcing_fee:         state.sourcingFee || 0,
+      fabric_estimate_pkr:  state.fabricEstimate || 0,
+      fabric_estimate_usd:  state.fabricEstimate > 0 ? pkrToUSD(state.fabricEstimate) : 0,
       fabric_sourcing: document.getElementById('source-fabric-check')?.checked
         ? {
-            link: document.getElementById('source-fabric-link')?.value || '',
-            desc: document.getElementById('source-fabric-desc')?.value || '',
+            link: document.getElementById('source-fabric-link')?.value  || '',
+            desc: document.getElementById('source-fabric-desc')?.value  || '',
             est_price: state.fabricEstimate || 0,
             pic: state.sourcePicBase64 || ''
           }
         : null
     };
-
 
     try {
       await submitWithStripe(formData, btn, originalText);
@@ -1086,7 +1156,12 @@ async function initStripe() {
   try {
     const resp = await fetch('/api/config');
     const data = await resp.json();
-    if (!data.stripePublishableKey) return;
+    if (!data.stripePublishableKey) {
+      // No Stripe key — show fallback notice
+      const notice = document.getElementById('stripe-no-key-notice');
+      if (notice) notice.style.display = 'block';
+      return;
+    }
     stripe = Stripe(data.stripePublishableKey);
     const elements = stripe.elements();
     cardElement = elements.create('card', {
@@ -1362,6 +1437,7 @@ document.addEventListener('DOMContentLoaded', () => {
   runTieredShipping();
   initStripe();
   updateNavMiniCart();
+  window.checkAuthForCheckout();
 
   const nextBtn = document.getElementById('btn-next');
   if (nextBtn) {
