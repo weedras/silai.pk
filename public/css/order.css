@@ -339,24 +339,27 @@
 .cm-footer { display: flex; align-items: center; justify-content: space-between; padding-top: var(--space-md); border-top: 1px solid var(--border); margin-top: auto; }
 .cm-live-price { font-size: 1.3rem; font-weight: 800; color: var(--gold); font-family: var(--font-sans); }
 .cm-footer-btns { display: flex; gap: 10px; }
-/* Bag icon button on product cards */
-.btn-bag-icon {
-  position: absolute;
-  bottom: var(--space-md);
-  right: var(--space-md);
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  background: var(--midnight-2);
-  color: var(--gold);
-  font-size: 1.1rem;
+/* Add to Bag button on product cards */
+.btn-add-to-bag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--gold);
+  color: var(--midnight, #0d1117);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
   transition: all var(--dur-fast);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  margin-top: auto;
 }
-.btn-bag-icon:hover { background: var(--gold); color: var(--midnight, #0d1117); transform: scale(1.1); }
-.product-card-shopify { position: relative; }
+.btn-add-to-bag:hover { background: #e8c84a; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(212,175,55,0.35); }
 /* Express badge */
 .express-badge { display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #2196F3, #00BCD4); color: white; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
 
