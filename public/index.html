@@ -99,6 +99,7 @@
   <div class="modal-box" style="max-width:500px">
     <button class="modal-close" onclick="document.getElementById('size-chart-modal').classList.remove('open')">✕</button>
     <h3 class="mb-lg" style="text-align:center">Standard Size Chart</h3>
+    <div class="size-chart-table-wrap">
     <table style="width:100%; border-collapse:collapse; text-align:center; font-size:0.9rem">
       <thead style="background:#eaf0fc;">
         <tr><th style="padding:10px; border:1px solid #c9d6f0;">Size</th><th style="padding:10px; border:1px solid #c9d6f0;">S</th><th style="padding:10px; border:1px solid #c9d6f0;">M</th><th style="padding:10px; border:1px solid #c9d6f0;">L</th></tr>
@@ -117,6 +118,7 @@
         <tr><td style="padding:8px; border-bottom:1px solid var(--border)">ARMHOLE</td><td style="padding:8px; border-bottom:1px solid var(--border)">7</td><td style="padding:8px; border-bottom:1px solid var(--border)">8</td><td style="padding:8px; border-bottom:1px solid var(--border)">9</td></tr>
       </tbody>
     </table>
+    </div><!-- end size-chart-table-wrap -->
     <p class="mt-md text-muted text-center" style="font-size:0.8rem">All measurements are in inches.</p>
   </div>
 </div><!-- ─── Config Modal (bag icon → style + measurements popup) ─── -->
@@ -846,7 +848,7 @@
 <div id="view-order" class="spa-view">
   <div class="page-header"><div class="container page-header-content text-center"><h1>✂️ Craft Your Outfit</h1><p class="section-subheading" style="margin:0 auto">Custom stitching to your measurements, delivered worldwide.</p></div></div>
   <div class="container order-page">
-    <div class="order-layout" style="display:grid; grid-template-columns:1fr 340px; gap:2rem; align-items:start;">
+    <div class="order-layout" style="display:grid;">
       <div class="order-main" style="min-width:0;">
         <div id="order-success" class="order-success">
           <div class="success-icon">🎉</div>

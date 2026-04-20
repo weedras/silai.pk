@@ -630,6 +630,58 @@ p  { color: var(--text-secondary); line-height: 1.75; }
   h2 { font-size: 1.6rem; }
 }
 
+/* ─── Mobile-specific UX fixes ───────────────────────────── */
+
+/* Filter bar — scroll horizontally instead of wrapping */
+@media (max-width: 768px) {
+  .filter-bar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-btn { flex-shrink: 0; }
+
+  /* Size chart table — horizontal scroll */
+  .size-chart-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .size-chart-table-wrap table { min-width: 420px; }
+
+  /* All modals — edge-to-edge on phones */
+  .modal-overlay .modal-box,
+  .modal-overlay > div[style*="background"],
+  #size-chart-modal .card,
+  #config-modal .config-modal-box {
+    width: calc(100vw - 24px) !important;
+    max-width: 100% !important;
+    margin: 12px;
+  }
+
+  /* Hero section — tighter on mobile */
+  .hero { padding: var(--space-3xl) 0 var(--space-2xl); }
+  .hero h1 { font-size: 2.2rem; }
+
+  /* Navbar — ensure logo stays left, actions stay right */
+  .navbar { padding: 0 var(--space-md); gap: 8px; }
+  .nav-logo { gap: 6px; }
+  .nav-logo-text { font-size: 1.3rem; }
+
+  /* Delivery/Currency button in navbar — compact */
+  #location-btn { font-size: 0.68rem; padding: 4px 8px; }
+
+  /* Btn tap targets — minimum 44px */
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 36px; }
+
+  /* Section headings — tighter spacing */
+  .section-heading { font-size: 1.6rem; }
+
+  /* Toast — full width on phones */
+  .toast-container { right: 12px; left: 12px; max-width: 100%; }
+}
+
 
 /* ─── Mobile Nav Menu ────────────────────────────────────── */
 .mobile-menu-overlay {

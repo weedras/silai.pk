@@ -303,18 +303,82 @@
 .qty-selector button:hover { background: rgba(255,255,255,0.1); }
 .qty-selector input { width: 34px; background: transparent !important; border: none !important; color: var(--text-primary) !important; text-align: center; font-weight: 700; font-size: 0.88rem; }
 
-/* Responsive */
+/* ─── Responsive ──────────────────────────────────────────── */
+
+/* Tablet — sidebar stacks below */
 @media (max-width: 1020px) {
-  /* Stack sidebar below form on tablets/phones */
-  .order-layout { grid-template-columns: 1fr; max-width: 780px; }
-  .price-sidebar { position: static; }
+  .order-layout { grid-template-columns: 1fr !important; max-width: 780px; }
+  .price-sidebar { position: static !important; }
 }
+
 @media (max-width: 860px) { .garment-product-grid { grid-template-columns: 1fr; } }
+
+/* Mobile */
 @media (max-width: 768px) {
   .garment-selector { grid-template-columns: 1fr 1fr; }
   .meas-grid { grid-template-columns: 1fr; }
   .tracking-header { flex-direction: column; }
   .tracking-info-grid { grid-template-columns: 1fr; }
+
+  /* Step progress — hide labels, compact dots */
+  .step-labels { display: none; }
+  .step-bar { margin-bottom: var(--space-md); }
+  .step-dot { width: 32px; height: 32px; font-size: 0.72rem; }
+
+  /* Form nav — bigger tap targets, stack on very small */
+  .form-nav { flex-wrap: wrap; gap: 10px; }
+  .form-nav .btn { min-height: 48px; flex: 1; min-width: 120px; justify-content: center; }
+
+  /* Qty selector — bigger buttons */
+  .qty-selector { height: 44px; }
+  .qty-selector button { width: 44px; font-size: 1.2rem; }
+
+  /* Size chips — 44px touch targets */
+  .size-chip span { width: 44px; height: 44px; font-size: 0.8rem; }
+
+  /* Order page padding */
+  .order-page { padding-top: calc(var(--nav-height) + var(--space-lg)); }
+
+  /* Checkout form max-width full on mobile */
+  #step-5 > div[style*="max-width"] { max-width: 100% !important; }
+
+  /* Payment card fields */
+  #manual-card-fields > div:last-of-type { grid-template-columns: 1fr 1fr; }
+
+  /* Add-ons grid */
+  .addons-grid { grid-template-columns: 1fr; }
+
+  /* Measurement options — single column */
+  .measurement-options { grid-template-columns: 1fr 1fr; }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  /* Step bar — dots only, no lines labels */
+  .step-dot { width: 28px; height: 28px; font-size: 0.68rem; }
+  .step-line { flex: 1; }
+
+  /* Form nav — stack vertically */
+  .form-nav { flex-direction: column; }
+  .form-nav .btn { width: 100%; min-height: 52px; font-size: 1rem; }
+
+  /* Garment selector — single column on tiny screens */
+  .garment-selector { grid-template-columns: 1fr; }
+
+  /* Measurement options — single column */
+  .measurement-options { grid-template-columns: 1fr; }
+
+  /* Neckline grid — 3 per row */
+  .neckline-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Config modal — full screen */
+  .config-modal-box { width: 100%; max-width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+
+  /* Garment product cards */
+  .garment-product-grid { grid-template-columns: 1fr; }
+
+  /* Checkout form row — single column */
+  .form-row { grid-template-columns: 1fr; }
 }
 
 /* ─── Config Modal (garment style + measurements popup) ───── */
