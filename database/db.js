@@ -159,13 +159,25 @@ if (!existingDemo) {
   console.log('✅ Demo orders seeded: SB-2025-00001, SB-2025-00002');
 }
 
-// ─── Counter for sequential order IDs ─────────────────────
+// ─── Persistent order-ID counter (survives failed inserts) ──
+db.exec(`
+  CREATE TABLE IF NOT EXISTS order_counters (
+    year INTEGER PRIMARY KEY,
+    last_seq INTEGER NOT NULL DEFAULT 0
+  )
+`);
+
 function getNextOrderId() {
   const year = new Date().getFullYear();
-  const row = db.prepare(`SELECT order_id FROM orders WHERE order_id LIKE 'SB-${year}-%' ORDER BY id DESC LIMIT 1`).get();
-  if (!row) return `SB-${year}-00001`;
-  const lastNum = parseInt(row.order_id.split('-')[2], 10);
-  return `SB-${year}-${String(lastNum + 1).padStart(5, '0')}`;
+
+  // Atomically increment the counter for this year
+  db.prepare(`
+    INSERT INTO order_counters (year, last_seq) VALUES (?, 1)
+    ON CONFLICT(year) DO UPDATE SET last_seq = last_seq + 1
+  `).run(year);
+
+  const row = db.prepare('SELECT last_seq FROM order_counters WHERE year = ?').get(year);
+  return `SB-${year}-${String(row.last_seq).padStart(5, '0')}`;
 }
 
 module.exports = { db, getNextOrderId };

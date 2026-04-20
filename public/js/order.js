@@ -387,12 +387,6 @@ function renderCart() {
   const stepCount = document.getElementById('shipping-item-count');
   if (stepCount) stepCount.textContent = `${state.cart.length} clothing item${state.cart.length !== 1 ? 's' : ''}`;
 
-  const navBadge = document.getElementById('nav-cart-badge');
-  if (navBadge) {
-    navBadge.textContent = state.cart.length;
-    navBadge.style.display = state.cart.length > 0 ? 'inline-block' : 'none';
-  }
-
   updateNavMiniCart();
 
   // Mini item list inside checkout summary bar (step 5 top)
