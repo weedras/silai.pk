@@ -559,46 +559,51 @@ function updateNavButtons() {
   const prevBtn         = document.getElementById('btn-prev');
   const nextBtn         = document.getElementById('btn-next');
   const submitBtn       = document.getElementById('btn-submit');
+  // Newsletter/terms section only shown on checkout step
   const sidebarCheckout = document.getElementById('sidebar-checkout-section');
-  const sidebarBadge    = document.getElementById('sidebar-secure-badge');
 
   const onCheckout = state.currentStep === state.totalSteps;
 
   if (state.currentStep === 1) {
-    if (prevBtn)         prevBtn.style.display         = 'none';
-    if (nextBtn)         nextBtn.style.display         = 'none';
-    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (prevBtn)   prevBtn.style.display   = 'none';
+    if (nextBtn)   nextBtn.style.display   = 'none';
+    if (submitBtn) submitBtn.style.display = 'none';
     if (sidebarCheckout) sidebarCheckout.style.display = 'none';
-    if (sidebarBadge)    sidebarBadge.style.display    = '';
   } else if (state.currentStep === 4) {
-    if (prevBtn)         prevBtn.style.display         = 'block';
-    if (nextBtn)         nextBtn.style.display         = 'none';
-    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (prevBtn)   prevBtn.style.display   = 'block';
+    if (nextBtn)   nextBtn.style.display   = 'none';
+    if (submitBtn) submitBtn.style.display = 'none';
     if (sidebarCheckout) sidebarCheckout.style.display = 'none';
-    if (sidebarBadge)    sidebarBadge.style.display    = '';
   } else if (onCheckout) {
-    if (prevBtn)         prevBtn.style.display         = 'block';
-    if (nextBtn)         nextBtn.style.display         = 'none';
-    if (submitBtn)       submitBtn.style.display       = 'block';
+    if (prevBtn)   prevBtn.style.display   = 'block';
+    if (nextBtn)   nextBtn.style.display   = 'none';
+    if (submitBtn) submitBtn.style.display = 'block';
     if (sidebarCheckout) sidebarCheckout.style.display = 'block';
-    if (sidebarBadge)    sidebarBadge.style.display    = 'none';
     populateReview();
   } else {
-    if (prevBtn)         prevBtn.style.display         = 'block';
-    if (nextBtn)         nextBtn.style.display         = 'block';
-    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (prevBtn)   prevBtn.style.display   = 'block';
+    if (nextBtn)   nextBtn.style.display   = 'block';
+    if (submitBtn) submitBtn.style.display = 'none';
     if (sidebarCheckout) sidebarCheckout.style.display = 'none';
-    if (sidebarBadge)    sidebarBadge.style.display    = '';
   }
 }
 
-// Sidebar submit button triggers the main form submit
+// Sidebar Place Order button — submits on step 5, advances toward checkout on other steps
 document.addEventListener('DOMContentLoaded', () => {
   const sidebarBtn = document.getElementById('btn-sidebar-submit');
   if (sidebarBtn) {
     sidebarBtn.addEventListener('click', () => {
-      const form = document.getElementById('order-form');
-      if (form) form.requestSubmit();
+      if (state.currentStep === state.totalSteps) {
+        // On checkout step — submit the form
+        const form = document.getElementById('order-form');
+        if (form) form.requestSubmit();
+      } else if (state.cart.length > 0) {
+        // Has items — go to checkout step
+        window.goToStep(state.totalSteps);
+      } else {
+        // Empty cart — nothing to do yet, show hint
+        if (typeof showToast === 'function') showToast('Add a garment to your bag first.', 'info');
+      }
     });
   }
 });
