@@ -31,7 +31,7 @@
   </script>
   <link rel="stylesheet" href="/css/main.css"/>
   <link rel="stylesheet" href="/css/home.css"/>
-  <link rel="stylesheet" href="/css/order.css"/>
+  <link rel="stylesheet" href="/css/order.css?v=2"/>
   <link rel="stylesheet" href="/css/cultural.css"/>
   <style>
     .spa-view { display: none; }
@@ -846,8 +846,8 @@
 <div id="view-order" class="spa-view">
   <div class="page-header"><div class="container page-header-content text-center"><h1>✂️ Craft Your Outfit</h1><p class="section-subheading" style="margin:0 auto">Custom stitching to your measurements, delivered worldwide.</p></div></div>
   <div class="container order-page">
-    <div class="order-layout">
-      <div class="order-main">
+    <div class="order-layout" style="display:grid; grid-template-columns:1fr 340px; gap:2rem; align-items:start;">
+      <div class="order-main" style="min-width:0;">
         <div id="order-success" class="order-success">
           <div class="success-icon">🎉</div>
           <h2>Order Placed!</h2>
@@ -1401,7 +1401,7 @@
       </div><!-- end order-form-wrapper -->
     </div><!-- end order-main -->
       <!-- Sidebar -->
-      <div class="price-sidebar">
+      <div class="price-sidebar" style="display:block; align-self:start; position:sticky; top:80px;">
         <div class="price-box">
           <h4>🛍️ Order Summary</h4>
 
