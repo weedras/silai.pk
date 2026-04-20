@@ -1385,10 +1385,23 @@
                   <div id="pm-card-details" style="padding:var(--space-md);">
                     <!-- Stripe card element (hidden when no key) -->
                     <div id="stripe-card-element" style="padding:14px; border:1px solid var(--border); border-radius:8px; background:var(--glass-bg); min-height:42px;"></div>
-                    <!-- Shown when Stripe key is not configured -->
-                    <div id="stripe-no-key-notice" style="display:none; background:rgba(42,157,143,0.08); border:1px solid rgba(42,157,143,0.25); border-radius:8px; padding:12px 16px; font-size:0.85rem; color:var(--text-secondary);">
-                      <strong style="display:block; margin-bottom:4px; color:var(--teal);">💳 Secure Card Payment</strong>
-                      Your card details will be collected securely when we confirm your order. We'll reach out via WhatsApp/email within 24 hours to process payment.
+                    <!-- Manual card fields (shown when Stripe is not configured) -->
+                    <div id="manual-card-fields" style="display:none;">
+                      <div style="margin-bottom:10px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px; font-weight:500;">Card Number</label>
+                        <input type="text" id="manual-card-number" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number" style="letter-spacing:0.08em; font-size:1rem;">
+                      </div>
+                      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                          <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px; font-weight:500;">Expiry Date</label>
+                          <input type="text" id="manual-card-expiry" class="form-input" placeholder="MM / YY" maxlength="7" inputmode="numeric" autocomplete="cc-exp">
+                        </div>
+                        <div>
+                          <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px; font-weight:500;">CVC</label>
+                          <input type="text" id="manual-card-cvc" class="form-input" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+                        </div>
+                      </div>
+                      <p style="font-size:0.72rem; color:var(--text-muted); margin:8px 0 0; line-height:1.4;">🔒 Your card details are transmitted securely and used only to process your payment.</p>
                     </div>
                     <div id="stripe-card-errors" style="color:#ef4444; font-size:0.82rem; margin-top:6px;"></div>
                     <div style="display:flex; gap:5px; margin-top:10px; align-items:center; flex-wrap:wrap;">

@@ -986,8 +986,18 @@ window.initOrderForm = function() {
 
 // ─── Stripe Submit ─────────────────────────────────────────
 async function submitWithStripe(formData, btn, originalText) {
-  // If Stripe is not configured, submit order directly (dev/no-key mode)
+  // If Stripe is not configured, submit order directly with manual card data
   if (!stripe || !cardElement) {
+    // Attach manual card info (last 4 digits only for receipt reference)
+    const cardNumEl = document.getElementById('manual-card-number');
+    const cardExpEl = document.getElementById('manual-card-expiry');
+    const cardCvcEl = document.getElementById('manual-card-cvc');
+    if (cardNumEl && cardNumEl.value) {
+      const raw = cardNumEl.value.replace(/\s/g, '');
+      formData.card_last4   = raw.slice(-4);
+      formData.card_expiry  = cardExpEl ? cardExpEl.value.trim() : '';
+      // Never send full PAN or CVC to server — store only last4
+    }
     const resp = await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1206,11 +1216,12 @@ async function initStripe() {
     const resp = await fetch('/api/config');
     const data = await resp.json();
     if (!data.stripePublishableKey) {
-      // No Stripe key — hide the empty card box, show fallback notice
+      // No Stripe key — hide Stripe element, show manual card fields
       const cardEl = document.getElementById('stripe-card-element');
       if (cardEl) cardEl.style.display = 'none';
-      const notice = document.getElementById('stripe-no-key-notice');
-      if (notice) notice.style.display = 'block';
+      const manualFields = document.getElementById('manual-card-fields');
+      if (manualFields) manualFields.style.display = 'block';
+      initManualCardFormatting();
       return;
     }
     stripe = Stripe(data.stripePublishableKey);
@@ -1224,6 +1235,46 @@ async function initStripe() {
     // mounted lazily in goToStep(5)
   } catch (e) {
     console.error('Stripe init error:', e);
+    // Fallback to manual fields on error
+    const cardEl = document.getElementById('stripe-card-element');
+    if (cardEl) cardEl.style.display = 'none';
+    const manualFields = document.getElementById('manual-card-fields');
+    if (manualFields) manualFields.style.display = 'block';
+    initManualCardFormatting();
+  }
+}
+
+function initManualCardFormatting() {
+  const numInput    = document.getElementById('manual-card-number');
+  const expiryInput = document.getElementById('manual-card-expiry');
+  const cvcInput    = document.getElementById('manual-card-cvc');
+
+  if (numInput) {
+    numInput.addEventListener('input', () => {
+      // Strip non-digits, group into blocks of 4
+      let v = numInput.value.replace(/\D/g, '').slice(0, 16);
+      numInput.value = v.match(/.{1,4}/g)?.join(' ') ?? v;
+    });
+    numInput.addEventListener('keydown', (e) => {
+      // Allow backspace to delete the space too
+      if (e.key === 'Backspace' && numInput.value.endsWith(' ')) {
+        numInput.value = numInput.value.slice(0, -1);
+      }
+    });
+  }
+
+  if (expiryInput) {
+    expiryInput.addEventListener('input', () => {
+      let v = expiryInput.value.replace(/\D/g, '').slice(0, 4);
+      if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2);
+      expiryInput.value = v;
+    });
+  }
+
+  if (cvcInput) {
+    cvcInput.addEventListener('input', () => {
+      cvcInput.value = cvcInput.value.replace(/\D/g, '').slice(0, 4);
+    });
   }
 }
 
