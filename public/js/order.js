@@ -545,35 +545,30 @@ function updateProgress(step) {
 }
 
 function updateNavButtons() {
-  const prevBtn   = document.getElementById('btn-prev');
-  const nextBtn   = document.getElementById('btn-next');
-  const submitBtn = document.getElementById('btn-submit');
+  const prevBtn    = document.getElementById('btn-prev');
+  const nextBtn    = document.getElementById('btn-next');
+  // btn-submit and checkout-footer-options now live inside the right sidebar of step 5
   const footerOpts = document.getElementById('checkout-footer-options');
 
   if (state.currentStep === 1) {
-    // Step 1: garment-card buttons handle navigation; hide all generic buttons
     if (prevBtn)    prevBtn.style.display    = 'none';
     if (nextBtn)    nextBtn.style.display    = 'none';
-    if (submitBtn)  submitBtn.style.display  = 'none';
     if (footerOpts) footerOpts.style.display = 'none';
   } else if (state.currentStep === 4) {
-    // Step 4 (Shopping Bag): hide generic next; bag has its own "Proceed to Checkout" button
+    // Step 4 (Shopping Bag): bag has its own "Proceed to Checkout" button
     if (prevBtn)    prevBtn.style.display    = 'block';
     if (nextBtn)    nextBtn.style.display    = 'none';
-    if (submitBtn)  submitBtn.style.display  = 'none';
     if (footerOpts) footerOpts.style.display = 'none';
   } else if (state.currentStep === state.totalSteps) {
-    // Step 5: show Place Order button + newsletter/terms footer
+    // Step 5: show sticky sidebar (newsletter + terms + submit btn inside sidebar)
     if (prevBtn)    prevBtn.style.display    = 'block';
     if (nextBtn)    nextBtn.style.display    = 'none';
-    if (submitBtn)  submitBtn.style.display  = 'block';
     if (footerOpts) footerOpts.style.display = 'block';
     populateReview();
   } else {
     // Steps 2 & 3
     if (prevBtn)    prevBtn.style.display    = 'block';
     if (nextBtn)    nextBtn.style.display    = 'block';
-    if (submitBtn)  submitBtn.style.display  = 'none';
     if (footerOpts) footerOpts.style.display = 'none';
   }
 }

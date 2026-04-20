@@ -5,8 +5,74 @@ const path = require('path');
 const session = require('express-session');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const SQLiteStore = require('better-sqlite3-session-store')(session);
 const { db } = require('./database/db');
+
+// ─── Custom SQLite Session Store ──────────────────────────
+// better-sqlite3-session-store v0.1.0 stores expire as an ISO string
+// with milliseconds (e.g. "2026-05-20T12:00:00.000Z"). SQLite's
+// datetime() function doesn't parse the milliseconds part, so the
+// WHERE clause always evaluates to NULL → sessions are saved but never
+// found on the next request.  This replacement uses Unix timestamps
+// (integers) which SQLite handles perfectly.
+class SQLiteSessionStore extends session.Store {
+  constructor(db) {
+    super();
+    this.db = db;
+    // Recreate table with integer expire column (drops old TEXT-expire table)
+    db.exec(`
+      DROP TABLE IF EXISTS sessions;
+      CREATE TABLE IF NOT EXISTS sessions (
+        sid     TEXT    PRIMARY KEY,
+        sess    TEXT    NOT NULL,
+        expire  INTEGER NOT NULL
+      )
+    `);
+    // Purge expired sessions every hour
+    setInterval(() => {
+      try { db.prepare('DELETE FROM sessions WHERE expire <= ?').run(Math.floor(Date.now() / 1000)); }
+      catch(e) { /* ignore */ }
+    }, 3_600_000);
+  }
+  get(sid, cb) {
+    try {
+      const row = this.db.prepare('SELECT sess FROM sessions WHERE sid = ? AND expire > ?')
+        .get(sid, Math.floor(Date.now() / 1000));
+      cb(null, row ? JSON.parse(row.sess) : null);
+    } catch(e) { cb(e); }
+  }
+  set(sid, sess, cb) {
+    try {
+      const maxAge = sess.cookie?.maxAge ?? 86_400_000; // ms → default 1 day
+      const expire = Math.floor((Date.now() + maxAge) / 1000);
+      this.db.prepare('INSERT OR REPLACE INTO sessions (sid, sess, expire) VALUES (?, ?, ?)')
+        .run(sid, JSON.stringify(sess), expire);
+      cb(null);
+    } catch(e) { cb(e); }
+  }
+  destroy(sid, cb) {
+    try { this.db.prepare('DELETE FROM sessions WHERE sid = ?').run(sid); cb(null); }
+    catch(e) { cb(e); }
+  }
+  touch(sid, sess, cb) {
+    try {
+      const maxAge = sess.cookie?.maxAge ?? 86_400_000;
+      const expire = Math.floor((Date.now() + maxAge) / 1000);
+      this.db.prepare('UPDATE sessions SET expire = ? WHERE sid = ?').run(expire, sid);
+      cb(null);
+    } catch(e) { cb(e); }
+  }
+  length(cb) {
+    try {
+      const row = this.db.prepare('SELECT COUNT(*) as c FROM sessions WHERE expire > ?')
+        .get(Math.floor(Date.now() / 1000));
+      cb(null, row.c);
+    } catch(e) { cb(e); }
+  }
+  clear(cb) {
+    try { this.db.prepare('DELETE FROM sessions').run(); cb(null); }
+    catch(e) { cb(e); }
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,13 +110,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Persistent Session Store
 app.use(session({
-  store: new SQLiteStore({
-    client: db,
-    expired: {
-      clear: true,
-      intervalMs: 3600000 // clean up expired sessions every hour
-    }
-  }),
+  store: new SQLiteSessionStore(db),
   secret: process.env.SESSION_SECRET || 'silai-secret-2026',
   resave: true,             // always re-save so the store entry never expires before the cookie
   saveUninitialized: false,
