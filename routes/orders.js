@@ -50,9 +50,11 @@ router.post('/', async (req, res) => {
         userId = result.lastInsertRowid;
         userCreated = true;
 
-        // Set session so they're logged in immediately
+        // Set session so they're logged in immediately after checkout
         req.session.userId = userId;
         req.session.user = { id: userId, name: customer_name, email: customer_email, role: 'customer' };
+        // Save session synchronously before the order DB writes continue
+        await new Promise((resolve) => req.session.save(resolve));
       }
     }
 

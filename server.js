@@ -11,9 +11,13 @@ const { db } = require('./database/db');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust the first reverse proxy (Hostinger / Nginx) so that
+// secure cookies work correctly when the app sits behind HTTPS termination.
+app.set('trust proxy', 1);
+
 // ─── Middleware ───────────────────────────────────────────
 app.use(helmet({
-  contentSecurityPolicy: false, 
+  contentSecurityPolicy: false,
 }));
 
 // CORS Configuration
@@ -44,15 +48,17 @@ app.use(session({
     client: db,
     expired: {
       clear: true,
-      intervalMs: 900000 // 15min
+      intervalMs: 3600000 // clean up expired sessions every hour
     }
   }),
   secret: process.env.SESSION_SECRET || 'silai-secret-2026',
-  resave: false,
+  resave: true,             // always re-save so the store entry never expires before the cookie
   saveUninitialized: false,
-  cookie: { 
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  rolling: true,            // reset the 30-day window on every request (keeps active users logged in)
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     httpOnly: true,
+    // secure only when behind HTTPS — trust proxy (set above) makes this work on Hostinger
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
   }

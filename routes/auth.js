@@ -39,7 +39,15 @@ router.post('/register', async (req, res) => {
     req.session.userId = user.id;
     req.session.user   = { id: user.id, name: user.name, email: user.email, role: user.role };
 
-    res.status(201).json({ success: true, user: req.session.user });
+    // Explicitly save to DB before responding — prevents the race condition where
+    // the response (and Set-Cookie header) is sent before the async DB write completes.
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error (register):', err);
+        return res.status(500).json({ error: 'Account created but session could not be saved. Please sign in.' });
+      }
+      res.status(201).json({ success: true, user: req.session.user });
+    });
   } catch (err) {
     console.error('Registration error:', err);
     res.status(500).json({ error: 'Internal server error during registration.' });
@@ -84,7 +92,15 @@ router.post('/login', async (req, res) => {
     req.session.userId = user.id;
     req.session.user   = { id: user.id, name: user.name, email: user.email, role: user.role };
 
-    res.json({ success: true, user: req.session.user });
+    // Explicitly save to DB before responding — prevents the race condition where
+    // the response (and Set-Cookie header) is sent before the async DB write completes.
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error (login):', err);
+        return res.status(500).json({ error: 'Login failed — session could not be saved. Please try again.' });
+      }
+      res.json({ success: true, user: req.session.user });
+    });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Internal server error during login.' });
