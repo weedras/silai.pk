@@ -369,12 +369,22 @@ function renderCart() {
     </div>
   `).join('');
 
-  // Mini list for nav mini-cart (still needed)
+  // Mini list for sidebar order summary (with edit +/- controls)
   const sidebarList = document.getElementById('sidebar-cart-list');
   if (sidebarList) {
+    const garmentLabelsS = { kameez: 'Kameez', fullsuit: 'Full Suit', '3piece': '3-Piece', party: 'Party Wear' };
     sidebarList.innerHTML = state.cart.map(item => `
-      <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; color:var(--text-secondary)">
-        <span>1× ${item.type}</span><span>${formatPrice(item.price)}</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid var(--border); color:var(--text-secondary);">
+        <span style="font-weight:600; color:var(--text-primary);">1× ${garmentLabelsS[item.type] || item.type}</span>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <button type="button" onclick="window.removeItemFromCart(${item.id})"
+            style="width:22px; height:22px; background:rgba(239,68,68,0.1); border:none; border-radius:4px; cursor:pointer; color:var(--rose); font-size:0.95rem; line-height:1; display:flex; align-items:center; justify-content:center;"
+            title="Remove">−</button>
+          <span style="font-weight:700; color:var(--gold); min-width:50px; text-align:right;">${formatPrice(item.price)}</span>
+          <button type="button" onclick="window.duplicateItemInCart(${item.id})"
+            style="width:22px; height:22px; background:rgba(42,157,143,0.12); border:none; border-radius:4px; cursor:pointer; color:var(--teal); font-size:0.95rem; line-height:1; display:flex; align-items:center; justify-content:center;"
+            title="Add another">+</button>
+        </div>
       </div>`).join('');
   }
 
@@ -545,33 +555,57 @@ function updateProgress(step) {
 }
 
 function updateNavButtons() {
-  const prevBtn    = document.getElementById('btn-prev');
-  const nextBtn    = document.getElementById('btn-next');
-  // btn-submit + newsletter/terms now live inside the order summary card on step 5
-  const footerOpts = document.getElementById('checkout-footer-options');
+  const prevBtn       = document.getElementById('btn-prev');
+  const nextBtn       = document.getElementById('btn-next');
+  const submitBtn     = document.getElementById('btn-submit');
+  const footerOpts    = document.getElementById('checkout-footer-options');
+  const sidebarSubmit = document.getElementById('btn-sidebar-submit');
+  const sidebarBadge  = document.getElementById('sidebar-secure-badge');
+
+  const onCheckout = state.currentStep === state.totalSteps;
 
   if (state.currentStep === 1) {
-    if (prevBtn)    prevBtn.style.display    = 'none';
-    if (nextBtn)    nextBtn.style.display    = 'none';
-    if (footerOpts) footerOpts.style.display = 'none';
+    if (prevBtn)       prevBtn.style.display       = 'none';
+    if (nextBtn)       nextBtn.style.display       = 'none';
+    if (submitBtn)     submitBtn.style.display     = 'none';
+    if (footerOpts)    footerOpts.style.display    = 'none';
+    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
+    if (sidebarBadge)  sidebarBadge.style.display  = '';
   } else if (state.currentStep === 4) {
-    // Step 4 (Shopping Bag): bag has its own "Proceed to Checkout" button
-    if (prevBtn)    prevBtn.style.display    = 'block';
-    if (nextBtn)    nextBtn.style.display    = 'none';
-    if (footerOpts) footerOpts.style.display = 'none';
-  } else if (state.currentStep === state.totalSteps) {
-    // Step 5: show newsletter + terms + SECURE PAYMENT inside the summary card
-    if (prevBtn)    prevBtn.style.display    = 'block';
-    if (nextBtn)    nextBtn.style.display    = 'none';
-    if (footerOpts) footerOpts.style.display = 'block';
+    if (prevBtn)       prevBtn.style.display       = 'block';
+    if (nextBtn)       nextBtn.style.display       = 'none';
+    if (submitBtn)     submitBtn.style.display     = 'none';
+    if (footerOpts)    footerOpts.style.display    = 'none';
+    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
+    if (sidebarBadge)  sidebarBadge.style.display  = '';
+  } else if (onCheckout) {
+    if (prevBtn)       prevBtn.style.display       = 'block';
+    if (nextBtn)       nextBtn.style.display       = 'none';
+    if (submitBtn)     submitBtn.style.display     = 'block';
+    if (footerOpts)    footerOpts.style.display    = 'block';
+    if (sidebarSubmit) sidebarSubmit.style.display = 'block';
+    if (sidebarBadge)  sidebarBadge.style.display  = 'none';
     populateReview();
   } else {
-    // Steps 2 & 3
-    if (prevBtn)    prevBtn.style.display    = 'block';
-    if (nextBtn)    nextBtn.style.display    = 'block';
-    if (footerOpts) footerOpts.style.display = 'none';
+    if (prevBtn)       prevBtn.style.display       = 'block';
+    if (nextBtn)       nextBtn.style.display       = 'block';
+    if (submitBtn)     submitBtn.style.display     = 'none';
+    if (footerOpts)    footerOpts.style.display    = 'none';
+    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
+    if (sidebarBadge)  sidebarBadge.style.display  = '';
   }
 }
+
+// Sidebar submit button triggers the main form submit
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebarBtn = document.getElementById('btn-sidebar-submit');
+  if (sidebarBtn) {
+    sidebarBtn.addEventListener('click', () => {
+      const form = document.getElementById('order-form');
+      if (form) form.requestSubmit();
+    });
+  }
+});
 
 window.nextStep = function nextStep() {
   if (validateStep(state.currentStep)) {
