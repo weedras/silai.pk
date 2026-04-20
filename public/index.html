@@ -1244,176 +1244,177 @@
             <h2 class="step-title">Checkout</h2>
 
             <!-- ═══ PROMINENT ADDRESS BANNER ════════════════════════ -->
-            <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(42,157,143,0.08)); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 20px; display:flex; align-items:flex-start; gap:14px;">
+            <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(42,157,143,0.08)); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 20px; margin-bottom:var(--space-lg); display:flex; align-items:flex-start; gap:14px;">
               <span style="font-size:1.5rem; flex-shrink:0;">📦</span>
               <div>
-                <div style="font-weight:700; font-size:0.95rem; color:var(--gold); margin-bottom:4px;">After ordering — Ship your fabric to:</div>
-                <div style="font-size:0.92rem; font-weight:600; color:#fff; line-height:1.5;">House 82D, Block D, PCSIR Staff Colony, College Road, Lahore, Pakistan</div>
+                <div style="font-weight:700; font-size:0.95rem; color:var(--gold); margin-bottom:4px;">Step 1 after ordering — Ship your fabric to:</div>
+                <div style="font-size:0.92rem; font-weight:600; color:#fff; line-height:1.5;">House 82D, Block D, PCSIR Staff Colony,<br/>College Road, Lahore, Pakistan</div>
                 <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">We'll confirm receipt by WhatsApp &amp; email once it arrives at our workshop.</div>
               </div>
             </div>
 
-            <!-- ═══ TWO-COLUMN LAYOUT ═══════════════════════════════ -->
-            <div class="checkout-layout">
-
-              <!-- ── LEFT: Form ────────────────────────────────────── -->
-              <div class="checkout-form-col">
-
-                <!-- Login / Signup prompt -->
-                <div id="checkout-login-prompt" style="display:flex; align-items:center; justify-content:space-between; background:var(--glass-bg); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:var(--space-md); font-size:0.85rem;">
-                  <span style="color:var(--text-muted);">Already have an account?</span>
-                  <div style="display:flex; gap:12px;">
-                    <button type="button" onclick="window.openAuthModal('login', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--gold); font-weight:600; cursor:pointer; font-size:0.85rem;">Log in →</button>
-                    <button type="button" onclick="window.openAuthModal('register', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--teal); font-weight:600; cursor:pointer; font-size:0.85rem;">Sign up</button>
-                  </div>
+            <!-- ═══ ORDER SUMMARY BAR (top, laam.pk style) ══════════ -->
+            <div class="card mb-xl" style="padding:0; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
+              <!-- Header — always visible, click to expand/collapse -->
+              <div onclick="toggleSummary()" style="padding:var(--space-md) var(--space-lg); display:flex; justify-content:space-between; align-items:center; cursor:pointer; background:var(--glass-bg); user-select:none;">
+                <div>
+                  <span style="font-weight:700;" id="checkout-summary-title">Order summary (1 item)</span>
+                  <div id="sidebar-est-delivery" style="font-size:0.78rem; color:var(--teal); margin-top:2px; display:none;"></div>
                 </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <span style="font-size:1.1rem; font-weight:700; color:var(--gold);" id="co-total">—</span>
+                  <span id="summary-chevron" style="color:var(--text-muted); display:inline-block; transition:transform 0.25s; font-size:0.7rem;">▼</span>
+                </div>
+              </div>
+              <!-- Expandable body -->
+              <div id="co-summary-body" style="padding:var(--space-md) var(--space-lg) var(--space-lg); border-top:1px solid var(--border);">
+                <div id="co-items-mini" style="margin-bottom:var(--space-md);"></div>
+                <div class="price-line" style="font-size:0.88rem;"><span>Subtotal</span><span id="co-subtotal">—</span></div>
+                <div class="price-line" style="font-size:0.88rem;"><span>Shipping</span><span class="text-teal shipping-rate-val" id="co-shipping">TBD</span></div>
+                <hr style="border:0; border-top:1px solid var(--border); margin:8px 0;" />
+                <div class="price-line" style="font-size:1rem; font-weight:700;"><span>Total</span><span id="co-total-body">—</span></div>
+                <div style="background:rgba(233,196,106,0.08); color:var(--gold); padding:7px 10px; border-radius:6px; margin-top:10px; font-size:0.78rem; display:flex; gap:6px; align-items:center;">
+                  ✨ Earn <strong id="co-points">0</strong> loyalty points on this order
+                </div>
+                <!-- Newsletter + Terms + Place Order (inside summary, shown on step 5) -->
+                <div id="checkout-footer-options" style="display:none; margin-top:var(--space-md); padding-top:var(--space-md); border-top:1px solid var(--border);">
+                  <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+                    <input type="checkbox" id="newsletter-opt-in" style="margin-top:2px; accent-color:var(--gold); flex-shrink:0;">
+                    <span>Subscribe to our newsletter for exclusive offers and style tips. Unsubscribe anytime.</span>
+                  </label>
+                  <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.5; margin:0 0 12px;">
+                    By ordering, you agree to our
+                    <a href="#policy-terms" style="color:var(--gold); text-decoration:none;">Terms</a>
+                    and <a href="#policy-privacy" style="color:var(--gold); text-decoration:none;">Privacy Policy</a>.
+                  </p>
+                  <button class="btn btn-teal" id="btn-submit" type="submit" style="width:100%; font-size:0.95rem; padding:13px; font-weight:700; letter-spacing:0.04em;">🔒 SECURE PAYMENT</button>
+                </div>
+              </div>
+            </div>
 
-                <!-- Contact Info -->
-                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
-                  <h4 class="mb-md">Contact Info</h4>
+            <!-- ═══ FORM (single column, max 620px) ══════════════════ -->
+            <div style="max-width:620px;">
+
+              <!-- Login / Signup prompt -->
+              <div id="checkout-login-prompt" style="display:flex; align-items:center; justify-content:space-between; background:var(--glass-bg); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:var(--space-md); font-size:0.85rem;">
+                <span style="color:var(--text-muted);">Already have an account?</span>
+                <div style="display:flex; gap:12px;">
+                  <button type="button" onclick="window.openAuthModal('login', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--gold); font-weight:600; cursor:pointer; font-size:0.85rem;">Log in →</button>
+                  <button type="button" onclick="window.openAuthModal('register', window.checkAuthForCheckout)" style="background:none; border:none; color:var(--teal); font-weight:600; cursor:pointer; font-size:0.85rem;">Sign up</button>
+                </div>
+              </div>
+
+              <!-- Contact Info -->
+              <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                <h4 class="mb-md">Contact Info</h4>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">First Name *</label><input type="text" id="co-fname" class="form-input" required></div>
+                  <div class="form-group"><label class="form-label">Last Name *</label><input type="text" id="co-lname" class="form-input" required></div>
+                </div>
+                <div class="form-group"><label class="form-label">Email Address *</label><input type="email" id="co-email" class="form-input" required></div>
+                <div class="form-group"><label class="form-label">WhatsApp / Phone *</label><input type="tel" id="co-phone" class="form-input" placeholder="+44 7700 000000" required></div>
+
+                <!-- Account creation (hidden if already logged in) -->
+                <div id="account-creation-section" style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:10px; padding:var(--space-md); margin-top:var(--space-md);">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                    <span>🔐</span>
+                    <span style="font-weight:600; font-size:0.9rem;">Create your account</span>
+                  </div>
+                  <p style="font-size:0.8rem; color:var(--text-muted); margin:0 0 var(--space-sm);">We'll sign you up so you can track orders &amp; view your history anytime.</p>
                   <div class="form-row">
-                    <div class="form-group"><label class="form-label">First Name *</label><input type="text" id="co-fname" class="form-input" required></div>
-                    <div class="form-group"><label class="form-label">Last Name *</label><input type="text" id="co-lname" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="co-password" class="form-input" placeholder="Min. 6 characters" minlength="6" autocomplete="new-password"></div>
+                    <div class="form-group"><label class="form-label">Confirm Password</label><input type="password" id="co-password-confirm" class="form-input" placeholder="Repeat password" autocomplete="new-password"></div>
                   </div>
-                  <div class="form-group"><label class="form-label">Email Address *</label><input type="email" id="co-email" class="form-input" required></div>
-                  <div class="form-group"><label class="form-label">WhatsApp / Phone *</label><input type="tel" id="co-phone" class="form-input" placeholder="+44 7700 000000" required></div>
+                  <div id="co-password-error" style="color:#ef4444; font-size:0.78rem; display:none; margin-top:4px;"></div>
+                  <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0 0;">Leave blank to place order without an account.</p>
+                </div>
+              </div>
 
-                  <!-- Account creation (hidden if already logged in) -->
-                  <div id="account-creation-section" style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:10px; padding:var(--space-md); margin-top:var(--space-md);">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                      <span>🔐</span><span style="font-weight:600; font-size:0.9rem;">Create your account</span>
-                    </div>
-                    <p style="font-size:0.8rem; color:var(--text-muted); margin:0 0 var(--space-sm);">We'll sign you up so you can track orders &amp; view your history anytime.</p>
-                    <div class="form-row">
-                      <div class="form-group"><label class="form-label">Password</label><input type="password" id="co-password" class="form-input" placeholder="Min. 6 characters" minlength="6" autocomplete="new-password"></div>
-                      <div class="form-group"><label class="form-label">Confirm Password</label><input type="password" id="co-password-confirm" class="form-input" placeholder="Repeat password" autocomplete="new-password"></div>
-                    </div>
-                    <div id="co-password-error" style="color:#ef4444; font-size:0.78rem; display:none; margin-top:4px;"></div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0 0;">Leave blank to place order without an account.</p>
+              <!-- Shipping Address -->
+              <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                <h4 class="mb-md">Shipping Address</h4>
+                <div class="form-group"><label class="form-label">Country *</label>
+                  <select id="co-country" class="form-select" required>
+                    <option value="United States">🇺🇸 United States</option>
+                    <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                    <option value="Canada">🇨🇦 Canada</option>
+                    <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
+                    <option value="Australia">🇦🇺 Australia</option>
+                    <option value="Pakistan">🇵🇰 Pakistan</option>
+                  </select>
+                </div>
+                <div class="form-group mt-sm"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
+                <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
+                  <div class="form-group">
+                    <label class="form-label">Zip / Postal Code *</label>
+                    <input type="text" id="co-zip" class="form-input" required>
+                    <div id="co-zip-hint" style="font-size:0.75rem; margin-top:4px; min-height:16px;"></div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Shipping Address -->
-                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
-                  <h4 class="mb-md">Shipping Address</h4>
-                  <div class="form-group"><label class="form-label">Country *</label>
-                    <select id="co-country" class="form-select" required>
-                      <option value="United States">🇺🇸 United States</option>
-                      <option value="United Kingdom">🇬🇧 United Kingdom</option>
-                      <option value="Canada">🇨🇦 Canada</option>
-                      <option value="United Arab Emirates">🇦🇪 United Arab Emirates</option>
-                      <option value="Australia">🇦🇺 Australia</option>
-                      <option value="Pakistan">🇵🇰 Pakistan</option>
-                    </select>
-                  </div>
-                  <div class="form-group mt-sm"><label class="form-label">Address *</label><input type="text" id="co-address" class="form-input" placeholder="House number, street, area" required></div>
-                  <div class="form-group"><label class="form-label">Apt, suite, unit (optional)</label><input type="text" id="co-apt" class="form-input"></div>
-                  <div class="form-row">
-                    <div class="form-group"><label class="form-label">City *</label><input type="text" id="co-city" class="form-input" required></div>
-                    <div class="form-group">
-                      <label class="form-label">Zip / Postal Code *</label>
-                      <input type="text" id="co-zip" class="form-input" required>
-                      <div id="co-zip-hint" style="font-size:0.75rem; margin-top:4px; min-height:16px;"></div>
+              <!-- Shipping rate info -->
+              <div id="shipping-tier-panel" class="card mb-md" style="padding:var(--space-md) var(--space-lg); border:1px solid rgba(42,157,143,0.3);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.88rem; color:var(--text-muted);">🚚 <span id="shipping-item-count">1 garment</span></span>
+                  <span class="text-teal" style="font-weight:600;" id="shipping-tier-rate">Calculating…</span>
+                </div>
+                <div id="shipping-upsell-bar" style="margin-top:8px; display:none;">
+                  <p id="upsell-msg" style="font-size:0.8rem; color:var(--gold); margin:0;"></p>
+                </div>
+              </div>
+
+              <!-- Payment -->
+              <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-md);">
+                  <h4 style="margin:0;">Payment Method</h4>
+                  <div class="badge badge-gold" style="font-size:0.78rem;">🔒 Secure</div>
+                </div>
+                <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+                  <label style="display:flex; padding:var(--space-md); border-bottom:1px solid var(--border); cursor:pointer; align-items:center; gap:12px; background:var(--glass-bg)">
+                    <input type="radio" name="payMethod" value="card" checked>
+                    <div style="flex:1; font-weight:600; font-size:0.95rem;">Credit / Debit Card</div>
+                    <!-- Card brand logos -->
+                    <div style="display:flex; gap:4px; align-items:center;">
+                      <span title="Visa" style="background:#1A1F71; color:#fff; font-weight:900; font-size:0.55rem; padding:2px 6px; border-radius:3px; letter-spacing:0.08em; font-family:sans-serif;">VISA</span>
+                      <span title="Mastercard" style="background:linear-gradient(90deg,#EB001B 40%,#F79E1B 60%); color:#fff; font-weight:700; font-size:0.55rem; padding:2px 6px; border-radius:3px; font-family:sans-serif;">MC</span>
+                      <span title="Amex" style="background:#2E77BC; color:#fff; font-weight:700; font-size:0.55rem; padding:2px 6px; border-radius:3px; font-family:sans-serif;">AMEX</span>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Shipping rate info -->
-                <div id="shipping-tier-panel" class="card mb-md" style="padding:var(--space-md) var(--space-lg); border:1px solid rgba(42,157,143,0.3);">
-                  <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.88rem; color:var(--text-muted);">🚚 <span id="shipping-item-count">1 garment</span></span>
-                    <span class="text-teal" style="font-weight:600;" id="shipping-tier-rate">Calculating…</span>
-                  </div>
-                  <div id="shipping-upsell-bar" style="margin-top:8px; display:none;">
-                    <p id="upsell-msg" style="font-size:0.8rem; color:var(--gold); margin:0;"></p>
-                  </div>
-                </div>
-
-                <!-- Payment -->
-                <div class="card mb-md" style="padding:var(--space-lg); border:1px solid var(--border);">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-md);">
-                    <h4 style="margin:0;">Payment Method</h4>
-                    <div class="badge badge-gold" style="font-size:0.78rem;">🔒 Secure</div>
-                  </div>
-                  <div style="border:1px solid var(--border); border-radius:8px; overflow:hidden;">
-                    <label style="display:flex; padding:var(--space-md); border-bottom:1px solid var(--border); cursor:pointer; align-items:center; gap:12px; background:var(--glass-bg)">
-                      <input type="radio" name="payMethod" value="card" checked>
-                      <div style="flex:1; font-weight:600; font-size:0.95rem;">Credit / Debit Card</div>
-                      <div style="display:flex; gap:4px; align-items:center;">
-                        <span title="Visa" style="background:#1A1F71; color:#fff; font-weight:900; font-size:0.55rem; padding:2px 6px; border-radius:3px; letter-spacing:0.08em; font-family:sans-serif;">VISA</span>
-                        <span title="Mastercard" style="background:linear-gradient(90deg,#EB001B 40%,#F79E1B 60%); color:#fff; font-weight:700; font-size:0.55rem; padding:2px 6px; border-radius:3px; font-family:sans-serif;">MC</span>
-                        <span title="Amex" style="background:#2E77BC; color:#fff; font-weight:700; font-size:0.55rem; padding:2px 6px; border-radius:3px; font-family:sans-serif;">AMEX</span>
-                      </div>
-                    </label>
-                    <div id="pm-card-details" style="padding:var(--space-md);">
-                      <div id="stripe-card-element" style="padding:14px; border:1px solid var(--border); border-radius:8px; background:var(--glass-bg); min-height:42px;"></div>
-                      <div id="stripe-no-key-notice" style="display:none; background:rgba(42,157,143,0.08); border:1px solid rgba(42,157,143,0.25); border-radius:8px; padding:12px 16px; font-size:0.85rem; color:var(--text-secondary);">
-                        <strong style="display:block; margin-bottom:4px; color:var(--teal);">💳 Secure Card Payment</strong>
-                        Your card details will be collected securely when we confirm your order. We'll reach out via WhatsApp/email within 24 hours to process payment.
-                      </div>
-                      <div id="stripe-card-errors" style="color:#ef4444; font-size:0.82rem; margin-top:6px;"></div>
-                      <div style="display:flex; gap:5px; margin-top:10px; align-items:center; flex-wrap:wrap;">
-                        <span title="Apple Pay" style="background:#000; color:#fff; font-weight:500; font-size:0.6rem; padding:2px 7px; border-radius:3px; font-family:sans-serif;">🍎 Pay</span>
-                        <span title="Google Pay" style="background:#fff; color:#333; font-weight:600; font-size:0.6rem; padding:2px 7px; border-radius:3px; border:1px solid #ddd; font-family:sans-serif;"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span> Pay</span>
-                        <span style="font-size:0.72rem; color:var(--text-muted);">All major cards accepted</span>
-                      </div>
+                  </label>
+                  <div id="pm-card-details" style="padding:var(--space-md);">
+                    <!-- Stripe card element (hidden when no key) -->
+                    <div id="stripe-card-element" style="padding:14px; border:1px solid var(--border); border-radius:8px; background:var(--glass-bg); min-height:42px;"></div>
+                    <!-- Shown when Stripe key is not configured -->
+                    <div id="stripe-no-key-notice" style="display:none; background:rgba(42,157,143,0.08); border:1px solid rgba(42,157,143,0.25); border-radius:8px; padding:12px 16px; font-size:0.85rem; color:var(--text-secondary);">
+                      <strong style="display:block; margin-bottom:4px; color:var(--teal);">💳 Secure Card Payment</strong>
+                      Your card details will be collected securely when we confirm your order. We'll reach out via WhatsApp/email within 24 hours to process payment.
+                    </div>
+                    <div id="stripe-card-errors" style="color:#ef4444; font-size:0.82rem; margin-top:6px;"></div>
+                    <div style="display:flex; gap:5px; margin-top:10px; align-items:center; flex-wrap:wrap;">
+                      <span title="Apple Pay" style="background:#000; color:#fff; font-weight:500; font-size:0.6rem; padding:2px 7px; border-radius:3px; font-family:sans-serif;">🍎 Pay</span>
+                      <span title="Google Pay" style="background:#fff; color:#333; font-weight:600; font-size:0.6rem; padding:2px 7px; border-radius:3px; border:1px solid #ddd; font-family:sans-serif;"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span> Pay</span>
+                      <span style="font-size:0.72rem; color:var(--text-muted);">All major cards accepted</span>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Trust badges -->
-                <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                  <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">🔒 256-bit SSL</div>
-                  <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">✅ Secure Checkout</div>
-                  <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">💳 Powered by Stripe</div>
-                  <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">🛡️ Privacy Protected</div>
-                </div>
-              </div><!-- end checkout-form-col -->
+              <!-- Trust badges -->
+              <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:var(--space-md);">
+                <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">🔒 256-bit SSL</div>
+                <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">✅ Secure Checkout</div>
+                <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">💳 Powered by Stripe</div>
+                <div style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-muted); background:var(--glass-bg); border:1px solid var(--border); padding:4px 10px; border-radius:20px;">🛡️ Privacy Protected</div>
+              </div>
 
-              <!-- ── RIGHT: Sticky Order Summary ───────────────────── -->
-              <div class="checkout-summary-col">
-                <div class="card" style="padding:0; border:1px solid var(--border); border-radius:14px; overflow:hidden;">
-                  <!-- Header -->
-                  <div style="padding:16px 20px; background:var(--glass-bg); border-bottom:1px solid var(--border);">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span style="font-weight:700; font-size:1rem;">💰 Order Summary</span>
-                      <span style="font-size:1.1rem; font-weight:700; color:var(--gold);" id="co-total">—</span>
-                    </div>
-                    <div id="sidebar-est-delivery" style="font-size:0.78rem; color:var(--teal); margin-top:4px; display:none;"></div>
-                  </div>
-                  <!-- Items -->
-                  <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
-                    <div id="co-items-mini"></div>
-                  </div>
-                  <!-- Price breakdown -->
-                  <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
-                    <div class="price-line" style="font-size:0.88rem; margin-bottom:6px;"><span>Order Cost</span><span id="co-subtotal">—</span></div>
-                    <div class="price-line" style="font-size:0.88rem; margin-bottom:6px;"><span>🚚 Shipping</span><span class="text-teal" id="co-shipping">TBD</span></div>
-                    <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;"/>
-                    <div class="price-line" style="font-size:1.05rem; font-weight:700;"><span>Total</span><span id="co-total-body">—</span></div>
-                    <div style="background:rgba(212,175,55,0.08); color:var(--gold); padding:7px 10px; border-radius:6px; margin-top:10px; font-size:0.78rem;">
-                      ✨ Earn <strong id="co-points">0</strong> loyalty points
-                    </div>
-                  </div>
-                  <!-- Newsletter + Terms + Submit (inside sidebar) -->
-                  <div id="checkout-footer-options" style="display:none; padding:16px 20px;">
-                    <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
-                      <input type="checkbox" id="newsletter-opt-in" style="margin-top:2px; accent-color:var(--gold); flex-shrink:0;">
-                      <span>Subscribe to our newsletter for exclusive offers and style tips. Unsubscribe anytime.</span>
-                    </label>
-                    <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.5; margin:0 0 14px;">
-                      By ordering, you agree to our
-                      <a href="#policy-terms" style="color:var(--gold); text-decoration:none;">Terms</a>
-                      and
-                      <a href="#policy-privacy" style="color:var(--gold); text-decoration:none;">Privacy Policy</a>.
-                    </p>
-                    <button class="btn btn-teal" id="btn-submit" type="submit" style="width:100%; font-size:1rem; padding:14px; letter-spacing:0.04em; font-weight:700;">🔒 SECURE PAYMENT</button>
-                    <p style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin:10px 0 0;">📍 Ship fabric to Lahore after ordering</p>
-                  </div>
-                </div>
-              </div><!-- end checkout-summary-col -->
-
-            </div><!-- end checkout-layout -->
+              <!-- Workshop address -->
+              <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.6; margin:0;">
+                📍 After placing your order, ship your fabric to:<br/>
+                <strong style="color:var(--text-secondary);">House 82D, Block D, PCSIR Staff Colony, College Road, Lahore, Pakistan</strong>
+              </p>
+            </div>
           </div> <!-- end step-5 -->
 
           <div class="form-nav" style="margin-top:var(--space-md)">

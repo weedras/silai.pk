@@ -7,20 +7,6 @@
 .order-layout { display: block; max-width: 780px; margin: 0 auto; }
 .price-sidebar { display: none !important; }
 
-/* ─── Step 5 two-column checkout layout ─────────────────── */
-.checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: var(--space-xl);
-  align-items: start;
-}
-.checkout-form-col { min-width: 0; }
-.checkout-summary-col { position: sticky; top: calc(var(--nav-height) + 24px); }
-@media (max-width: 800px) {
-  .checkout-layout { grid-template-columns: 1fr; }
-  .checkout-summary-col { position: static; }
-}
-
 /* Progress Steps */
 .step-progress { margin-bottom: var(--space-2xl); }
 .step-bar { display: flex; align-items: center; margin-bottom: var(--space-xl); }

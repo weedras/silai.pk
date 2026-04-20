@@ -547,7 +547,7 @@ function updateProgress(step) {
 function updateNavButtons() {
   const prevBtn    = document.getElementById('btn-prev');
   const nextBtn    = document.getElementById('btn-next');
-  // btn-submit and checkout-footer-options now live inside the right sidebar of step 5
+  // btn-submit + newsletter/terms now live inside the order summary card on step 5
   const footerOpts = document.getElementById('checkout-footer-options');
 
   if (state.currentStep === 1) {
@@ -560,7 +560,7 @@ function updateNavButtons() {
     if (nextBtn)    nextBtn.style.display    = 'none';
     if (footerOpts) footerOpts.style.display = 'none';
   } else if (state.currentStep === state.totalSteps) {
-    // Step 5: show sticky sidebar (newsletter + terms + submit btn inside sidebar)
+    // Step 5: show newsletter + terms + SECURE PAYMENT inside the summary card
     if (prevBtn)    prevBtn.style.display    = 'block';
     if (nextBtn)    nextBtn.style.display    = 'none';
     if (footerOpts) footerOpts.style.display = 'block';
