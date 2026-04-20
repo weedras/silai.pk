@@ -210,7 +210,7 @@ window.addItemToCart = function() {
   recalcPrice();
   const msg = qty > 1 ? `${qty} garments added to cart!` : 'Garment added to cart!';
   if (typeof showToast === 'function') showToast(msg, 'success');
-  goToStep(4);
+  window.goToStep(4);
 };
 
 window.removeItemFromCart = function(id) {
@@ -275,7 +275,7 @@ window.startConfiguration = function(garmentType) {
   if (sizeSelect) sizeSelect.value = size;
   state.basePrice = PRICES.base[garmentType] || PRICES.base['kameez'];
   recalcPrice();
-  goToStep(2);
+  window.goToStep(2);
 };
 
 window.changeQty = function(garmentType, delta) {
@@ -305,14 +305,26 @@ function clearGarmentForm() {
 
 function renderCart() {
   const container = document.getElementById('cart-items-list');
-  const sidebarList = document.getElementById('sidebar-cart-list');
+  const bagCountLabel = document.getElementById('bag-count-label');
+  const bagTotalCard  = document.getElementById('bag-total-card');
+  const bagCheckoutBtn = document.getElementById('bag-checkout-btn');
+
+  // Update badge count
+  const navBadge = document.getElementById('nav-cart-badge');
+  if (navBadge) {
+    navBadge.textContent = state.cart.length;
+    navBadge.style.display = state.cart.length > 0 ? 'inline-block' : 'none';
+  }
 
   if (state.cart.length === 0) {
-    if (container) container.innerHTML = '<div class="text-center p-lg"><p>Your cart is empty.</p></div>';
-    if (sidebarList) sidebarList.innerHTML = '';
-    // Clear nav badge
-    const navBadge = document.getElementById('nav-cart-badge');
-    if (navBadge) { navBadge.textContent = '0'; navBadge.style.display = 'none'; }
+    if (container) container.innerHTML = `
+      <div class="text-center p-xl card card-glass">
+        <div style="font-size:2.5rem; margin-bottom:12px;">🧵</div>
+        <p style="color:var(--text-muted); margin:0;">Your bag is empty.<br/>Select a garment below to get started.</p>
+      </div>`;
+    if (bagCountLabel)  bagCountLabel.textContent = 'Add garments below';
+    if (bagTotalCard)   bagTotalCard.style.display  = 'none';
+    if (bagCheckoutBtn) bagCheckoutBtn.style.display = 'none';
     updateNavMiniCart();
     recalcPrice();
     return;
@@ -320,39 +332,50 @@ function renderCart() {
 
   if (!container) return;
 
+  if (bagCountLabel) bagCountLabel.textContent = `${state.cart.length} item${state.cart.length !== 1 ? 's' : ''} in your bag`;
+  if (bagTotalCard)   bagTotalCard.style.display  = '';
+  if (bagCheckoutBtn) bagCheckoutBtn.style.display = '';
+
   const garmentEmoji = { kameez: '👘', fullsuit: '👗', '3piece': '🥻', party: '✨' };
-  container.innerHTML = state.cart.map((item, idx) => `
-    <div class="cart-item-card card mb-md" style="padding:var(--space-md); border:1px solid var(--border); background:rgba(255,255,255,0.02)">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <div style="display:flex; gap:12px; align-items:center; flex:1; min-width:0;">
-          <div style="font-size:1.5rem; flex-shrink:0;">${garmentEmoji[item.type] || '👘'}</div>
-          <div style="min-width:0;">
-            <div style="font-weight:600; text-transform:capitalize; font-size:0.95rem;">${item.type} (${item.fabric})</div>
-            <div style="font-size:0.78rem; color:var(--text-muted)">Neck: ${item.neckline || '—'} · Size: ${item.measurements?.standard_size || 'Custom'}</div>
-          </div>
-        </div>
-        <div style="text-align:right; flex-shrink:0;">
-          <div style="font-weight:700; color:var(--gold); margin-bottom:8px;">${formatPrice(item.price)}</div>
-          <!-- +/- Quantity controls -->
-          <div style="display:flex; align-items:center; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden; justify-content:flex-end;">
-            <button type="button" onclick="window.removeItemFromCart(${item.id})"
-              style="background:var(--glass-bg); border:none; width:30px; height:30px; font-size:1.1rem; cursor:pointer; color:var(--rose); display:flex; align-items:center; justify-content:center; line-height:1;">−</button>
-            <span style="min-width:24px; text-align:center; font-size:0.85rem; font-weight:600; padding:0 4px;">1</span>
-            <button type="button" onclick="window.duplicateItemInCart(${item.id})"
-              style="background:var(--glass-bg); border:none; width:30px; height:30px; font-size:1.1rem; cursor:pointer; color:var(--teal); display:flex; align-items:center; justify-content:center; line-height:1;">+</button>
-          </div>
+  const garmentLabels = { kameez: 'Kameez', fullsuit: 'Full Suit', '3piece': '3-Piece', party: 'Party Wear' };
+
+  container.innerHTML = state.cart.map(item => `
+    <div style="display:flex; gap:16px; align-items:center; padding:var(--space-md); border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,0.02); margin-bottom:10px;">
+      <!-- Garment icon -->
+      <div style="width:56px; height:56px; background:var(--glass-bg); border:1px solid var(--border); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.7rem; flex-shrink:0;">
+        ${garmentEmoji[item.type] || '👘'}
+      </div>
+      <!-- Details -->
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:700; font-size:0.95rem; text-transform:capitalize;">${garmentLabels[item.type] || item.type}</div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">${item.fabric || '—'} · ${item.neckline || '—'} neck · Size: ${item.measurements?.standard_size || 'Custom'}</div>
+        ${item.addons && item.addons.length ? `<div style="font-size:0.72rem; color:var(--gold); margin-top:2px;">+ ${item.addons.join(', ')}</div>` : ''}
+      </div>
+      <!-- Price + qty controls -->
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+        <span style="font-weight:700; color:var(--gold); font-size:1rem;">${formatPrice(item.price)}</span>
+        <div style="display:flex; align-items:center; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--glass-bg);">
+          <button type="button" onclick="window.removeItemFromCart(${item.id})"
+            title="Remove one"
+            style="width:34px; height:34px; background:none; border:none; cursor:pointer; color:var(--rose); font-size:1.2rem; display:flex; align-items:center; justify-content:center; transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.background='none'">−</button>
+          <span style="min-width:28px; text-align:center; font-size:0.88rem; font-weight:700; color:var(--text-primary);">1</span>
+          <button type="button" onclick="window.duplicateItemInCart(${item.id})"
+            title="Add another identical garment"
+            style="width:34px; height:34px; background:none; border:none; cursor:pointer; color:var(--teal); font-size:1.2rem; display:flex; align-items:center; justify-content:center; transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(42,157,143,0.08)'" onmouseout="this.style.background='none'">+</button>
         </div>
       </div>
     </div>
   `).join('');
 
+  // Mini list for nav mini-cart (still needed)
+  const sidebarList = document.getElementById('sidebar-cart-list');
   if (sidebarList) {
     sidebarList.innerHTML = state.cart.map(item => `
       <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; color:var(--text-secondary)">
-        <span>1x ${item.type}</span>
-        <span>${formatPrice(item.price)}</span>
-      </div>
-    `).join('');
+        <span>1× ${item.type}</span><span>${formatPrice(item.price)}</span>
+      </div>`).join('');
   }
 
   const coGarment = document.getElementById('checkout-garment');
@@ -402,7 +425,7 @@ function renderCart() {
             <h4 style="color:var(--gold); margin-bottom:8px;">✨ Complete the Look</h4>
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <p style="font-size:0.85rem; margin:0; color:var(--text-muted)">Add custom Tassels, Laces & Buttons to elevate your design.</p>
-              <button type="button" class="btn btn-sm btn-outline" style="white-space:nowrap; margin-left:12px;" onclick="goToStep(2)">Edit Add-ons</button>
+              <button type="button" class="btn btn-sm btn-outline" style="white-space:nowrap; margin-left:12px;" onclick="window.goToStep(2)">Edit Add-ons</button>
             </div>
           </div>
         `;
@@ -486,7 +509,7 @@ document.getElementById('loc-country-sel')?.addEventListener('change', function(
 });
 
 // ─── Step navigation ───────────────────────────────────────
-function goToStep(step) {
+window.goToStep = function goToStep(step) {
   if (step < 1 || step > state.totalSteps) return;
   document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(`step-${step}`);
@@ -495,10 +518,6 @@ function goToStep(step) {
   state.currentStep = step;
   updateNavButtons();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Show newsletter/terms footer only on step 5
-  const footerOpts = document.getElementById('checkout-footer-options');
-  if (footerOpts) footerOpts.style.display = step === 5 ? 'block' : 'none';
 
   if (step === 5) {
     // Sync country from step-1 selector into checkout country
@@ -532,40 +551,52 @@ function updateProgress(step) {
 }
 
 function updateNavButtons() {
-  const prevBtn = document.getElementById('btn-prev');
-  const nextBtn = document.getElementById('btn-next');
+  const prevBtn   = document.getElementById('btn-prev');
+  const nextBtn   = document.getElementById('btn-next');
   const submitBtn = document.getElementById('btn-submit');
+  const footerOpts = document.getElementById('checkout-footer-options');
 
   if (state.currentStep === 1) {
-    if (prevBtn) prevBtn.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'none'; // product card buttons handle step 1 navigation
-    if (submitBtn) submitBtn.style.display = 'none';
+    // Step 1: garment-card buttons handle navigation; hide all generic buttons
+    if (prevBtn)    prevBtn.style.display    = 'none';
+    if (nextBtn)    nextBtn.style.display    = 'none';
+    if (submitBtn)  submitBtn.style.display  = 'none';
+    if (footerOpts) footerOpts.style.display = 'none';
+  } else if (state.currentStep === 4) {
+    // Step 4 (Shopping Bag): hide generic next; bag has its own "Proceed to Checkout" button
+    if (prevBtn)    prevBtn.style.display    = 'block';
+    if (nextBtn)    nextBtn.style.display    = 'none';
+    if (submitBtn)  submitBtn.style.display  = 'none';
+    if (footerOpts) footerOpts.style.display = 'none';
   } else if (state.currentStep === state.totalSteps) {
-    if (prevBtn) prevBtn.style.display = 'block';
-    if (nextBtn) nextBtn.style.display = 'none';
-    if (submitBtn) submitBtn.style.display = 'block';
+    // Step 5: show Place Order button + newsletter/terms footer
+    if (prevBtn)    prevBtn.style.display    = 'block';
+    if (nextBtn)    nextBtn.style.display    = 'none';
+    if (submitBtn)  submitBtn.style.display  = 'block';
+    if (footerOpts) footerOpts.style.display = 'block';
     populateReview();
   } else {
-    if (prevBtn) prevBtn.style.display = 'block';
-    if (nextBtn) nextBtn.style.display = 'block';
-    if (submitBtn) submitBtn.style.display = 'none';
+    // Steps 2 & 3
+    if (prevBtn)    prevBtn.style.display    = 'block';
+    if (nextBtn)    nextBtn.style.display    = 'block';
+    if (submitBtn)  submitBtn.style.display  = 'none';
+    if (footerOpts) footerOpts.style.display = 'none';
   }
 }
 
-function nextStep() {
+window.nextStep = function nextStep() {
   if (validateStep(state.currentStep)) {
     if (state.currentStep === 3) {
       window.addItemToCart();
     } else {
-      goToStep(state.currentStep + 1);
+      window.goToStep(state.currentStep + 1);
     }
   }
-}
+};
 
-
-function prevStep() {
-  goToStep(state.currentStep - 1);
-}
+window.prevStep = function prevStep() {
+  window.goToStep(state.currentStep - 1);
+};
 
 function validateStep(step) {
   const stepTarget = document.getElementById(`step-${step}`);
@@ -675,19 +706,24 @@ function recalcPrice() {
   state.orderData.amount_paid = total;
 
   // ── Estimated delivery date ───────────────────────────────
+  const country = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value || '';
+  let deliveryZone = 'international';
+  for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
+    if (z.countries && z.countries.includes(country)) { deliveryZone = name; break; }
+  }
+  const deliveryText = state.cart.length > 0 ? ('📅 Estimated delivery: ' + getEstimatedDelivery(deliveryZone)) : '';
+
+  // Step 5 collapsible summary bar
   const estDeliveryEl = document.getElementById('sidebar-est-delivery');
   if (estDeliveryEl) {
-    const country = document.getElementById('co-country')?.value || document.getElementById('shipping-country')?.value || '';
-    let zone = 'international';
-    for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
-      if (z.countries && z.countries.includes(country)) { zone = name; break; }
-    }
-    if (state.cart.length > 0) {
-      estDeliveryEl.textContent = 'Est. delivery: ' + getEstimatedDelivery(zone);
-      estDeliveryEl.style.display = '';
-    } else {
-      estDeliveryEl.style.display = 'none';
-    }
+    estDeliveryEl.textContent = deliveryText;
+    estDeliveryEl.style.display = (state.cart.length > 0) ? '' : 'none';
+  }
+  // Step 4 bag total card
+  const bagDeliveryEl = document.getElementById('bag-est-delivery');
+  if (bagDeliveryEl) {
+    bagDeliveryEl.textContent = deliveryText;
+    bagDeliveryEl.style.display = (state.cart.length > 0) ? '' : 'none';
   }
 }
 
@@ -954,7 +990,7 @@ window.initOrderForm = function() {
     if (el) el.value = '';
   });
   saveCartToStorage();
-  goToStep(1);
+  window.goToStep(1);
   renderCart();
   recalcPrice();
 };

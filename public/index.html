@@ -1194,39 +1194,64 @@
                  <input type="file" id="meas-upload-file" class="form-input" accept="image/*">
                </div>
             </div>
-          </div>          <!-- Step 4 -->
+          </div>          <!-- Step 4 — Shopping Bag -->
           <div id="step-4" class="form-step">
-            <h2 class="step-title">Review Your Cart</h2>
-            <p class="section-subheading mb-lg" style="margin:0 auto">You can add multiple suits to a single order and save on shipping!</p>
-            
-            <div id="cart-items-list" class="mb-xl">
-              <!-- Cart items will be injected here via JS -->
-              <div class="text-center p-xl card card-glass">
-                <p>Your cart is empty.</p>
-              </div>
-            </div>
-            
-            <div id="review-upsell-container" style="display:none; margin-bottom:var(--space-lg)"></div>
 
-            <div style="display:flex; flex-direction:column; gap:12px;">
-              <div style="display:flex; gap:12px;">
-                <button type="button" class="btn btn-outline" style="flex:1" onclick="goToStep(1)">+ Add Another Garment</button>
-                <button type="button" class="btn btn-outline" style="border-color:var(--rose); color:var(--rose);" onclick="window.clearCart()">🗑️ Clear Cart</button>
+            <!-- Bag header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-lg);">
+              <div>
+                <h2 style="margin:0; font-size:1.6rem;">🛍️ Shopping Bag</h2>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin:4px 0 0;" id="bag-count-label">Add garments below</p>
               </div>
-              <div class="card card-glass mt-lg">
-                <div class="form-section-title">Order Total</div>
-                <div class="price-line"><span>Subtotal</span><strong id="review-total">—</strong></div>
-                <div class="price-line"><span>Shipping</span><strong class="text-teal shipping-rate-val" id="shipping-tier-rate-review">Calculating…</strong></div>
-                <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;" />
-                <div class="price-line total"><span>Total Due Now</span><strong id="review-deposit">—</strong></div>
+              <button type="button" class="btn btn-outline" style="border-color:var(--rose); color:var(--rose); padding:7px 14px; font-size:0.82rem;" onclick="window.clearCart()">🗑️ Clear Bag</button>
+            </div>
+
+            <!-- Cart items list -->
+            <div id="cart-items-list">
+              <div class="text-center p-xl card card-glass">
+                <div style="font-size:2.5rem; margin-bottom:12px;">🧵</div>
+                <p style="color:var(--text-muted); margin:0;">Your bag is empty.<br/>Select a garment below to get started.</p>
               </div>
             </div>
+
+            <!-- Upsell banner -->
+            <div id="review-upsell-container" style="display:none; margin-top:var(--space-md);"></div>
+
+            <!-- Add another garment -->
+            <button type="button" class="btn btn-outline" style="width:100%; margin-top:var(--space-md);" onclick="goToStep(1)">
+              ✂️ Add Another Garment
+            </button>
+
+            <!-- Order total card -->
+            <div class="card" id="bag-total-card" style="margin-top:var(--space-xl); padding:var(--space-lg); border:1px solid var(--border); display:none;">
+              <div class="price-line" style="font-size:0.9rem;"><span>Subtotal</span><span id="review-total">—</span></div>
+              <div class="price-line" style="font-size:0.9rem;"><span>Shipping</span><span class="text-teal shipping-rate-val" id="shipping-tier-rate-review">Calculating…</span></div>
+              <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;" />
+              <div class="price-line total" style="font-size:1.1rem;"><span>Total</span><span id="review-deposit">—</span></div>
+              <div id="bag-est-delivery" style="display:none; background:rgba(42,157,143,0.08); color:var(--teal); padding:8px 12px; border-radius:6px; margin-top:10px; font-size:0.82rem; border:1px solid rgba(42,157,143,0.2);"></div>
+            </div>
+
+            <!-- Proceed to checkout — big prominent button -->
+            <button type="button" id="bag-checkout-btn" class="btn btn-primary" style="display:none; width:100%; margin-top:var(--space-md); padding:16px; font-size:1.05rem; letter-spacing:0.02em;" onclick="goToStep(5)">
+              Proceed to Checkout →
+            </button>
+
           </div>
 
 
                     <!-- Step 5 -->
           <div id="step-5" class="form-step">
-            <h2 class="step-title">Quick Checkout</h2>
+            <h2 class="step-title">Checkout</h2>
+
+            <!-- ═══ PROMINENT ADDRESS BANNER ════════════════════════ -->
+            <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(42,157,143,0.08)); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 20px; margin-bottom:var(--space-lg); display:flex; align-items:flex-start; gap:14px;">
+              <span style="font-size:1.5rem; flex-shrink:0;">📦</span>
+              <div>
+                <div style="font-weight:700; font-size:0.95rem; color:var(--gold); margin-bottom:4px;">Step 1 after ordering — Ship your fabric to:</div>
+                <div style="font-size:0.92rem; font-weight:600; color:#fff; line-height:1.5;">House 82D, Block D, PCSIR Staff Colony,<br/>College Road, Lahore, Pakistan</div>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">We'll confirm receipt by WhatsApp &amp; email once it arrives at our workshop.</div>
+              </div>
+            </div>
 
             <!-- ═══ ORDER SUMMARY BAR (top, laam.pk style) ══════════ -->
             <div class="card mb-xl" style="padding:0; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
