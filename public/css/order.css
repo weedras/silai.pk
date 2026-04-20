@@ -4,8 +4,17 @@
 
 /* ─── Order Form Page ────────────────────────────────────── */
 .order-page { min-height: 100vh; padding-top: calc(var(--nav-height) + var(--space-2xl)); padding-bottom: var(--space-4xl); }
-.order-layout { display: block; max-width: 780px; margin: 0 auto; }
-.price-sidebar { display: none !important; }
+.order-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-2xl);
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.price-sidebar {
+  /* sticky sidebar — overridden below on mobile */
+}
 
 /* Progress Steps */
 .step-progress { margin-bottom: var(--space-2xl); }
@@ -294,7 +303,12 @@
 .qty-selector input { width: 34px; background: transparent !important; border: none !important; color: var(--text-primary) !important; text-align: center; font-weight: 700; font-size: 0.88rem; }
 
 /* Responsive */
-@media (max-width: 860px) { .order-layout { max-width: 100%; } .garment-product-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1020px) {
+  /* Stack sidebar below form on tablets/phones */
+  .order-layout { grid-template-columns: 1fr; max-width: 780px; }
+  .price-sidebar { position: static; }
+}
+@media (max-width: 860px) { .garment-product-grid { grid-template-columns: 1fr; } }
 @media (max-width: 768px) {
   .garment-selector { grid-template-columns: 1fr 1fr; }
   .meas-grid { grid-template-columns: 1fr; }
