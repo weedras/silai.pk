@@ -1252,44 +1252,6 @@
               </div>
             </div>
 
-            <!-- ═══ ORDER SUMMARY BAR (top, laam.pk style) ══════════ -->
-            <div class="card mb-xl" style="padding:0; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
-              <!-- Header — always visible, click to expand/collapse -->
-              <div onclick="toggleSummary()" style="padding:var(--space-md) var(--space-lg); display:flex; justify-content:space-between; align-items:center; cursor:pointer; background:var(--glass-bg); user-select:none;">
-                <div>
-                  <span style="font-weight:700;" id="checkout-summary-title">Order summary (1 item)</span>
-                  <div id="sidebar-est-delivery" style="font-size:0.78rem; color:var(--teal); margin-top:2px; display:none;"></div>
-                </div>
-                <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size:1.1rem; font-weight:700; color:var(--gold);" id="co-total">—</span>
-                  <span id="summary-chevron" style="color:var(--text-muted); display:inline-block; transition:transform 0.25s; font-size:0.7rem;">▼</span>
-                </div>
-              </div>
-              <!-- Expandable body -->
-              <div id="co-summary-body" style="padding:var(--space-md) var(--space-lg) var(--space-lg); border-top:1px solid var(--border);">
-                <div id="co-items-mini" style="margin-bottom:var(--space-md);"></div>
-                <div class="price-line" style="font-size:0.88rem;"><span>Subtotal</span><span id="co-subtotal">—</span></div>
-                <div class="price-line" style="font-size:0.88rem;"><span>Shipping</span><span class="text-teal shipping-rate-val" id="co-shipping">TBD</span></div>
-                <hr style="border:0; border-top:1px solid var(--border); margin:8px 0;" />
-                <div class="price-line" style="font-size:1rem; font-weight:700;"><span>Total</span><span id="co-total-body">—</span></div>
-                <div style="background:rgba(233,196,106,0.08); color:var(--gold); padding:7px 10px; border-radius:6px; margin-top:10px; font-size:0.78rem; display:flex; gap:6px; align-items:center;">
-                  ✨ Earn <strong id="co-points">0</strong> loyalty points on this order
-                </div>
-                <!-- Newsletter + Terms + Place Order (inside summary, shown on step 5) -->
-                <div id="checkout-footer-options" style="display:none; margin-top:var(--space-md); padding-top:var(--space-md); border-top:1px solid var(--border);">
-                  <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
-                    <input type="checkbox" id="newsletter-opt-in" style="margin-top:2px; accent-color:var(--gold); flex-shrink:0;">
-                    <span>Subscribe to our newsletter for exclusive offers and style tips. Unsubscribe anytime.</span>
-                  </label>
-                  <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.5; margin:0 0 12px;">
-                    By ordering, you agree to our
-                    <a href="#policy-terms" style="color:var(--gold); text-decoration:none;">Terms</a>
-                    and <a href="#policy-privacy" style="color:var(--gold); text-decoration:none;">Privacy Policy</a>.
-                  </p>
-                  <button class="btn btn-teal" id="btn-submit" type="submit" style="width:100%; font-size:0.95rem; padding:13px; font-weight:700; letter-spacing:0.04em;">🔒 SECURE PAYMENT</button>
-                </div>
-              </div>
-            </div>
 
             <!-- ═══ FORM (single column, max 620px) ══════════════════ -->
             <div style="max-width:620px;">
@@ -1433,7 +1395,7 @@
             <button class="btn btn-outline" id="btn-prev" style="display:none">← Back</button>
             <div style="flex:1"></div>
             <button class="btn btn-primary" id="btn-next">Continue →</button>
-            <button class="btn btn-teal" id="btn-submit" type="submit" style="display:none; font-weight:700; letter-spacing:0.04em;">🔒 Place Order Securely</button>
+            <button class="btn btn-teal" id="btn-submit" type="submit" style="display:none; font-weight:700; letter-spacing:0.04em; padding:12px 28px;">🔒 Place Order</button>
           </div>
         </form>
       </div>
@@ -1441,18 +1403,47 @@
       <!-- Sidebar -->
       <div class="price-sidebar">
         <div class="price-box">
-          <h4>💰 Order Summary</h4>
-          <div id="sidebar-cart-list" style="margin-bottom:var(--space-md)">
-             <!-- Cart items injected by renderCart() -->
+          <h4>🛍️ Order Summary</h4>
+
+          <!-- Estimated delivery (shown once shipping is known) -->
+          <div id="sidebar-est-delivery-line" style="display:none; font-size:0.78rem; color:var(--teal); margin-bottom:var(--space-md); padding-bottom:var(--space-sm); border-bottom:1px solid var(--border);">
+            📅 Est. delivery: <span id="sidebar-est-delivery-date">—</span>
           </div>
+
+          <!-- Cart items with +/- controls -->
+          <div id="sidebar-cart-list" style="margin-bottom:var(--space-md)">
+            <!-- injected by renderCart() -->
+          </div>
+
+          <!-- Price breakdown -->
           <div class="price-line"><span>Order Cost</span><span id="price-order-cost">$0.00</span></div>
           <div class="price-line" id="sidebar-sourcing-row" style="display:none;"><span style="display:flex;align-items:center;gap:6px;">🛍️ Sourcing Fee</span><span id="sidebar-sourcing-fee">$5.00</span></div>
           <div class="price-line" id="sidebar-fabric-est-row" style="display:none;"><span>🧵 Est. Fabric Cost</span><span id="sidebar-fabric-est">—</span></div>
           <div class="price-line"><span>Shipping</span><span class="text-teal" id="sidebar-shipping">At dispatch</span></div>
           <div class="price-line total"><span>Total</span><span id="price-total">$0.00</span></div>
-          <div class="price-total-big mt-lg" style="display:none"><div class="amount" id="price-deposit">$0</div></div>
+
           <div class="price-deposit mt-md">100% Total Due Now. Secure your slot!</div>
-          <button id="btn-sidebar-submit" type="button" class="btn btn-teal w-full mt-md" style="display:none; font-weight:700; letter-spacing:0.04em; padding:13px; font-size:0.95rem;">🔒 SECURE PAYMENT</button>
+
+          <!-- Loyalty points (shown when cart has items) -->
+          <div id="sidebar-loyalty-line" style="display:none; background:rgba(233,196,106,0.08); color:var(--gold); padding:7px 10px; border-radius:6px; margin-top:10px; font-size:0.78rem;">
+            ✨ Earn <strong id="sidebar-loyalty-pts">0</strong> loyalty points on this order
+          </div>
+
+          <!-- Checkout section: newsletter + terms + Place Order (step 5 only) -->
+          <div id="sidebar-checkout-section" style="display:none; margin-top:var(--space-md); padding-top:var(--space-md); border-top:1px solid var(--border);">
+            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+              <input type="checkbox" id="newsletter-opt-in" style="margin-top:2px; accent-color:var(--gold); flex-shrink:0;">
+              <span>Subscribe to our newsletter for exclusive offers and style tips. Unsubscribe anytime.</span>
+            </label>
+            <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.5; margin:0 0 12px;">
+              By ordering, you agree to our
+              <a href="#policy-terms" style="color:var(--gold); text-decoration:none;">Terms</a>
+              and <a href="#policy-privacy" style="color:var(--gold); text-decoration:none;">Privacy Policy</a>.
+            </p>
+            <button id="btn-sidebar-submit" type="button" class="btn btn-teal w-full" style="font-weight:700; letter-spacing:0.04em; padding:13px; font-size:0.95rem;">🔒 Place Order</button>
+          </div>
+
+          <!-- Static badge shown on non-checkout steps -->
           <div id="sidebar-secure-badge" class="badge badge-gold w-full flex-center mt-md" style="justify-content:center">🔒 Secure Payment</div>
         </div>
       </div>

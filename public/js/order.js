@@ -55,7 +55,8 @@ function calculateTieredShipping(cartItems, destinationCountry) {
 function updateShippingUI(result) {
   if (!result) return;
 
-  const shippingText = result.rate > 0 ? formatPrice(result.rate) : (result.label || '—');
+  // Always prefer the zone's native label (e.g. "£19", "$35") over a USD-converted value
+  const shippingText = result.label || (result.rate > 0 ? formatPrice(result.rate) : '—');
 
   // All shipping display elements
   document.querySelectorAll('#sidebar-shipping, #shipping-tier-rate, #shipping-tier-rate-review, .shipping-rate-val')
@@ -555,44 +556,39 @@ function updateProgress(step) {
 }
 
 function updateNavButtons() {
-  const prevBtn       = document.getElementById('btn-prev');
-  const nextBtn       = document.getElementById('btn-next');
-  const submitBtn     = document.getElementById('btn-submit');
-  const footerOpts    = document.getElementById('checkout-footer-options');
-  const sidebarSubmit = document.getElementById('btn-sidebar-submit');
-  const sidebarBadge  = document.getElementById('sidebar-secure-badge');
+  const prevBtn         = document.getElementById('btn-prev');
+  const nextBtn         = document.getElementById('btn-next');
+  const submitBtn       = document.getElementById('btn-submit');
+  const sidebarCheckout = document.getElementById('sidebar-checkout-section');
+  const sidebarBadge    = document.getElementById('sidebar-secure-badge');
 
   const onCheckout = state.currentStep === state.totalSteps;
 
   if (state.currentStep === 1) {
-    if (prevBtn)       prevBtn.style.display       = 'none';
-    if (nextBtn)       nextBtn.style.display       = 'none';
-    if (submitBtn)     submitBtn.style.display     = 'none';
-    if (footerOpts)    footerOpts.style.display    = 'none';
-    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
-    if (sidebarBadge)  sidebarBadge.style.display  = '';
+    if (prevBtn)         prevBtn.style.display         = 'none';
+    if (nextBtn)         nextBtn.style.display         = 'none';
+    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (sidebarCheckout) sidebarCheckout.style.display = 'none';
+    if (sidebarBadge)    sidebarBadge.style.display    = '';
   } else if (state.currentStep === 4) {
-    if (prevBtn)       prevBtn.style.display       = 'block';
-    if (nextBtn)       nextBtn.style.display       = 'none';
-    if (submitBtn)     submitBtn.style.display     = 'none';
-    if (footerOpts)    footerOpts.style.display    = 'none';
-    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
-    if (sidebarBadge)  sidebarBadge.style.display  = '';
+    if (prevBtn)         prevBtn.style.display         = 'block';
+    if (nextBtn)         nextBtn.style.display         = 'none';
+    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (sidebarCheckout) sidebarCheckout.style.display = 'none';
+    if (sidebarBadge)    sidebarBadge.style.display    = '';
   } else if (onCheckout) {
-    if (prevBtn)       prevBtn.style.display       = 'block';
-    if (nextBtn)       nextBtn.style.display       = 'none';
-    if (submitBtn)     submitBtn.style.display     = 'block';
-    if (footerOpts)    footerOpts.style.display    = 'block';
-    if (sidebarSubmit) sidebarSubmit.style.display = 'block';
-    if (sidebarBadge)  sidebarBadge.style.display  = 'none';
+    if (prevBtn)         prevBtn.style.display         = 'block';
+    if (nextBtn)         nextBtn.style.display         = 'none';
+    if (submitBtn)       submitBtn.style.display       = 'block';
+    if (sidebarCheckout) sidebarCheckout.style.display = 'block';
+    if (sidebarBadge)    sidebarBadge.style.display    = 'none';
     populateReview();
   } else {
-    if (prevBtn)       prevBtn.style.display       = 'block';
-    if (nextBtn)       nextBtn.style.display       = 'block';
-    if (submitBtn)     submitBtn.style.display     = 'none';
-    if (footerOpts)    footerOpts.style.display    = 'none';
-    if (sidebarSubmit) sidebarSubmit.style.display = 'none';
-    if (sidebarBadge)  sidebarBadge.style.display  = '';
+    if (prevBtn)         prevBtn.style.display         = 'block';
+    if (nextBtn)         nextBtn.style.display         = 'block';
+    if (submitBtn)       submitBtn.style.display       = 'none';
+    if (sidebarCheckout) sidebarCheckout.style.display = 'none';
+    if (sidebarBadge)    sidebarBadge.style.display    = '';
   }
 }
 
@@ -662,11 +658,11 @@ function pkrToUSD(pkr) {
   return pkr / rate;
 }
 
-// Format shipping for display
+// Format shipping for display — use native label (£19, $35) when available
 function formatShipping() {
-  if (state.cart.length === 0)  return '—';
-  if (state.shippingRate > 0)   return formatPrice(state.shippingRate);
-  if (state.shippingRate === 0) return state.shippingLabel || '—';
+  if (state.cart.length === 0) return '—';
+  if (state.shippingLabel && state.shippingLabel !== 'TBD') return state.shippingLabel;
+  if (state.shippingRate > 0)  return formatPrice(state.shippingRate);
   return 'Calculating…';
 }
 
@@ -724,6 +720,12 @@ function recalcPrice() {
   if (reviewTotal)   reviewTotal.textContent    = formatPrice(subtotal);
   if (reviewDeposit) reviewDeposit.textContent  = formatPrice(total);
 
+  // Sidebar loyalty line
+  const sidebarLoyaltyLine = document.getElementById('sidebar-loyalty-line');
+  const sidebarLoyaltyPts  = document.getElementById('sidebar-loyalty-pts');
+  if (sidebarLoyaltyPts) sidebarLoyaltyPts.textContent = state.loyaltyPoints;
+  if (sidebarLoyaltyLine) sidebarLoyaltyLine.style.display = state.loyaltyPoints > 0 ? '' : 'none';
+
   // Store in USD for server
   state.orderData.total_price = total;
   state.orderData.amount_paid = total;
@@ -734,18 +736,18 @@ function recalcPrice() {
   for (const [name, z] of Object.entries(SHIPPING_ZONES)) {
     if (z.countries && z.countries.includes(country)) { deliveryZone = name; break; }
   }
-  const deliveryText = state.cart.length > 0 ? ('📅 Estimated delivery: ' + getEstimatedDelivery(deliveryZone)) : '';
+  const deliveryDate = state.cart.length > 0 ? getEstimatedDelivery(deliveryZone) : '';
 
-  // Step 5 collapsible summary bar
-  const estDeliveryEl = document.getElementById('sidebar-est-delivery');
-  if (estDeliveryEl) {
-    estDeliveryEl.textContent = deliveryText;
-    estDeliveryEl.style.display = (state.cart.length > 0) ? '' : 'none';
-  }
+  // Right sidebar delivery line
+  const sidebarEstLine = document.getElementById('sidebar-est-delivery-line');
+  const sidebarEstDate = document.getElementById('sidebar-est-delivery-date');
+  if (sidebarEstDate) sidebarEstDate.textContent = deliveryDate;
+  if (sidebarEstLine) sidebarEstLine.style.display = deliveryDate ? '' : 'none';
+
   // Step 4 bag total card
   const bagDeliveryEl = document.getElementById('bag-est-delivery');
   if (bagDeliveryEl) {
-    bagDeliveryEl.textContent = deliveryText;
+    bagDeliveryEl.textContent = deliveryDate ? ('📅 Estimated delivery: ' + deliveryDate) : '';
     bagDeliveryEl.style.display = (state.cart.length > 0) ? '' : 'none';
   }
 }
