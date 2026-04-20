@@ -1,10 +1,19 @@
 const { Resend } = require('resend');
 
-const FROM      = 'orders@silai.pk';
-const WA_NUMBER = process.env.WHATSAPP_BUSINESS_NUMBER || '923000446387';
+// Use verified domain if RESEND_DOMAIN is set, otherwise fall back to the
+// Resend sandbox address (onboarding@resend.dev) which works with any API key
+// but only delivers to the key owner's email — fine for testing, not production.
+const FROM_DOMAIN = process.env.RESEND_DOMAIN || null;
+const FROM        = FROM_DOMAIN ? `Silai.pk Orders <orders@${FROM_DOMAIN}>` : 'Silai.pk <onboarding@resend.dev>';
+const WA_NUMBER   = process.env.WHATSAPP_BUSINESS_NUMBER || '923000446387';
 
 function getResend() {
-  return new Resend(process.env.RESEND_API_KEY);
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.warn('[Email] RESEND_API_KEY is not set — emails will not be sent.');
+    return null;
+  }
+  return new Resend(key);
 }
 
 // ─── Send WhatsApp via Meta Cloud API (if configured) ─────
@@ -44,8 +53,11 @@ async function sendOrderConfirmation(order) {
   const count  = garment_count || 1;
 
   // ── Email ────────────────────────────────────────────────
-  try {
-    await getResend().emails.send({
+  const resend = getResend();
+  if (!resend) {
+    console.log(`[Email] Skipped confirmation for ${order_id} — no API key.`);
+  } else try {
+    await resend.emails.send({
       from: FROM,
       to: customer_email,
       subject: `✅ Order ${order_id} Confirmed — Silai.pk`,
@@ -138,8 +150,9 @@ async function sendOrderConfirmation(order) {
 </html>
       `,
     });
+    console.log(`[Email] Confirmation sent to ${customer_email} for order ${order_id}`);
   } catch (err) {
-    console.error('sendOrderConfirmation email failed:', err.message);
+    console.error(`[Email] sendOrderConfirmation failed for ${order_id}:`, err.message);
   }
 
   // ── WhatsApp message to customer ─────────────────────────
@@ -156,8 +169,10 @@ async function sendStatusUpdate(order, stageName) {
   const trackingLink = `https://silai.pk/#track?order=${order.order_id}`;
   const waLink = `https://wa.me/${WA_NUMBER}?text=Hi%2C%20my%20order%20ID%20is%20${order.order_id}`;
 
+  const resend2 = getResend();
+  if (!resend2) return;
   try {
-    await getResend().emails.send({
+    await resend2.emails.send({
       from: FROM,
       to: order.customer_email,
       subject: `📦 Order ${order.order_id} Update: ${stageName}`,

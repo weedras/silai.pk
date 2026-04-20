@@ -529,6 +529,8 @@ window.goToStep = function goToStep(step) {
     const shipCountry = document.getElementById('shipping-country')?.value;
     const coCountryEl = document.getElementById('co-country');
     if (coCountryEl && shipCountry && !coCountryEl.value) coCountryEl.value = shipCountry;
+    // Pre-fill saved details for returning customers (async, non-blocking)
+    if (typeof window.checkAuthForCheckout === 'function') window.checkAuthForCheckout();
     // Refresh estimated delivery when landing on step 5
     recalcPrice();
 
@@ -987,6 +989,9 @@ window.toggleSummary = function() {
 function showOrderSuccess(orderId, userCreated) {
   state.cart = [];
   saveCartToStorage();
+  // Refresh sidebar + badge so cart shows 0 immediately
+  renderCart();
+  recalcPrice();
   const wrapper = document.getElementById('order-form-wrapper');
   if (wrapper) wrapper.style.display = 'none';
   const sc = document.getElementById('order-success');
@@ -1133,6 +1138,7 @@ function validateZip(zipVal, country) {
 })();
 
 // ─── Show / hide account creation section based on auth ──
+// Also pre-fills checkout fields with saved details from last order
 window.checkAuthForCheckout = async function() {
   try {
     const r = await fetch('/api/auth/me');
@@ -1143,6 +1149,29 @@ window.checkAuthForCheckout = async function() {
       // User is logged in — hide account creation and login prompt
       if (section)      section.style.display = 'none';
       if (loginPrompt)  loginPrompt.style.display = 'none';
+
+      // Pre-fill checkout fields from last order (only if still empty)
+      try {
+        const sr = await fetch('/api/auth/saved-details');
+        const sd = await sr.json();
+        if (sd.saved) {
+          const s = sd.saved;
+          const set = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && !el.value && val) el.value = val;
+          };
+          set('co-fname',   s.fname);
+          set('co-lname',   s.lname);
+          set('co-email',   s.email);
+          set('co-phone',   s.phone);
+          set('co-address', s.street);
+          set('co-city',    s.city);
+          set('co-zip',     s.zip);
+          // Country dropdown
+          const coCountry = document.getElementById('co-country');
+          if (coCountry && !coCountry.value && s.country) coCountry.value = s.country;
+        }
+      } catch(_) { /* saved details fetch failed — silent */ }
     } else {
       if (section)      section.style.display = '';
       if (loginPrompt)  loginPrompt.style.display = '';

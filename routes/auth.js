@@ -119,6 +119,61 @@ router.get('/me', (req, res) => {
   res.json({ user: req.session.user });
 });
 
+// ─── GET /api/auth/saved-details ──────────────────────────
+// Returns the contact + shipping details from the user's most recent order
+// so the checkout form can be pre-filled without re-typing everything.
+router.get('/saved-details', (req, res) => {
+  if (!req.session || !req.session.user)
+    return res.status(401).json({ error: 'Not logged in.' });
+
+  const order = db.prepare(`
+    SELECT customer_name, customer_email, customer_whatsapp,
+           shipping_country, shipping_address
+    FROM orders
+    WHERE customer_email = ?
+    ORDER BY created_at DESC
+    LIMIT 1
+  `).get(req.session.user.email);
+
+  if (!order) return res.json({ saved: null });
+
+  // Split full name into first / last for the form fields
+  const parts = (order.customer_name || '').trim().split(/\s+/);
+  const fname = parts[0] || '';
+  const lname = parts.slice(1).join(' ') || '';
+
+  // shipping_address is stored as "street, city ZIP, Country" — try to parse
+  // Format written in order.js:  `${address}${apt}, ${city} ${zip}, ${country}`
+  let street = '', city = '', zip = '';
+  const addr = order.shipping_address || '';
+  const commaChunks = addr.split(',').map(s => s.trim());
+  if (commaChunks.length >= 2) {
+    street = commaChunks[0];
+    // second chunk is "city ZIP"
+    const cityZip = commaChunks[1];
+    const lastSpace = cityZip.lastIndexOf(' ');
+    if (lastSpace > 0) {
+      city = cityZip.slice(0, lastSpace).trim();
+      zip  = cityZip.slice(lastSpace + 1).trim();
+    } else {
+      city = cityZip;
+    }
+  }
+
+  res.json({
+    saved: {
+      fname,
+      lname,
+      email:   order.customer_email,
+      phone:   order.customer_whatsapp || '',
+      country: order.shipping_country  || '',
+      street,
+      city,
+      zip,
+    }
+  });
+});
+
 // ─── GET /api/auth/my-orders ───────────────────────────────
 router.get('/my-orders', (req, res) => {
   if (!req.session || !req.session.user)
