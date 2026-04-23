@@ -326,6 +326,12 @@ function renderCart() {
     if (bagCountLabel)  bagCountLabel.textContent = 'Add garments below';
     if (bagTotalCard)   bagTotalCard.style.display  = 'none';
     if (bagCheckoutBtn) bagCheckoutBtn.style.display = 'none';
+    // Also clear sidebar so it shows empty state instead of stale items
+    const sidebarListEmpty = document.getElementById('sidebar-cart-list');
+    if (sidebarListEmpty) sidebarListEmpty.innerHTML = `
+      <div style="text-align:center; padding:16px 0; color:var(--text-muted); font-size:0.85rem;">
+        🧵 Your bag is empty
+      </div>`;
     updateNavMiniCart();
     recalcPrice();
     return;

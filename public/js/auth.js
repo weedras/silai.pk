@@ -28,17 +28,36 @@ function updateNavForUser() {
   const userMenu   = document.getElementById('nav-user-menu');
   const userNameEl = document.getElementById('nav-user-name');
   const adminLink  = document.getElementById('nav-admin-link');
+  // Mobile menu equivalents
+  const mobileAuthBtn    = document.getElementById('mobile-auth-btn');
+  const mobileSignoutBtn = document.getElementById('mobile-signout-btn');
+  const mobileAdminLink  = document.getElementById('mobile-nav-admin-link');
 
   if (currentUser) {
     if (authBtn)    authBtn.style.display   = 'none';
     if (userMenu)   userMenu.style.display  = 'flex';
     if (userNameEl) userNameEl.textContent  = currentUser.name.split(' ')[0];
     if (adminLink)  adminLink.style.display = currentUser.role === 'admin' ? 'inline' : 'none';
+    // Mobile menu: show Sign Out, hide Sign In
+    if (mobileAuthBtn)    mobileAuthBtn.style.display    = 'none';
+    if (mobileSignoutBtn) mobileSignoutBtn.style.display = 'block';
+    if (mobileAdminLink)  mobileAdminLink.style.display  = currentUser.role === 'admin' ? 'block' : 'none';
   } else {
     if (authBtn)   authBtn.style.display   = 'inline-flex';
     if (userMenu)  userMenu.style.display  = 'none';
     if (adminLink) adminLink.style.display = 'none';
+    // Mobile menu: show Sign In, hide Sign Out
+    if (mobileAuthBtn)    mobileAuthBtn.style.display    = 'block';
+    if (mobileSignoutBtn) mobileSignoutBtn.style.display = 'none';
+    if (mobileAdminLink)  mobileAdminLink.style.display  = 'none';
   }
+  // Sync flag/currency text into mobile menu
+  const desktopFlag     = document.getElementById('nav-flag');
+  const desktopCurrency = document.getElementById('nav-currency');
+  const mobileFlag      = document.getElementById('mobile-nav-flag');
+  const mobileCurrency  = document.getElementById('mobile-nav-currency');
+  if (mobileFlag     && desktopFlag)     mobileFlag.textContent     = desktopFlag.textContent;
+  if (mobileCurrency && desktopCurrency) mobileCurrency.textContent = desktopCurrency.textContent + ' — Change';
 }
 
 // ─── Modal helpers ─────────────────────────────────────────

@@ -612,9 +612,14 @@ p  { color: var(--text-secondary); line-height: 1.75; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .grid-4 { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
-  .nav-links, .nav-actions .btn-outline { display: none; }
+  /* Hide desktop nav links and the delivery/currency pill — they go into the mobile menu */
+  .nav-links, .header-delivery { display: none !important; }
+  /* Hide sign-out button from the desktop user menu (it appears in mobile menu drawer instead) */
+  .nav-actions .nav-user-menu .btn-outline { display: none; }
   .nav-hamburger { display: flex; }
   .navbar { padding: 0 var(--space-lg); }
+  /* Keep Sign In button always visible in the top bar */
+  #nav-auth-btn { display: inline-flex !important; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: var(--space-md); text-align: center; }
   .section { padding: var(--space-3xl) 0; }

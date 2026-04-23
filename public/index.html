@@ -349,6 +349,16 @@
   <a href="#measure" class="nav-link">Measure Guide</a>
   <a href="#admin" class="nav-link" id="mobile-nav-admin-link" style="display:none">Admin</a>
   <a href="#profile" class="nav-link">My Profile</a>
+  <!-- Auth button for mobile -->
+  <div id="mobile-menu-auth" style="margin-top:auto; padding-top:24px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px;">
+    <button id="mobile-auth-btn" class="btn btn-primary w-full" onclick="document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('mobile-menu-overlay').classList.remove('open'); openAuthModal('login');">Sign In</button>
+    <button id="mobile-signout-btn" class="btn btn-outline w-full" style="display:none" onclick="logout()">Sign Out</button>
+    <div onclick="document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('mobile-menu-overlay').classList.remove('open'); document.getElementById('location-modal').classList.add('open')"
+         style="cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; color:var(--text-secondary);">
+      <span id="mobile-nav-flag">🌍</span>
+      <span id="mobile-nav-currency">Change Currency / Region</span>
+    </div>
+  </div>
 </div>
 <div class="toast-container"></div>
 
