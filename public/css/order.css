@@ -477,3 +477,74 @@
 .nmc-total-row { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
 .nmc-shipping-row { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px; }
 @media (max-width: 480px) { .nav-mini-cart { width: calc(100vw - 32px); right: -16px; } }
+
+/* ─── Reference Style Photo Uploader ─────────────────────── */
+.ref-photo-slot {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.ref-photo-slot.empty {
+  border: 2px dashed var(--border);
+  background: var(--glass-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.ref-photo-slot.empty:hover {
+  border-color: var(--teal);
+  transform: scale(1.03);
+  background: rgba(42,157,143,0.07);
+}
+.ref-photo-add-icon { font-size: 1.4rem; line-height: 1; }
+.ref-photo-add-label { font-size: 0.65rem; color: var(--text-muted); text-align: center; }
+.ref-photo-slot.filled {
+  border: 2px solid var(--border);
+}
+.ref-photo-slot.filled img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ref-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+.ref-photo-slot.filled:hover .ref-photo-remove { opacity: 1; }
+.ref-photo-num {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.5);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+@media (max-width: 480px) {
+  #ref-photo-grid { grid-template-columns: repeat(5,1fr) !important; gap: 6px !important; }
+  .ref-photo-add-label { display: none; }
+  .ref-photo-add-icon { font-size: 1.1rem; }
+}

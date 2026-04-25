@@ -1130,17 +1130,18 @@
               <div class="form-group"><label class="form-label">Bottom Style</label><select id="trouser-style" class="form-select"><option value="Straight">Straight Pants</option><option value="Shalwar">Shalwar</option><option value="Tulip Shalwar">Tulip Shalwar</option><option value="Cigarette Pants">Cigarette Pants</option><option value="Patiala">Patiala Shalwar</option><option value="Bell-Bottom">Bell Bottom</option><option value="Palazzo">Palazzo</option></select></div>
             </div>
             
-            <div class="form-section-title mt-lg">Reference Design Picture</div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Have a specific style in mind? Show us.</p>
-            <div class="measurement-options">
-              <input type="radio" name="refMethod" id="rm-upload" value="upload" class="meas-option-radio" checked>
-              <label for="rm-upload" class="meas-option-label"><div class="meas-option-icon">📁</div><div class="meas-option-text"><h4>Upload Picture</h4></div></label>
-              
-              <input type="radio" name="refMethod" id="rm-whatsapp" value="whatsapp" class="meas-option-radio">
-              <label for="rm-whatsapp" class="meas-option-label"><div class="meas-option-icon">💬</div><div class="meas-option-text"><h4>Send via WhatsApp</h4></div></label>
+            <div class="form-section-title mt-lg">Reference Style Photos</div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Upload up to 5 inspiration photos — neckline styles, sleeve cuts, embroidery, anything. Our tailors will match the look as closely as possible.</p>
+
+            <!-- Photo upload grid -->
+            <div id="ref-photo-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:12px;">
+              <!-- 5 slots rendered by JS -->
             </div>
-            <div id="ref-upload-panel" style="margin-top:12px;">
-               <input type="file" id="reference-upload" class="form-input" accept="image/*">
+            <!-- Hidden file input triggered by slot clicks -->
+            <input type="file" id="ref-photo-input" accept="image/*" multiple style="display:none;">
+            <p id="ref-photo-hint" style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-top:6px;">Click any slot to add a photo · JPG / PNG / WebP · Max 10 MB each</p>
+            <div id="ref-whatsapp-note" style="display:none; margin-top:10px; padding:10px 14px; background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.25); border-radius:8px; font-size:0.83rem; color:var(--text-secondary);">
+              💬 <strong>No photos yet?</strong> You can also WhatsApp them to us after ordering — we'll link them to your order ID.
             </div>
 
             <div class="form-section-title mt-lg">Premium Add-ons</div>

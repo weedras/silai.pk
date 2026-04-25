@@ -190,7 +190,9 @@ window.addItemToCart = function() {
     },
     style: {
       notes: document.getElementById('special-instructions')?.value,
-      reference: state.referenceDesignBase64,
+      reference: state.referencePhotos && state.referencePhotos.length
+        ? state.referencePhotos.map(p => p.dataUrl)
+        : (state.referenceDesignBase64 ? [state.referenceDesignBase64] : []),
       fabric_sourcing: document.getElementById('source-fabric-check')?.checked
         ? {
             link: document.getElementById('source-fabric-link')?.value,
@@ -291,6 +293,7 @@ window.changeQty = function(garmentType, delta) {
 function clearGarmentForm() {
   state.addons = {};
   state.referenceDesignBase64 = '';
+  state.referencePhotos = [];
   state.sourcePicBase64 = '';
   state.trimsPicBase64 = '';
   state.measPicBase64 = '';
@@ -869,10 +872,97 @@ const handleBase64Upload = (elementId, stateKey) => {
     });
   }
 };
-handleBase64Upload('reference-upload', 'referenceDesignBase64');
 handleBase64Upload('source-fabric-upload', 'sourcePicBase64');
 handleBase64Upload('trims-upload', 'trimsPicBase64');
 handleBase64Upload('meas-upload-file', 'measPicBase64');
+
+// ─── Reference style photo uploader (up to 5 photos) ──────
+const MAX_REF_PHOTOS = 5;
+// Stored as { dataUrl, name } objects
+if (!state.referencePhotos) state.referencePhotos = [];
+
+function renderRefPhotoGrid() {
+  const grid = document.getElementById('ref-photo-grid');
+  if (!grid) return;
+  const hint = document.getElementById('ref-photo-hint');
+  const waNote = document.getElementById('ref-whatsapp-note');
+  const count = state.referencePhotos.length;
+
+  grid.innerHTML = '';
+
+  // Filled slots
+  state.referencePhotos.forEach((photo, idx) => {
+    const slot = document.createElement('div');
+    slot.className = 'ref-photo-slot filled';
+    slot.innerHTML = `
+      <img src="${photo.dataUrl}" alt="Reference ${idx + 1}">
+      <button type="button" class="ref-photo-remove" onclick="window.removeRefPhoto(${idx})" title="Remove">✕</button>
+      <div class="ref-photo-num">${idx + 1}</div>`;
+    grid.appendChild(slot);
+  });
+
+  // Empty slots (up to MAX_REF_PHOTOS)
+  for (let i = count; i < MAX_REF_PHOTOS; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'ref-photo-slot empty';
+    slot.setAttribute('data-slot', i);
+    slot.innerHTML = `
+      <div class="ref-photo-add-icon">📷</div>
+      <div class="ref-photo-add-label">${i === 0 ? 'Add photo' : '+ Add'}</div>`;
+    slot.addEventListener('click', () => triggerRefPhotoInput());
+    grid.appendChild(slot);
+  }
+
+  if (hint) hint.textContent = count === 0
+    ? 'Click any slot to add a photo · JPG / PNG / WebP · Max 10 MB each'
+    : `${count} of ${MAX_REF_PHOTOS} photos added — click an empty slot to add more`;
+
+  if (waNote) waNote.style.display = count === 0 ? 'block' : 'none';
+}
+
+function triggerRefPhotoInput() {
+  const inp = document.getElementById('ref-photo-input');
+  if (inp) {
+    inp.value = '';
+    inp.click();
+  }
+}
+
+window.removeRefPhoto = function(idx) {
+  state.referencePhotos.splice(idx, 1);
+  renderRefPhotoGrid();
+};
+
+const refPhotoInput = document.getElementById('ref-photo-input');
+if (refPhotoInput) {
+  refPhotoInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = MAX_REF_PHOTOS - state.referencePhotos.length;
+    const toLoad = files.slice(0, remaining);
+    if (files.length > remaining && typeof showToast === 'function') {
+      showToast(`Max ${MAX_REF_PHOTOS} photos — added ${toLoad.length}`, 'info');
+    }
+    let loaded = 0;
+    toLoad.forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        if (typeof showToast === 'function') showToast(`${file.name} is over 10 MB — skipped`, 'error');
+        loaded++;
+        if (loaded === toLoad.length) renderRefPhotoGrid();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.referencePhotos.push({ dataUrl: ev.target.result, name: file.name });
+        loaded++;
+        if (loaded === toLoad.length) renderRefPhotoGrid();
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
+// Initial render
+renderRefPhotoGrid();
 
 const trimsCheck = document.getElementById('addon-trims-check');
 if (trimsCheck) {
