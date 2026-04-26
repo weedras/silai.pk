@@ -193,6 +193,14 @@
           <label class="addon-item"><div class="addon-left"><div class="addon-icon">〰️</div><div><div class="addon-name">Piping</div><div class="addon-desc">Contrast edge detail</div></div></div><div class="addon-right"><div class="addon-price">+$5</div><div class="toggle"><input type="checkbox" class="cm-addon" data-addon="piping" data-price="5"><div class="toggle-track"></div></div></div></label>
         </div>
       </div>
+      <!-- Reference style photos inside modal -->
+      <div class="form-group">
+        <label class="form-label">Reference Style Photos <span style="color:var(--text-muted);font-weight:400">(optional · up to 5)</span></label>
+        <p style="font-size:0.78rem;color:var(--text-muted);margin:0 0 10px;">Show us the neckline, embroidery or cut you want — our tailors will match it.</p>
+        <div id="cm-ref-photo-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px;"></div>
+        <input type="file" id="cm-ref-photo-input" accept="image/*" multiple style="display:none;">
+        <p id="cm-ref-photo-hint" style="font-size:0.72rem;color:var(--text-muted);margin:0;">Click a slot to add · JPG/PNG · max 10 MB each</p>
+      </div>
       <div class="form-group">
         <label class="form-label">Special Instructions <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
         <textarea id="cm-notes" class="form-textarea" rows="2" placeholder="e.g. Keep it loose, add piping on neckline..."></textarea>
@@ -297,6 +305,7 @@
   </a>
   <div class="nav-links">
     <a href="#home" class="nav-link">Home</a>
+    <a href="#designs" class="nav-link">✨ Designs</a>
     <a href="#order" class="nav-link">Place Order</a>
     <a href="#track" class="nav-link">Track Order</a>
     <a href="#measure" class="nav-link">Measure Guide</a>
@@ -347,6 +356,7 @@
 <div class="mobile-menu" id="mobile-menu">
   <button class="mobile-menu-close" onclick="document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('mobile-menu-overlay').classList.remove('open');">✕</button>
   <a href="#home" class="nav-link">Home</a>
+  <a href="#designs" class="nav-link">✨ Designs</a>
   <a href="#order" class="nav-link">Place Order</a>
   <a href="#track" class="nav-link">Track Order</a>
   <a href="#measure" class="nav-link">Measure Guide</a>
@@ -853,6 +863,34 @@
   </section>
 
   </section>
+</div>
+
+<!-- ========================================================
+     DESIGNS COLLECTION VIEW
+======================================================== -->
+<div id="view-designs" class="spa-view">
+  <div class="page-header">
+    <div class="container page-header-content text-center">
+      <h1>✨ Design Collection</h1>
+      <p class="section-subheading" style="margin:0 auto">Trending Pakistani styles — pick one and we'll stitch it to your measurements.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:var(--space-2xl);padding-bottom:var(--space-4xl);">
+    <!-- Filter tabs -->
+    <div class="designs-filter-bar" id="designs-filter-bar">
+      <button class="designs-filter-btn active" data-filter="all">All Styles</button>
+      <button class="designs-filter-btn" data-filter="casual">Casual / Pret</button>
+      <button class="designs-filter-btn" data-filter="formal">Formal</button>
+      <button class="designs-filter-btn" data-filter="party">Party Wear</button>
+      <button class="designs-filter-btn" data-filter="bridal">Bridal / Festive</button>
+      <button class="designs-filter-btn" data-filter="traditional">Traditional</button>
+      <button class="designs-filter-btn" data-filter="modern">Modern Fusion</button>
+    </div>
+
+    <!-- Design cards grid -->
+    <div class="designs-grid" id="designs-grid"></div>
+  </div>
 </div>
 
 <!-- ========================================================
@@ -1812,6 +1850,7 @@
 <script src="/js/order.js" defer></script>
 <script src="/js/track.js" defer></script>
 <script src="/js/auth.js" defer></script>
+<script src="/js/designs.js" defer></script>
 
 <!-- ─── Lookbook Filter ──────────────────────────────── -->
 <script>

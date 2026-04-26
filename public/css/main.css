@@ -940,3 +940,134 @@ body { animation: page-fade-in 0.5s ease both; }
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ─── Designs Collection Page ────────────────────────────── */
+.designs-filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+.designs-filter-btn {
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.designs-filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+.designs-filter-btn.active { background: var(--gold); border-color: var(--gold); color: #111; font-weight: 700; }
+
+.designs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.design-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.design-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  border-color: var(--gold);
+}
+
+.design-card-hero {
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.design-card-emoji {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+  line-height: 1;
+}
+.design-trend-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.design-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.design-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.design-tag {
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.25);
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.design-card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+.design-card-subtitle {
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.design-card-desc {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 4px 0 auto;
+}
+.design-order-btn {
+  margin-top: 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .designs-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .design-card-hero { height: 140px; }
+  .design-card-emoji { font-size: 3.2rem; }
+  .design-card-body { padding: 14px; }
+  .design-card-name { font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .designs-grid { grid-template-columns: 1fr; }
+  .designs-filter-bar { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; padding-bottom: 10px; }
+  .designs-filter-bar::-webkit-scrollbar { display: none; }
+}

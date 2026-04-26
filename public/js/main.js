@@ -196,7 +196,8 @@ function handleHashChange() {
     'policy-returns': 'Return & Exchange Policy — Silai',
     'policy-shipping': 'Shipping & Customs — Silai',
     'policy-privacy': 'Privacy Policy — Silai',
-    'policy-terms': 'Terms of Service — Silai'
+    'policy-terms': 'Terms of Service — Silai',
+    'designs': 'Design Collection — Silai'
   };
   document.title = titles[hash] || titles.home;
 
@@ -209,6 +210,7 @@ function handleHashChange() {
     if (window.runTieredShipping) window.runTieredShipping();
     if (window.checkAuthForCheckout) window.checkAuthForCheckout();
   }
+  if (hash === 'designs' && window.renderDesigns) window.renderDesigns();
 }
 
 // Global initialization

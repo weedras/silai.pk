@@ -1480,7 +1480,57 @@ function cmUpdateStep() {
   if (pill2) pill2.classList.toggle('active', cmState.step === 2);
 }
 
-window.openConfigModal = function(garmentType) {
+// ─── Config modal reference photos ───────────────────────
+let cmRefPhotos = [];
+const CM_MAX_PHOTOS = 5;
+
+function renderCmRefPhotoGrid() {
+  const grid = document.getElementById('cm-ref-photo-grid');
+  const hint = document.getElementById('cm-ref-photo-hint');
+  if (!grid) return;
+  grid.innerHTML = '';
+  cmRefPhotos.forEach((photo, idx) => {
+    const slot = document.createElement('div');
+    slot.className = 'ref-photo-slot filled';
+    slot.innerHTML = `<img src="${photo.dataUrl}" alt="Ref ${idx+1}">
+      <button type="button" class="ref-photo-remove" onclick="window.removeCmRefPhoto(${idx})" title="Remove">✕</button>
+      <div class="ref-photo-num">${idx+1}</div>`;
+    grid.appendChild(slot);
+  });
+  for (let i = cmRefPhotos.length; i < CM_MAX_PHOTOS; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'ref-photo-slot empty';
+    slot.innerHTML = `<div class="ref-photo-add-icon">📷</div><div class="ref-photo-add-label">${i===0?'Add photo':'+ Add'}</div>`;
+    slot.addEventListener('click', () => { const inp = document.getElementById('cm-ref-photo-input'); if(inp){inp.value='';inp.click();} });
+    grid.appendChild(slot);
+  }
+  if (hint) hint.textContent = cmRefPhotos.length === 0
+    ? 'Click a slot to add · JPG/PNG · max 10 MB each'
+    : `${cmRefPhotos.length} of ${CM_MAX_PHOTOS} photos added`;
+}
+
+window.removeCmRefPhoto = function(idx) {
+  cmRefPhotos.splice(idx, 1);
+  renderCmRefPhotoGrid();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('cm-ref-photo-input');
+  if (inp) {
+    inp.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      const rem = CM_MAX_PHOTOS - cmRefPhotos.length;
+      files.slice(0, rem).forEach(file => {
+        if (file.size > 10*1024*1024) { if(typeof showToast==='function') showToast(`${file.name} over 10 MB — skipped`,'error'); return; }
+        const r = new FileReader();
+        r.onload = ev => { cmRefPhotos.push({ dataUrl: ev.target.result, name: file.name }); renderCmRefPhotoGrid(); };
+        r.readAsDataURL(file);
+      });
+    });
+  }
+});
+
+window.openConfigModal = function(garmentType, presetStyle) {
   cmState.step = 1;
   cmState.garmentType = garmentType;
   const size = document.querySelector(`input[name="size-${garmentType}"]:checked`)?.value || 'M';
@@ -1504,12 +1554,11 @@ window.openConfigModal = function(garmentType) {
 
   // Set standard size select to match chosen size chip
   const stdSel = document.getElementById('cm-std-size');
-  if (stdSel) {
-    const valid = ['XS','S','M','L','XL'];
-    stdSel.value = valid.includes(size) ? size : 'M';
-  }
+  if (stdSel) stdSel.value = size || 'M';
 
-  // Reset form
+  // Reset form & photos
+  cmRefPhotos = [];
+  renderCmRefPhotoGrid();
   document.querySelectorAll('.cm-addon').forEach(cb => cb.checked = false);
   const notesEl = document.getElementById('cm-notes');
   if (notesEl) notesEl.value = '';
@@ -1517,6 +1566,19 @@ window.openConfigModal = function(garmentType) {
   if (firstNl) firstNl.checked = true;
   const stdRadio = document.getElementById('cm-mm-standard');
   if (stdRadio) { stdRadio.checked = true; cmToggleMeasPanel('standard'); }
+
+  // Apply preset style if coming from Designs page
+  if (presetStyle) {
+    if (presetStyle.neckline) {
+      const nlRadio = document.querySelector(`input[name="cm-nl"][value="${presetStyle.neckline}"]`);
+      if (nlRadio) nlRadio.checked = true;
+    }
+    if (presetStyle.notes && notesEl) notesEl.value = presetStyle.notes;
+    if (presetStyle.fabric) {
+      const fab = document.getElementById('cm-fabric');
+      if (fab) fab.value = presetStyle.fabric;
+    }
+  }
 
   cmUpdateLivePrice();
   cmUpdateStep();
@@ -1587,7 +1649,7 @@ window.cmAddToBag = function() {
       addons_price: addonsTotal,
       size: cmState.size,
       measurements,
-      style: { notes, reference: null, fabric_sourcing: null }
+      style: { notes, reference: cmRefPhotos.map(p => p.dataUrl), fabric_sourcing: null }
     });
   }
 
