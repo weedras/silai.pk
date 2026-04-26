@@ -1,7 +1,12 @@
 /* ═══════════════════════════════════════════════════════════
    Silai — Design Collection
    Trending Pakistani women's stitching styles
+   Photos: Pexels (free commercial use)
 ═══════════════════════════════════════════════════════════ */
+
+// Helper: build a Pexels image URL with crop
+const px = (id, w=480, h=560) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}&h=${h}&fit=crop`;
 
 const DESIGNS = [
 
@@ -12,9 +17,7 @@ const DESIGNS = [
     subtitle: 'Lawn Season Favourite',
     category: 'casual',
     garment: 'fullsuit',
-    emoji: '🌷',
-    gradient: 'linear-gradient(135deg,#e8f5e9,#c8e6c9)',
-    accent: '#388e3c',
+    photo: px(20777204),
     tags: ['Lawn','Casual','Summer'],
     desc: 'Fitted tulip-cut trousers with a relaxed straight kameez. The most-worn silhouette in Pakistani pret right now — elegant yet comfortable for daily wear.',
     preset: { fabric:'Lawn', neckline:'Round', notes:'Tulip shalwar cut, relaxed fit on kameez' },
@@ -26,9 +29,7 @@ const DESIGNS = [
     subtitle: 'Smart Casual',
     category: 'casual',
     garment: 'fullsuit',
-    emoji: '👖',
-    gradient: 'linear-gradient(135deg,#e3f2fd,#bbdefb)',
-    accent: '#1976d2',
+    photo: px(31874451),
     tags: ['Cotton','Chiffon','Office Wear'],
     desc: 'Slim cigarette-cut trousers with an embellished or plain kameez. Polished enough for the office, light enough for brunch. A wardrobe staple.',
     preset: { fabric:'Cotton', neckline:'Ban Collar', notes:'Cigarette pants, slightly flared kameez hem' },
@@ -40,9 +41,7 @@ const DESIGNS = [
     subtitle: 'Effortless Flow',
     category: 'casual',
     garment: 'kameez',
-    emoji: '🌊',
-    gradient: 'linear-gradient(135deg,#fff8e1,#ffecb3)',
-    accent: '#f57f17',
+    photo: px(25185003),
     tags: ['Lawn','Chiffon','Resort','Casual'],
     desc: 'Loose, flowing kaftan-style kameez with wide sleeves. Airy and comfortable — perfect for summer afternoons, family gatherings or casual outings.',
     preset: { fabric:'Chiffon', neckline:'Round', notes:'Kaftan style — wide sleeves, loose body, below-knee length' },
@@ -54,9 +53,7 @@ const DESIGNS = [
     subtitle: 'Khaddi / Gul Ahmed Style',
     category: 'casual',
     garment: 'fullsuit',
-    emoji: '🎨',
-    gradient: 'linear-gradient(135deg,#fce4ec,#f8bbd0)',
-    accent: '#c2185b',
+    photo: px(20777166),
     tags: ['Lawn','Printed','Pret'],
     desc: 'Bold digital floral or geometric prints on lawn fabric. Bring your own printed fabric — we stitch it to your exact silhouette: straight shirt, wide-leg or tulip trousers.',
     preset: { fabric:'Lawn', neckline:'Round', notes:'Straight shirt, use fabric prints as design — keep embellishments minimal' },
@@ -70,9 +67,7 @@ const DESIGNS = [
     subtitle: 'Pakistani Tuxedo Look',
     category: 'formal',
     garment: 'fullsuit',
-    emoji: '🎩',
-    gradient: 'linear-gradient(135deg,#263238,#37474f)',
-    accent: '#d4af37',
+    photo: px(31874455),
     tags: ['Velvet','Silk','Formal','Office'],
     desc: 'Clean ban (mandarin) collar with a structured straight-cut kameez and cigarette trousers. Exudes boardroom power while staying rooted in Pakistani elegance.',
     preset: { fabric:'Silk', neckline:'Ban Collar', notes:'Structured collar, straight cut, minimal embellishment, clean formal lines' },
@@ -84,9 +79,7 @@ const DESIGNS = [
     subtitle: 'Machine Embroidery Classic',
     category: 'formal',
     garment: 'fullsuit',
-    emoji: '🌸',
-    gradient: 'linear-gradient(135deg,#f3e5f5,#e1bee7)',
-    accent: '#7b1fa2',
+    photo: px(31874445),
     tags: ['Chiffon','Embroidered','Formal'],
     desc: 'Delicate machine-embroidered (schiffli) chiffon with a fully embroidered front panel. Flows beautifully — ideal for formal dinners and eid gatherings.',
     preset: { fabric:'Chiffon', neckline:'Round', notes:'Schiffli embroidered front panel, flowy straight cut, add inner lining' },
@@ -98,9 +91,7 @@ const DESIGNS = [
     subtitle: 'Flattering Silhouette',
     category: 'formal',
     garment: 'fullsuit',
-    emoji: '🎀',
-    gradient: 'linear-gradient(135deg,#fff3e0,#ffe0b2)',
-    accent: '#e65100',
+    photo: px(31874435),
     tags: ['Cotton','Silk','Formal','Wedding'],
     desc: 'A flared peplum hem at the hips over slim cigarette trousers. Exceptionally flattering — creates a natural waist, a go-to choice for formal functions.',
     preset: { fabric:'Silk', neckline:'V-Neck', notes:'Peplum flare at hips, V-neck, fitted body, cigarette trousers' },
@@ -112,9 +103,7 @@ const DESIGNS = [
     subtitle: 'High-Low Drama',
     category: 'formal',
     garment: 'fullsuit',
-    emoji: '🎭',
-    gradient: 'linear-gradient(135deg,#e8eaf6,#c5cae9)',
-    accent: '#3949ab',
+    photo: px(20614162),
     tags: ['Chiffon','Organza','Formal'],
     desc: 'Front shorter, back dramatically longer — a contemporary high-low cut. Pairs with straight trousers or palazzo for a modern formal statement.',
     preset: { fabric:'Chiffon', neckline:'V-Neck', notes:'Asymmetric hemline — front knee length, back floor length, straight trousers' },
@@ -128,9 +117,7 @@ const DESIGNS = [
     subtitle: 'Floor-Length Flared',
     category: 'party',
     garment: 'fullsuit',
-    emoji: '💃',
-    gradient: 'linear-gradient(135deg,#1a237e,#283593)',
-    accent: '#d4af37',
+    photo: px(34091706),
     tags: ['Organza','Velvet','Party','Wedding'],
     desc: 'Classic floor-length flared kameez with a fitted bodice — the Anarkali never goes out of style. Add embroidery, piping or lace trim for full impact.',
     preset: { fabric:'Organza', neckline:'Round', notes:'Full Anarkali flare, fitted bodice, floor length, add embroidery detailing' },
@@ -142,9 +129,7 @@ const DESIGNS = [
     subtitle: 'Wide-Leg Power',
     category: 'party',
     garment: 'fullsuit',
-    emoji: '🦋',
-    gradient: 'linear-gradient(135deg,#880e4f,#ad1457)',
-    accent: '#f8bbd0',
+    photo: px(34077588),
     tags: ['Silk','Chiffon','Party','Sangeet'],
     desc: 'Short embellished kameez (mid-thigh) with wide-leg matching palazzo trousers. The palazzo co-ord is dominating Pakistani party wear right now.',
     preset: { fabric:'Silk', neckline:'Square', notes:'Short kameez mid-thigh, palazzo trousers, matching fabric, add sequin or gota trim' },
@@ -156,9 +141,7 @@ const DESIGNS = [
     subtitle: 'Dupatta-Free Drama',
     category: 'party',
     garment: 'fullsuit',
-    emoji: '🦸‍♀️',
-    gradient: 'linear-gradient(135deg,#004d40,#00695c)',
-    accent: '#a5d6a7',
+    photo: px(34658495),
     tags: ['Chiffon','Organza','Party','Modern'],
     desc: 'An attached chiffon or organza cape replaces the separate dupatta — effortlessly chic. Looks stunning for dinners, mehndi functions and semi-formal events.',
     preset: { fabric:'Chiffon', neckline:'Boat Neck', notes:'Attached cape overlay, boat neck, straight trousers, no separate dupatta' },
@@ -170,9 +153,7 @@ const DESIGNS = [
     subtitle: 'Cut-Out Glamour',
     category: 'party',
     garment: 'fullsuit',
-    emoji: '💫',
-    gradient: 'linear-gradient(135deg,#4a148c,#6a1b9a)',
-    accent: '#ce93d8',
+    photo: px(34091727),
     tags: ['Velvet','Silk','Party','Night Out'],
     desc: 'Shoulder cut-outs with flowing sleeves from the elbow — sultry yet tasteful. A head-turner at dinner parties and mehndi functions.',
     preset: { fabric:'Velvet', neckline:'Boat Neck', notes:'Cold shoulder cut-outs, half sleeves from elbow, fitted body, heavy dupatta' },
@@ -186,9 +167,7 @@ const DESIGNS = [
     subtitle: 'Festive & Bridal',
     category: 'bridal',
     garment: '3piece',
-    emoji: '👰',
-    gradient: 'linear-gradient(135deg,#b71c1c,#c62828)',
-    accent: '#ffcc02',
+    photo: px(29460598),
     tags: ['Velvet','Silk','Bridal','Wedding'],
     desc: 'A heavily embellished kameez with a flared lehenga skirt and dupatta — our signature 3-piece bridal piece. Send us your fabric and we handle the entire stitching.',
     preset: { fabric:'Velvet', neckline:'Square', notes:'Lehenga style — flared skirt, heavily embellished kameez, matching dupatta finishing' },
@@ -200,9 +179,7 @@ const DESIGNS = [
     subtitle: 'Shisha Embellishment',
     category: 'bridal',
     garment: 'fullsuit',
-    emoji: '🪞',
-    gradient: 'linear-gradient(135deg,#e65100,#bf360c)',
-    accent: '#ffcc02',
+    photo: px(29460594),
     tags: ['Cotton','Silk','Eid','Festive'],
     desc: 'Traditional shisha (mirror) embellishment on the neckline and sleeves — a staple of festive Pakistani dressing. Vibrant, handcrafted, deeply cultural.',
     preset: { fabric:'Cotton', neckline:'Round', notes:'Mirror/shisha work on neckline, cuffs and hem, straight kameez, shalwar' },
@@ -214,9 +191,7 @@ const DESIGNS = [
     subtitle: 'Gold Ribbon Trim',
     category: 'bridal',
     garment: 'fullsuit',
-    emoji: '🌟',
-    gradient: 'linear-gradient(135deg,#f57f17,#e65100)',
-    accent: '#fff9c4',
+    photo: px(29396108),
     tags: ['Chiffon','Silk','Festive','Mehndi'],
     desc: 'Gota patti — gold or silver ribbon appliqué on the neckline, sleeves and hemline. Festive, regal, and deeply rooted in Mughal textile tradition. Perfect for mehndi and walima.',
     preset: { fabric:'Chiffon', neckline:'Round', notes:'Gota patti trim on neckline, cuffs and hemline, straight cut, add lining' },
@@ -230,9 +205,7 @@ const DESIGNS = [
     subtitle: 'Mughal Court Heritage',
     category: 'traditional',
     garment: '3piece',
-    emoji: '🏛️',
-    gradient: 'linear-gradient(135deg,#1b5e20,#2e7d32)',
-    accent: '#ffcc02',
+    photo: px(34076976),
     tags: ['Silk','Velvet','Traditional','Bridal'],
     desc: 'Wide-flared gharara bottoms with a short kameez and dupatta — a piece of Pakistani cultural heritage. Ideal for nikah, baraat and traditional formal events.',
     preset: { fabric:'Silk', neckline:'Square', notes:'Gharara wide flared bottoms, short kameez, matching dupatta, traditional embroidery on hem' },
@@ -244,9 +217,7 @@ const DESIGNS = [
     subtitle: 'Wrap-Front Elegance',
     category: 'traditional',
     garment: 'kameez',
-    emoji: '🎋',
-    gradient: 'linear-gradient(135deg,#33691e,#558b2f)',
-    accent: '#dce775',
+    photo: px(5922737),
     tags: ['Cotton','Lawn','Casual','Traditional'],
     desc: 'Wrap-around front panel with a tie or button closure — the Angrakha is having a major revival in Pakistani fashion. Flattering for all body types.',
     preset: { fabric:'Cotton', neckline:'V-Neck', notes:'Angrakha wrap-around front with tie closure, tulip shalwar or cigarette pants' },
@@ -258,9 +229,7 @@ const DESIGNS = [
     subtitle: 'Pleated Comfort',
     category: 'traditional',
     garment: 'fullsuit',
-    emoji: '🥻',
-    gradient: 'linear-gradient(135deg,#01579b,#0277bd)',
-    accent: '#b3e5fc',
+    photo: px(18380705),
     tags: ['Cotton','Lawn','Casual','Traditional'],
     desc: 'Heavily pleated Patiala shalwar paired with a short kameez — comfortable, vibrant and joyful. A favourite for casual festive wear and cultural events.',
     preset: { fabric:'Cotton', neckline:'Round', notes:'Patiala shalwar — heavy pleats, short kameez above knee, traditional dupatta' },
@@ -272,9 +241,7 @@ const DESIGNS = [
     subtitle: 'Flared from the Waist',
     category: 'traditional',
     garment: '3piece',
-    emoji: '💎',
-    gradient: 'linear-gradient(135deg,#4a148c,#7b1fa2)',
-    accent: '#e1bee7',
+    photo: px(13562538),
     tags: ['Organza','Chiffon','Festive','Bridal'],
     desc: 'Sharara trousers flare dramatically from the waist — different from gharara which flares from the knee. A regal silhouette for eid, mehndi and formal occasions.',
     preset: { fabric:'Organza', neckline:'Square', notes:'Sharara flare from waist, heavy embellished kameez, matching dupatta with border' },
@@ -288,9 +255,7 @@ const DESIGNS = [
     subtitle: 'Matching Two-Piece',
     category: 'modern',
     garment: 'fullsuit',
-    emoji: '🤍',
-    gradient: 'linear-gradient(135deg,#37474f,#546e7a)',
-    accent: '#b0bec5',
+    photo: px(31874429),
     tags: ['Cotton','Linen','Modern','Casual'],
     desc: 'Matching top and trouser in a tonal or contrasting co-ord set. Monochrome co-ords are dominating Pakistani modern fashion — clean, minimal, effortless.',
     preset: { fabric:'Cotton', neckline:'Ban Collar', notes:'Matching co-ord set, minimal embellishment, clean modern lines, same fabric top and bottom' },
@@ -302,9 +267,7 @@ const DESIGNS = [
     subtitle: 'East Meets West',
     category: 'modern',
     garment: 'kameez',
-    emoji: '🌺',
-    gradient: 'linear-gradient(135deg,#880e4f,#c2185b)',
-    accent: '#fce4ec',
+    photo: px(34933703),
     tags: ['Chiffon','Silk','Modern','Party'],
     desc: 'A floor-length kameez with western-inspired silhouette — structured shoulders, fitted waist, flared hem. Perfect for diaspora events and multicultural celebrations.',
     preset: { fabric:'Chiffon', neckline:'V-Neck', notes:'Maxi length, fitted waist, flared hem, structured shoulders — fusion silhouette' },
@@ -316,9 +279,7 @@ const DESIGNS = [
     subtitle: 'Breathable & Chic',
     category: 'modern',
     garment: 'fullsuit',
-    emoji: '🌿',
-    gradient: 'linear-gradient(135deg,#f9fbe7,#f0f4c3)',
-    accent: '#33691e',
+    photo: px(25184951),
     tags: ['Cotton','Linen','Summer','Modern'],
     desc: 'Relaxed linen kameez with wide-leg trousers — muted earth tones, zero fuss. The linen co-ord trend is everywhere in 2025, and our tailors can stitch it perfectly from your fabric.',
     preset: { fabric:'Cotton', neckline:'Ban Collar', notes:'Relaxed linen fit, wide-leg trousers, earth tones, minimal stitching detail' },
@@ -336,9 +297,10 @@ window.renderDesigns = function(filter) {
 
   grid.innerHTML = filtered.map(d => `
     <div class="design-card" data-category="${d.category}" data-id="${d.id}">
-      <div class="design-card-hero" style="background:${d.gradient};">
-        <div class="design-card-emoji">${d.emoji}</div>
-        ${d.trend ? `<span class="design-trend-badge" style="background:${d.accent};color:${isLight(d.accent)?'#111':'#fff'}">${d.trend}</span>` : ''}
+      <div class="design-card-hero">
+        <img src="${d.photo}" alt="${d.name}" loading="lazy"
+             onerror="this.parentElement.style.background='linear-gradient(135deg,#1b4434,#225340)';this.style.display='none'">
+        ${d.trend ? `<span class="design-trend-badge">${d.trend}</span>` : ''}
       </div>
       <div class="design-card-body">
         <div class="design-card-tags">
@@ -355,19 +317,11 @@ window.renderDesigns = function(filter) {
   `).join('');
 };
 
-function isLight(hex) {
-  const c = hex.replace('#','');
-  if (c.length < 6) return false;
-  const r = parseInt(c.substr(0,2),16), g = parseInt(c.substr(2,2),16), b = parseInt(c.substr(4,2),16);
-  return (r*299 + g*587 + b*114) / 1000 > 186;
-}
-
 // Navigate to order flow with the selected design pre-applied
 window.orderDesign = function(designId) {
   const d = DESIGNS.find(x => x.id === designId);
   if (!d) return;
   window.location.hash = '#order';
-  // Wait for view to render, then open the config modal with preset style
   setTimeout(() => {
     if (typeof window.openConfigModal === 'function') {
       window.openConfigModal(d.garment, d.preset);
@@ -387,6 +341,5 @@ document.addEventListener('DOMContentLoaded', () => {
       window.renderDesigns(btn.dataset.filter);
     });
   }
-  // Initial render if already on designs page
   if ((window.location.hash || '').replace('#','') === 'designs') window.renderDesigns();
 });

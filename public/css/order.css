@@ -291,12 +291,12 @@
 .btn-premium:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
 .btn-text-gold { background: none; border: none; color: var(--gold); font-weight: 600; text-decoration: underline; cursor: pointer; }
 /* Size chips */
-.size-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.size-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .size-chip { cursor: pointer; }
 .size-chip input { position: absolute; opacity: 0; pointer-events: none; }
-.size-chip span { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.72rem; font-weight: 600; transition: all var(--dur-fast); color: var(--text-secondary); background: rgba(255,255,255,0.02); }
-.size-chip input:checked + span { background: var(--gold); color: var(--midnight, #0d1117); border-color: var(--gold); }
-.size-chip:hover span { border-color: var(--gold); }
+.size-chip span { display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.83rem; font-weight: 700; transition: all var(--dur-fast); color: var(--text-secondary); background: rgba(255,255,255,0.02); letter-spacing: 0.02em; }
+.size-chip input:checked + span { background: var(--gold); color: var(--midnight, #0d1117); border-color: var(--gold); box-shadow: 0 0 14px rgba(212,175,55,0.35); }
+.size-chip:hover span { border-color: var(--gold); color: var(--gold); }
 /* Qty selector */
 .qty-selector { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; height: 36px; }
 .qty-selector button { background: none; border: none; color: var(--text-primary); width: 30px; height: 100%; cursor: pointer; font-size: 1rem; transition: background var(--dur-fast); }
@@ -333,8 +333,8 @@
   .qty-selector { height: 44px; }
   .qty-selector button { width: 44px; font-size: 1.2rem; }
 
-  /* Size chips — 44px touch targets */
-  .size-chip span { width: 44px; height: 44px; font-size: 0.8rem; }
+  /* Size chips — 54px on mobile for easy tapping */
+  .size-chip span { width: 54px; height: 54px; font-size: 0.82rem; }
 
   /* Order page padding */
   .order-page { padding-top: calc(var(--nav-height) + var(--space-lg)); }
